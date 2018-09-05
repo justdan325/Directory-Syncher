@@ -46,7 +46,7 @@ public class FileCMD
 
 		catch(FileNotFoundException e)
 		{
-			System.out.println("\nFileNotFoundException\n");
+			System.out.println("\nFileNotFoundException when reading " + fileName + "\n" + Prin.getStackTrace(e));
 			return "";
 		}
 
