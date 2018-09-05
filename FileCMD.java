@@ -7,7 +7,7 @@ import java.nio.file.attribute.FileTime;
 *This is a class that abstracts file io to suit my needs
 *
 *@author Dan Martineau
-*@version 1.1
+*@version 1.2
 */
 
 public class FileCMD
@@ -244,5 +244,40 @@ public class FileCMD
 		}
 		
 		return result;
+	}
+	
+	/**
+	*Tests to see if a file is a directory
+	*@param path to file/directory
+	*@return true if directory
+	*/
+	public static boolean isDir(String path)
+	{
+		boolean isDir = false;
+		
+		try{isDir = Files.isDirectory(strToPath(path), LinkOption.NOFOLLOW_LINKS);}
+		catch(SecurityException e){Prin.tln("Security Exception when testing for directory: " + path + "\n" + Prin.getStackTrace(e));}
+		
+		return isDir;
+	}
+	
+	/**
+	*Makes new directories
+	*@param path of new directories
+	*@return true if successful
+	*/
+	public static boolean mkdirs(String path)
+	{
+		//if directories successfully made
+		boolean made = false;
+		
+		//create new directory file--does not exist yet
+		File newDir = new File(path);
+		
+		//make the directory/directories
+		try{made = newDir.mkdirs();}
+		catch(Exception e){Prin.tln("There was an exception trying to create new directories: " + path + "\n" + Prin.getStackTrace(e));}
+		
+		return made;
 	}
 }
