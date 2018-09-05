@@ -2,12 +2,13 @@ import java.util.Scanner;
 import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.FileTime;
+import java.util.ArrayList;
 
 /**
 *This is a class that abstracts file io to suit my needs
 *
 *@author Dan Martineau
-*@version 1.2
+*@version 1.3
 */
 
 public class FileCMD
@@ -279,5 +280,117 @@ public class FileCMD
 		catch(Exception e){Prin.tln("There was an exception trying to create new directories: " + path + "\n" + Prin.getStackTrace(e));}
 		
 		return made;
+	}
+	
+	/**
+	*Lists the files and directories (paths) for a given path
+	*@param path of directory
+	*@return String[] of file & directory names
+	*/
+	public static String[] listAll(String path)
+	{
+		//get File object for directory
+		File dir = new File(path);
+		//list of files
+		File[] files = dir.listFiles();
+		//File names
+		String[] fileNames = new String[files.length];
+		
+		//put file names into array
+		for(int i = 0; i < files.length; i++)
+			fileNames[i] = files[i].toString();
+		
+		return fileNames;
+	}
+	
+	
+	/**
+	*Lists the files (paths) in a given directory
+	*@param path of directory
+	*@return String[] of file names
+	*/
+	public static String[] listFiles(String path)
+	{
+		//get File object for directory
+		File dir = new File(path);
+		//list of files
+		File[] files = dir.listFiles();
+		//temp holder
+		ArrayList<String> temp = new ArrayList<String>();
+		//Just File names
+		String[] fileNames;
+		//holder for a name
+		String hold = "";
+		
+		//put file names into array list
+		for(int i = 0; i < files.length; i++)
+			temp.add(i,  files[i].toString());
+		
+		//weed out directories
+		for(int i = 0; i < temp.size(); i++)
+		{
+			hold = temp.get(i);
+			if(isDir(hold))
+			{
+				temp.remove(i);
+				temp.trimToSize();
+				i--;
+			}
+		}
+		
+		//place names into final list
+		fileNames = new String[temp.size()];
+		for(int i = 0; i < temp.size(); i++)
+			fileNames[i] = temp.get(i);
+		
+		//release temp
+		temp = null;
+		
+		return fileNames;
+	}
+	
+	/**
+	*Lists the subdirectories (paths) in a given  directory
+	*@param path of directory
+	*@return String[] of subdirectory names
+	*/
+	public static String[] listDirs(String path)
+	{
+		//get File object for directory
+		File dir = new File(path);
+		//list of directories
+		File[] files = dir.listFiles();
+		//temp holder
+		ArrayList<String> temp = new ArrayList<String>();
+		//Just File names
+		String[] dirNames;
+		//holder for a name
+		String hold = "";
+		
+		//put file names into array list
+		for(int i = 0; i < files.length; i++)
+			temp.add(i,  files[i].toString());
+		
+		//weed out directories
+		for(int i = 0; i < temp.size(); i++)
+		{
+			hold = temp.get(i);
+			if(!isDir(hold))
+			{
+				temp.remove(i);
+				temp.trimToSize();
+				i--;
+			}
+		}
+		
+		//place names into final list
+		dirNames = new String[temp.size()];
+		for(int i = 0; i < temp.size(); i++)
+			dirNames[i] = temp.get(i);
+		
+		//release temp
+		temp = null;
+		
+		return dirNames;
 	}
 }
