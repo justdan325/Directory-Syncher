@@ -8,7 +8,7 @@ import java.util.ArrayList;
 *This is a class that abstracts file io to suit my needs
 *
 *@author Dan Martineau
-*@version 1.3
+*@version 1.4
 */
 
 public class FileCMD
@@ -392,5 +392,28 @@ public class FileCMD
 		temp = null;
 		
 		return dirNames;
+	}
+	
+	/**
+	*Returnhs the path of a file
+	*@param file name
+	*@return String canonical path of the file/null if exception occurs
+	*/
+	public static String getPath(String inputFile)
+	{
+		File file = new File(inputFile);
+		String path = null;
+		
+		try{path = file.getCanonicalPath();}
+		catch(SecurityException e){Prin.tln("There was a security exception when atempting to read the file path of : " + inputFile + "\n" + Prin.getStackTrace(e));}
+		catch(IOException f){Prin.tln("There was an IOException when atempting to read the file path of : " + inputFile + "\n" + Prin.getStackTrace(f));}
+		
+		//remove second directory name if directory
+		if(path != null && isDir(path))
+			path = path.substring(0, (path.length() - inputFile.length()));
+		
+		Prin.tln("" + (path.length() - inputFile.length()));
+		
+		return path;
 	}
 }
