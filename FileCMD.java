@@ -8,7 +8,7 @@ import java.util.ArrayList;
 *This is a class that abstracts file io to suit my needs
 *
 *@author Dan Martineau
-*@version 1.4
+*@version 1.5
 */
 
 public class FileCMD
@@ -110,9 +110,41 @@ public class FileCMD
 		
 		try{deleted = Files.deleteIfExists(strToPath(path));}
 		catch(SecurityException e){Prin.tln("Security exception was thrown when attempting to delete: " + path + "\n" + Prin.getStackTrace(e));}
-		catch(IOException f){Prin.tln("There was an IOException when attempting to delete: " + path);}
+		catch(IOException f){Prin.tln("There was an IOException when attempting to delete: " + path + "\n" + Prin.getStackTrace(f));}
 		
 		return deleted;
+	}
+	
+	/**
+	*Delete a directory that might have files and/or subdirectoies--Recursive function
+	*@param path of dir
+	*/
+	public static void deleteDir(String path)
+	{
+		//get dir contents
+		String[] dirs = listDirs(path);
+		String[] files = listFiles(path);
+		
+		//delete rest of files if there are any
+		if(files.length > 0)
+		{
+			for(int i = 0; i < files.length; i++)
+				deleteFile(files[i]);
+		}
+		
+		//if there are subdirs, call this function recursivly on them
+		if(dirs.length > 0)
+		{
+			for(int i = 0; i < dirs.length; i++)
+				deleteDir(dirs[i]);
+			
+			deleteFile(path);
+			return;
+		}
+		
+		//delete dir itself--base case
+		deleteFile(path);
+		
 	}
 	
 	/**

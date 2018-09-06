@@ -18,3 +18,7 @@ synch process between two directories: dir1 and dir2
 	8) copy newly modified versions of files if update is turned on
 	
 	9) output log file in both locations
+	
+Note:
+	To delete a dir, you must first delete its contents, otherwise you'll get an IOException
+	
