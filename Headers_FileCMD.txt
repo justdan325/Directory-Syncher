@@ -1,0 +1,17 @@
+FileCMD headers:
+	public static Path strToPath(String strPath)
+	public static String readFile(String fileName)
+	public static void writeFile(String fileStr, String destination)
+	public static boolean deleteFile(String path)
+	public static boolean existFile(String path)
+	public static boolean copyFile(String source, String target, boolean overwrite)
+	public static String getModStamp(String path)
+	public static FileTime getFileTime(String path)
+	public static int compModTime(String file1, String file2)
+	public static boolean isDir(String path)
+	public static boolean mkdirs(String path)
+	public static String[] listAll(String path)
+	public static String[] listFiles(String path)
+	public static String[] listDirs(String path)
+	public static String getPath(String inputFile)
+	

@@ -179,11 +179,11 @@ public class FileCMD
 	}
 	
 	/**
-	*Find out what date a file was modified on
+	*Find out when file was last modified via time stamp
 	*@param file path
 	*@return String containing datestamp or null if file does not exist/is not accessible.
 	*/
-	public static String getModTime(String path)
+	public static String getModStamp(String path)
 	{
 		//date stamp from file time
 		String dateStamp = null;
@@ -201,6 +201,23 @@ public class FileCMD
 			dateStamp = null;
 		
 		return dateStamp;
+	}
+	
+	/**
+	*Return last modification time as a FileTime
+	*@param file path
+	*@return FileTime
+	*/
+	public static FileTime getFileTime(String path)
+	{
+		//file time of last modification
+		FileTime lastMod = null;
+		
+		try{lastMod = Files.getLastModifiedTime(strToPath(path), LinkOption.NOFOLLOW_LINKS);}
+		catch(SecurityException e){Prin.tln("Security Exception when accessing mod date of: " + path + "\n" + Prin.getStackTrace(e));}
+		catch(IOException f){Prin.tln("There was an IOException when accessing mod date of: " + path + "\n" + Prin.getStackTrace(f));}
+		
+		return lastMod;
 	}
 	
 	
