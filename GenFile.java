@@ -2,10 +2,10 @@
 *Class represents a generic file and its attributes that pretain to File Syncher program
 *
 *@author Dan Martineau
-*@version 1.1
+*@version 1.2
 */
 
-import java.nio.file;
+import java.nio.file.attribute.FileTime;
 
 public class GenFile
 {
@@ -15,17 +15,42 @@ public class GenFile
 	private FileTime lastMod;			//holds most recent modification time
 	private boolean canUpdate;			//true if the file can be updated
 	private boolean canDel;				//true if the file can be deleted
-	private boolean canRead;			//true if file can be read (and thus copied) 
-	
+	private boolean canRead;			//true if file can be read (and thus copied)
+	private String id;					//file id code
+
 	/**
-	*Constructor
+	*Constructor--Default all permissions to false
 	*@param canonical path of file as a String
+	*@param id of file
 	*/
-	public GenFile(String path)
+	public GenFile(String path, String newID)
 	{
 		canonicalPath = path;
+		id = newID;
+		canUpdate = false;
+		canDel = false;
+		canRead = false;
+		refreshRecord();
 	}
 	
+	/**
+	*Constructor--Allow permissions to be set initially
+	*@param canonical path of file as a String
+	*@param id of file
+	*@param update permissions
+	*@param delete permissions
+	*@param read permissions
+	*/
+	public GenFile(String path, String newID, boolean up, boolean del, boolean re)
+	{
+		canonicalPath = path;
+		id = newID;
+		canUpdate = up;
+		canDel = del;
+		canRead = re;
+		refreshRecord();
+	}
+
 	/**
 	*Refreshes file attributes
 	*@return true if attributes were able to be refreshed
@@ -34,26 +59,26 @@ public class GenFile
 	{
 		boolean refreshed = false;
 		boolean exists = false;
-		
+
 		//ensure file still exists
 		exists = FileCMD.existFile(canonicalPath);
-		
+
 		if(exists)
 		{
 			//update last modification time
 			lastMod = FileCMD.getFileTime(canonicalPath);
 			//update time stamp
 			modStamp = FileCMD.getModStamp(canonicalPath);
-			
+
 			//make sure that flag is true since things have been refreshed
 			refreshed = true;
 		}
-		
+
 		return refreshed;
 	}
-	
+
 	/*MUTATORS*/
-	
+
 	/**
 	*Allow/Disallow file updates
 	*@param true or false
@@ -62,7 +87,7 @@ public class GenFile
 	{
 		canUpdate = allow;
 	}
-	
+
 	/**
 	*Allow/Disallow file deletions
 	*@param true or false
@@ -71,7 +96,7 @@ public class GenFile
 	{
 		canDel = allow;
 	}
-	
+
 	/**
 	*Allow/Disallow file reading
 	*@param true or false
@@ -80,9 +105,9 @@ public class GenFile
 	{
 		canRead = allow;
 	}
-	
+
 	/*ACCESSORS*/
-	
+
 	/**
 	*Returns true if file can be updated
 	*@return canUpdate
@@ -91,7 +116,7 @@ public class GenFile
 	{
 		return canUpdate;
 	}
-	
+
 	/**
 	*Returns true if file can be deleted
 	*@return canUpdate
@@ -100,7 +125,7 @@ public class GenFile
 	{
 		return canDel;
 	}
-	
+
 	/**
 	*Returns true if file can be read
 	*@return canUpdate
@@ -108,5 +133,32 @@ public class GenFile
 	public boolean canRead()
 	{
 		return canRead;
+	}
+
+	/**
+	*Returns file id
+	*@return id
+	*/
+	public String getFileID()
+	{
+		return id;
+	}
+	
+	/**
+	*Returns FileTime
+	*@return lastMod
+	*/
+	public FileTime getFileTime()
+	{
+		return lastMod;
+	}
+	
+	/**
+	*Returns time stamp of last mod
+	*@return modStamp
+	*/
+	public String getModStamp()
+	{
+		return modStamp;
 	}
 }
