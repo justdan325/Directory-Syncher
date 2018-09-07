@@ -461,8 +461,21 @@ public class FileCMD
 		if(path != null && isDir(path))
 			path = path.substring(0, (path.length() - inputFile.length()));
 		
-		Prin.tln("" + (path.length() - inputFile.length()));
-		
 		return path;
+	}
+	
+	/**
+	*Returns name and of a file at a given path
+	*@param file path
+	*@return String name/null if does not exist
+	*/
+	public static String getName(String path)
+	{
+		File file = new File(path);
+		String name = null;
+		
+		name = file.getName();
+		
+		return name;
 	}
 }
