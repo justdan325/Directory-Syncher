@@ -15,6 +15,7 @@ FileCMD headers:
 	public static String[] listDirs(String path)
 	public static String getPath(String inputFile)
 	public static void deleteDir(String path)
+	public static String getName(String path)
 
 
 2018-09-06T04:40:07.185208Z

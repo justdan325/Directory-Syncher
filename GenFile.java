@@ -2,7 +2,7 @@
 *Class represents a generic file and its attributes that pretain to File Syncher program
 *
 *@author Dan Martineau
-*@version 1.3
+*@version 1.4
 */
 
 import java.nio.file.attribute.FileTime;
@@ -198,6 +198,15 @@ public class GenFile
 	public String getModStamp()
 	{
 		return modStamp;
+	}
+	
+	/**
+	*Returns file name
+	*@return name
+	*/
+	public String getFileName()
+	{
+		return name;
 	}
 	
 	/***************************/

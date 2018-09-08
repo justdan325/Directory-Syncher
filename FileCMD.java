@@ -334,7 +334,7 @@ public class FileCMD
 	/**
 	*Lists the files and directories (paths) for a given path
 	*@param path of directory
-	*@return String[] of file & directory names
+	*@return String[] of file & directory paths
 	*/
 	public static String[] listAll(String path)
 	{
@@ -356,7 +356,7 @@ public class FileCMD
 	/**
 	*Lists the files (paths) in a given directory
 	*@param path of directory
-	*@return String[] of file names
+	*@return String[] of file paths
 	*/
 	public static String[] listFiles(String path)
 	{
