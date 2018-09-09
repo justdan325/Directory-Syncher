@@ -2,7 +2,7 @@
 *Class represents a directory in a file system
 *
 *@author Dan Martineau
-*@version 1.2
+*@version 1.4
 */
 
 import java.util.ArrayList;
@@ -16,7 +16,8 @@ public class Directory
 	private boolean canRead;						//true if directory can be read (and thus copied)
 	private String id;								//directory id code
 	private String name;							//name of the directory
-	private static ArrayList<Object> contents;		//list of all files/subdirectories within directory
+	private static ArrayList<GenFile> files;		//list of all files within directory
+	private static ArrayList<Directory> sub;		//list of all subdirectories		
 	private int count;								//number of files/subdirectories within directory
 	
 	/*CONSTANTS*/
@@ -39,30 +40,46 @@ public class Directory
 		id = assignedID;
 		name = FileCMD.getName(path);
 		count = currentContents.length;
-		contents = new ArrayList<Object>(count);
+		files = new ArrayList<GenFile>();
+		sub = new ArrayList<Directory>();
 		
-		//add files to contents
-		int index = 0;
+		int index = 0;		//number assocaited with each file/subdirectory
+		int subCount = 0;	//running total of the number of subdirectories
+		
+		//temporary holder for directories
+		Directory[] dirs = new Directory[count];
+		
+		//add files to holder array
 		for(int i = 0; i < count; i++)
 		{
 			if(FileCMD.isDir(currentContents[i]))
 			{
-				//create directory
-				Directory temp = new Directory(currentContents[i], ("" + (index + Integer.parseInt(startIndex))), ("" + (index + Integer.parseInt(startIndex) + 1)));
 				//add directory
-				contents.add(temp);
+				dirs[subCount] = new Directory(currentContents[i], ("" + (index + Integer.parseInt(startIndex))), ("" + (index + Integer.parseInt(startIndex) + 1)));
 				//increase indicies based on how many were taken in the new directory
-				index += temp.getCount();
+				index += dirs[subCount].getCount();
+				
+				index++;
+				subCount++;
 			}
-			else
-			{
-				contents.add(new GenFile(currentContents[i], ("" + (index + Integer.parseInt(startIndex)))));
-			}
-			
-			index++;
 		}
 		
-		contents.trimToSize();
+		//add holder array contents to sub
+		for(int i = 0; i < subCount; i++)
+		{
+			if(dirs[i] != null)
+				sub.add(dirs[i]);
+		}
+		
+		for(int i = 0; i < count; i++)
+		{
+			if(!FileCMD.isDir(currentContents[i]))
+			{
+				files.add(new GenFile(currentContents[i], ("" + (index + Integer.parseInt(startIndex)))));
+				
+				index++;
+			}
+		}
 	}
 	
 	/**
@@ -72,7 +89,8 @@ public class Directory
 	public Directory(String dirStr)
 	{
 		//initialize contents
-		contents = new ArrayList<Object>();
+		files = new ArrayList<GenFile>();
+		sub = new ArrayList<Directory>();
 		
 		//get attributes
 		String[] attributes = decodeStr(dirStr);
@@ -130,46 +148,6 @@ public class Directory
 		canRead = allow;
 	}
 	
-	/**
-	*Adds new file/subdir to directory
-	*@param new file/subdir
-	*/
-	protected void addToDir(Object obj)
-	{
-		contents.add(obj);
-		count++;
-	}
-	
-	/**
-	*Removes file/subdir from contents by name
-	*@param name of file/subdir
-	*/
-	protected void remByName(String name)
-	{
-		for(int i = 0; i < contents.size(); i++)
-		{}
-	}
-	
-	/**
-	*Removes file/subdir from contents by path
-	*@param path of file/subdir
-	*/
-	protected void remByPath(String path)
-	{
-		for(int i = 0; i < contents.size(); i++)
-		{}
-	}
-	
-	/**
-	*Removes file/subdir from contents by number
-	*@param number of file/subdir
-	*/
-	protected void remByNum(String num)
-	{
-		for(int i = 0; i < contents.size(); i++)
-		{}
-	}
-
 	/*ACCESSORS*/
 	
 	/**
@@ -283,14 +261,14 @@ public class Directory
 			if(dirStr.charAt(beg) == '<')
 			{
 				end = nextDelim(dirStr.substring(beg), '>') + beg;
-				contents.add(new GenFile(dirStr.substring(beg, end)));
+				files.add(new GenFile(dirStr.substring(beg, end)));
 				beg = end + 1;
 			}
 			//add next directory to contents
 			else if(dirStr.charAt(beg) == '[')
 			{
 				end = nextDelim(dirStr.substring(beg), ']') + beg;
-				contents.add(new Directory(dirStr.substring(beg, end)));
+				sub.add(new Directory(dirStr.substring(beg, end)));
 				beg = end + 1;
 			}
 			//else if(dirStr.charAt(beg) == ']')
@@ -335,14 +313,28 @@ public class Directory
 		//declare and add directory attributes to the 
 		String str = ("[(" + id + DELIM + canonicalPath + DELIM + name + DELIM + canUpdate + DELIM + canDel + DELIM + canRead + DELIM + count + ")\n");
 		//holder for file strings
-		Object hold = null;
 		String tempStr = "";
 		
-		for(int i = 0; i < contents.size(); i++)
+		/*for(int i = 0; i < sub.size(); i++)
 		{
 			//make sure all lines of every string are indented
-			hold = contents.get(i);
-			tempStr = hold.toString();
+			tempStr = sub.get(i).toString();
+			
+			for(int j = 0; j < tempStr.length(); j++)
+			{
+				if(tempStr.charAt(j) == '\n')
+					tempStr = tempStr.substring(0, j+1) + INDENT + tempStr.substring(j+1);
+			}
+			
+			//add to string
+			str += (INDENT + tempStr + "\n");
+			
+		}*/
+		
+		for(int i = 0; i < files.size(); i++)
+		{
+			tempStr = files.get(i).toString();
+			
 			for(int j = 0; j < tempStr.length(); j++)
 			{
 				if(tempStr.charAt(j) == '\n')
