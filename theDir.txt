@@ -1,4 +1,8 @@
-[(0|/home/dan/Programming Projects/FileSynch/dir|dir|false|false|false|2)
+[(0|/home/dan/Programming Projects/FileSynch/dir|dir|false|false|false|3)
      <1|/home/dan/Programming Projects/FileSynch/dir/b|b|2018-09-09T01:07:41.946723Z|false|false|false>
      <2|/home/dan/Programming Projects/FileSynch/dir/a|a|2018-09-09T01:07:37.602726Z|false|false|false>
+     [(3|/home/dan/Programming Projects/FileSynch/dir/s|s|false|false|false|2)
+          <4|/home/dan/Programming Projects/FileSynch/dir/s/b|b|2018-09-09T01:07:41.946723Z|false|false|false>
+          <5|/home/dan/Programming Projects/FileSynch/dir/s/a|a|2018-09-09T01:07:37.602726Z|false|false|false>     
+     ]       
 ]     
