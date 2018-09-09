@@ -50,8 +50,8 @@ public class GenFile
 		else
 			canRead = false;
 		
-		refreshRecord();
-		name = FileCMD.getName(attributes[1]);
+		modStamp = attributes[6];
+		name = attributes[5];
 	}
 	
 	/**
@@ -213,7 +213,7 @@ public class GenFile
 	{	
 		int end = 2;							//index of next delimiter
 		int beg = 1;							//index of beginning of current substring
-		String[] attributes = new String[5];	//holds attributes
+		String[] attributes = new String[7];	//holds attributes
 		
 		//get id
 		end = nextDelim(fileStr);
@@ -226,11 +226,13 @@ public class GenFile
 		beg = end + 1;
 		
 		//skip name
-		end += nextDelim(fileStr.substring(beg));
+		end += nextDelim(fileStr.substring(beg)) + 1;
+		attributes[5] = fileStr.substring(beg, end);
 		beg = end + 1;
 		
-		//skip mod stamp
+		//get mod stamp
 		end += nextDelim(fileStr.substring(beg)) + 1;
+		attributes[6] =  fileStr.substring(beg, end);
 		beg = end + 1;
 	
 		//get update permissions
@@ -245,8 +247,7 @@ public class GenFile
 		
 		//get read permissions
 		end += nextDelim(fileStr.substring(beg)) + 1;
-		attributes[4] = fileStr.substring(beg, end);
-		beg = end + 1;
+		attributes[4] = fileStr.substring(beg);
 		
 		return attributes;
 	}
