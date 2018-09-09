@@ -55,38 +55,22 @@ public class GenFile
 	}
 	
 	/**
-	*Constructor--Default all permissions to false
-	*@param canonical path of file as a String
-	*@param id of file
-	*/
-	public GenFile(String path, String newID)
-	{
-		canonicalPath = path;
-		id = newID;
-		canUpdate = false;
-		canDel = false;
-		canRead = false;
-		refreshRecord();
-		name = FileCMD.getName(path);
-	}
-	
-	/**
 	*Constructor--Allow permissions to be set initially
 	*@param canonical path of file as a String
-	*@param id of file
 	*@param update permissions
 	*@param delete permissions
 	*@param read permissions
 	*/
-	public GenFile(String path, String newID, boolean up, boolean del, boolean re)
+	public GenFile(String path, boolean up, boolean del, boolean re)
 	{
 		canonicalPath = path;
-		id = newID;
+		//legacy--kept for compatibility/future use
+		id = "0";
 		canUpdate = up;
 		canDel = del;
 		canRead = re;
 		refreshRecord();
-		name = FileCMD.getName(path);
+		this.name = FileCMD.getName(path);
 	}
 
 	/**
@@ -207,6 +191,15 @@ public class GenFile
 	public String getFileName()
 	{
 		return name;
+	}
+	
+	/**
+	*Returns path of file
+	*@return canonicalPath
+	*/
+	public String getPath()
+	{
+		return canonicalPath;
 	}
 	
 	/***************************/

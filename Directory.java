@@ -2,7 +2,7 @@
 *Class represents a directory in a file system
 *
 *@author Dan Martineau
-*@version 1.4
+*@version 1.5
 */
 
 import java.util.ArrayList;
@@ -22,64 +22,38 @@ public class Directory
 	
 	/*CONSTANTS*/
 	private static final char DELIM = '|';			//delimiter for toString
-	private static final String INDENT = "     ";	//indent using spaces
 	
 	/**
 	*Constructor--add directory and contents with default values
 	*@param canonical path (as a string) of directory
-	*@param Directory ID
-	*@param beginning index to assign file numbers
+	*@param name of directory
+	*@param ArrayList of subdirectories
+	*@param ArrayList of files
+	*@param array of permissions (update, delete, read)
 	*/
-	public Directory(String path, String assignedID, String startIndex)
+	public Directory(String path, String name, ArrayList<Directory> sub, ArrayList<GenFile> files, boolean[] permissions)
 	{
-		String[] currentContents = FileCMD.listAll(path);
+		//startIndex is a legacy element pretaining to id. It is left in for compatibility/future use
+		String startIndex = "1";
+		
 		canonicalPath = path;
-		canUpdate = false;
-		canDel = false;
-		canRead = false;
-		id = assignedID;
-		name = FileCMD.getName(path);
-		count = currentContents.length;
-		files = new ArrayList<GenFile>();
-		sub = new ArrayList<Directory>();
+		canUpdate = permissions[0];
+		canDel = permissions[1];
+		canRead = permissions[2];
+		id = "0";
+		this.name = name;
 		
-		int index = 0;		//number assocaited with each file/subdirectory
-		int subCount = 0;	//running total of the number of subdirectories
+		if(files == null)
+			this.files = new ArrayList<GenFile>();
+		else
+			this.files = files;
 		
-		//temporary holder for directories
-		Directory[] dirs = new Directory[count];
+		if(sub == null)
+			this.sub = new ArrayList<Directory>();
+		else
+			this.sub = sub;
 		
-		//add files to holder array
-		for(int i = 0; i < count; i++)
-		{
-			if(FileCMD.isDir(currentContents[i]))
-			{
-				//add directory
-				dirs[subCount] = new Directory(currentContents[i], ("" + (index + Integer.parseInt(startIndex))), ("" + (index + Integer.parseInt(startIndex) + 1)));
-				//increase indicies based on how many were taken in the new directory
-				index += dirs[subCount].getCount();
-				
-				index++;
-				subCount++;
-			}
-		}
-		
-		//add holder array contents to sub
-		for(int i = 0; i < subCount; i++)
-		{
-			if(dirs[i] != null)
-				sub.add(dirs[i]);
-		}
-		
-		for(int i = 0; i < count; i++)
-		{
-			if(!FileCMD.isDir(currentContents[i]))
-			{
-				files.add(new GenFile(currentContents[i], ("" + (index + Integer.parseInt(startIndex)))));
-				
-				index++;
-			}
-		}
+		count = this.files.size() + this.sub.size();
 	}
 	
 	/**
@@ -116,7 +90,7 @@ public class Directory
 			canRead = false;
 		
 		count = Integer.parseInt(attributes[5]);
-		name = FileCMD.getName(attributes[1]);
+		name = attributes[6];
 	}
 	
 	/*MUTATORS*/
@@ -146,6 +120,58 @@ public class Directory
 	protected void allowRead(boolean allow)
 	{
 		canRead = allow;
+	}
+	
+	/**
+	*Adds a GenFile object to files list
+	*@param a file to be added 
+	*/
+	protected void addFile(GenFile file)
+	{
+		files.add(file);
+		count++;
+	}
+	
+	/**
+	*Adds a Directory object to sub list
+	*@param a directory to be added 
+	*/
+	protected void addDir(Directory dir)
+	{
+		sub.add(dir);
+		count++;
+	}
+	
+	/**
+	*Deletes a GenFile object from files list
+	*@param path of file
+	*/
+	protected void remFile(String path)
+	{
+		for(int i =0; i < files.size(); i++)
+		{
+			if(files.get(i).getPath().equals(path))
+			{
+				files.remove(i);
+				count--;
+			}
+		}
+	}
+	
+	/**
+	*Removes a Directory object from sub list
+	*@param a directory to be removed	
+	*/
+	protected void remDir(String path)
+	{
+		for(int i =0; i < sub.size(); i++)
+		{
+			if(sub.get(i).getPath().equals(path))
+			{
+				sub.remove(i);
+				count--;
+			}
+		}
 	}
 	
 	/*ACCESSORS*/
@@ -204,6 +230,33 @@ public class Directory
 		return name;
 	}
 	
+	/**
+	*Returns the path of the directory
+	*@return canonicalPath
+	*/
+	public String getPath()
+	{
+		return canonicalPath;
+	}
+	
+	/**
+	*Returns the list of subdirectories
+	*@return sub
+	*/
+	public ArrayList<Directory> getSubs()
+	{
+		return sub;
+	}
+	
+	/**
+	*Returns the list of files
+	*@return sub
+	*/
+	public ArrayList<GenFile> getFiles()
+	{
+		return files;
+	}
+	
 	/*****************************************/
 	
 	/**
@@ -215,7 +268,7 @@ public class Directory
 	{
 		int end = 0;							//index of next delimiter
 		int beg = nextDelim(dirStr, '(') + 1;	//index of beginning of current substring
-		String[] attributes = new String[6];	//holds attributes
+		String[] attributes = new String[7];	//holds attributes
 		
 		//First get directory attributes
 		
@@ -231,6 +284,7 @@ public class Directory
 		
 		//skip name
 		end += nextDelim(dirStr.substring(beg), DELIM) + 1;
+		attributes[6] = dirStr.substring(beg, end);
 		beg = end + 1;
 	
 		//get update permissions
@@ -310,42 +364,8 @@ public class Directory
 	*/
 	public String toString()
 	{
-		//declare and add directory attributes to the 
-		String str = ("[(" + id + DELIM + canonicalPath + DELIM + name + DELIM + canUpdate + DELIM + canDel + DELIM + canRead + DELIM + count + ")\n");
-		//holder for file strings
-		String tempStr = "";
-		
-		/*for(int i = 0; i < sub.size(); i++)
-		{
-			//make sure all lines of every string are indented
-			tempStr = sub.get(i).toString();
-			
-			for(int j = 0; j < tempStr.length(); j++)
-			{
-				if(tempStr.charAt(j) == '\n')
-					tempStr = tempStr.substring(0, j+1) + INDENT + tempStr.substring(j+1);
-			}
-			
-			//add to string
-			str += (INDENT + tempStr + "\n");
-			
-		}*/
-		
-		for(int i = 0; i < files.size(); i++)
-		{
-			tempStr = files.get(i).toString();
-			
-			for(int j = 0; j < tempStr.length(); j++)
-			{
-				if(tempStr.charAt(j) == '\n')
-					tempStr = tempStr.substring(0, j+1) + INDENT + tempStr.substring(j+1);
-			}
-			
-			//add to string
-			str += (INDENT + tempStr + "\n");
-		}
-		
-		str += "]\n";
+		//declare and add directory attributes to the string
+		String str = ("[(" + id + DELIM + canonicalPath + DELIM + name + DELIM + canUpdate + DELIM + canDel + DELIM + canRead + DELIM + count + ")]\n");
 		
 		return str;
 	}

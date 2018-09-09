@@ -1,8 +1,13 @@
+import java.util.*;
+
 public class UnitTest
 {
 	public static void main(String[] args)
-	{	
-		Directory dir1 = new Directory("C:\\Users\\Dan\\ProgrammingProjects\\FileSynch\\dir", "0", "1");
+	{
+		boolean[] temp = {true, true, false};
+		ArrayList<Directory> temp2 = new ArrayList<Directory>();
+		temp2.add(new Directory("/home/dan/Programming Projects/FileSynch/dir/dir", "dir", null, null, temp));
+		Directory dir1 = new Directory("/home/dan/Programming Projects/FileSynch/dir", "dir", temp2, null, temp);
 		Prin.tln(dir1.toString());
 		
 		//Directory dir2 = new Directory(dir1.toString());
