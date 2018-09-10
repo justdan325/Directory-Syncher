@@ -225,7 +225,7 @@ public class GenFile
 		attributes[1] = fileStr.substring(beg, end);
 		beg = end + 1;
 		
-		//skip name
+		//get name
 		end += nextDelim(fileStr.substring(beg)) + 1;
 		attributes[5] = fileStr.substring(beg, end);
 		beg = end + 1;

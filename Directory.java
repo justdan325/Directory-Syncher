@@ -16,12 +16,12 @@ public class Directory
 	private boolean canRead;						//true if directory can be read (and thus copied)
 	private String id;								//directory id code
 	private String name;							//name of the directory
-	private static ArrayList<GenFile> files;		//list of all files within directory
-	private static ArrayList<Directory> sub;		//list of all subdirectories		
+	private ArrayList<GenFile> files;		//list of all files within directory
+	private ArrayList<Directory> sub;		//list of all subdirectories		
 	private int count;								//number of files/subdirectories within directory
 	
 	/*CONSTANTS*/
-	private static final char DELIM = '|';			//delimiter for toString
+	private final char DELIM = '|';			//delimiter for toString
 	
 	/**
 	*Constructor--add directory and contents with default values
@@ -264,7 +264,7 @@ public class Directory
 	*@param file String
 	*@return attributes
 	*/
-	private static String[] decodeStr(String dirStr)
+	private String[] decodeStr(String dirStr)
 	{
 		int end = 0;							//index of next delimiter
 		int beg = nextDelim(dirStr, '(') + 1;	//index of beginning of current substring
@@ -340,7 +340,7 @@ public class Directory
 	*@param delimiter
 	*@return index of next delimiter or -1 if there is none
 	*/
-	private static int nextDelim(String str, char delimiter)
+	private int nextDelim(String str, char delimiter)
 	{
 		int index = -1;
 		
