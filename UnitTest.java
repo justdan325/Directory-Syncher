@@ -13,9 +13,10 @@ public class UnitTest
 		
 		//GenFile file = new GenFile("<0|/home|home|2018-09-06T04:40:07.185208Z|false|false|true>");
 		//Prin.tln(file.toString());
-		Directory dir1 = new Directory(FileCMD.readFile("theDir.txt"));
+		Directory dir1 = new Directory("C:\\Users\\Dan\\ProgrammingProjects\\FileSynch\\testDir", "0", "1");
 		Prin.tln(dir1.toString() + "\n");
 		Directory dir2 = new Directory(dir1.toString());
+		Prin.tln(dir2.toString() + "\n");
 		
 		if(dir1.toString().equals(dir2.toString()))
 			Prin.tln("\n\nThey match mahn!");
