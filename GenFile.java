@@ -2,10 +2,12 @@
 *Class represents a generic file and its attributes that pretain to File Syncher program
 *
 *@author Dan Martineau
-*@version 2.0
+*@version 2.1
 */
 
 import java.nio.file.attribute.FileTime;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class GenFile
 {
@@ -20,7 +22,7 @@ public class GenFile
 	private String name;				//name and extension of the file
 	
 	/*CONSTANTS*/
-	private static final char DELIM = '|';	//delimiter for file strings
+	private final char DELIM = '|';	//delimiter for file strings
 	
 	/**
 	*Constructor--Default all permissions to false
@@ -222,14 +224,59 @@ public class GenFile
 		return canonicalPath;
 	}
 	
+	/**
+	*Returns true if the file exists
+	*@return true/false
+	*/
+	public boolean exist()
+	{
+		return FileCMD.existFile(canonicalPath);
+	}
+	
 	/***************************/
+	
+	/**
+	*Compares the mod stamp saved locally with the file's actual mod stamp
+	*@return 1 is newer, 0 if equal, -1 if older
+	*/
+	public int current() 
+	{
+		//2018-09-06T04:40:07.185208Z
+		
+		String newStamp = FileCMD.getModStamp(canonicalPath);
+		newStamp = newStamp.substring(0,10) + " " + newStamp.substring(11,19);
+		
+		String oldStamp = modStamp;
+		oldStamp = oldStamp.substring(0,10) + " " + oldStamp.substring(11,19);
+		
+		SimpleDateFormat s1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		
+		Date dateOne = null;
+		Date dateTwo = null;
+		
+		try
+		{
+			dateOne = s1.parse(newStamp);
+			dateTwo = s1.parse(oldStamp);
+		}
+		catch(NullPointerException e)
+		{
+			Prin.tln("One of the dates was null, you moron!\n" + Prin.getStackTrace(e));
+		}
+		catch(Exception f)
+		{
+			Prin.tln(Prin.getStackTrace(f));
+		}
+	
+		return dateTwo.compareTo(dateOne);
+	}
 	
 	/**
 	*Decodes a file string and returns file attributes in a String[]
 	*@param file String
 	*@return attributes
 	*/
-	private static String[] decodeStr(String fileStr)
+	private String[] decodeStr(String fileStr)
 	{	
 		int end = 2;							//index of next delimiter
 		int beg = 1;							//index of beginning of current substring
@@ -277,7 +324,7 @@ public class GenFile
 	*@param substring of file string
 	*@return index of next delimiter or -1 if there is none
 	*/
-	private static int nextDelim(String str)
+	private int nextDelim(String str)
 	{
 		int index = -1;
 		

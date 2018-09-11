@@ -16,8 +16,8 @@ public class Directory
 	private boolean canRead;						//true if directory can be read (and thus copied)
 	private String id;								//directory id code
 	private String name;							//name of the directory
-	private ArrayList<GenFile> files;		//list of all files within directory
-	private ArrayList<Directory> sub;		//list of all subdirectories
+	private ArrayList<GenFile> files;				//list of all files within directory
+	private ArrayList<Directory> sub;				//list of all subdirectories
 	private int count;								//number of files/subdirectories within directory
 
 	/*CONSTANTS*/
