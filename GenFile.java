@@ -2,7 +2,7 @@
 *Class represents a generic file and its attributes that pretain to File Syncher program
 *
 *@author Dan Martineau
-*@version 1.4
+*@version 2.0
 */
 
 import java.nio.file.attribute.FileTime;
@@ -23,6 +23,22 @@ public class GenFile
 	private static final char DELIM = '|';	//delimiter for file strings
 	
 	/**
+	*Constructor--Default all permissions to false
+	*@param canonical path of file as a String
+	*@param id of file
+	*/
+	public GenFile(String path, String newID)
+	{
+		canonicalPath = path;
+		id = newID;
+		canUpdate = false;
+		canDel = false;
+		canRead = false;
+		refreshRecord();
+		name = FileCMD.getName(path);
+	}
+	
+	/**
 	*Constructor--Re-instantiates a GenFIle by passing in a toString String
 	*@param toString String--file attributes
 	*/
@@ -31,7 +47,9 @@ public class GenFile
 		//decode the string and fetch attributes
 		String[] attributes = decodeStr(fileStr);
 		
+		//legacy--kept for compatibility/future use
 		id = attributes[0];
+		
 		canonicalPath = attributes[1];
 		
 		//set permissions
@@ -64,8 +82,10 @@ public class GenFile
 	public GenFile(String path, boolean up, boolean del, boolean re)
 	{
 		canonicalPath = path;
+		
 		//legacy--kept for compatibility/future use
 		id = "0";
+		
 		canUpdate = up;
 		canDel = del;
 		canRead = re;
