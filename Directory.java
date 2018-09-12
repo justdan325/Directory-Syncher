@@ -68,7 +68,7 @@ public class Directory
 				//add directory
 				dirs[subCount] = new Directory(currentContents[i], ("" + (index + Integer.parseInt(startIndex))), ("" + (index + Integer.parseInt(startIndex) + 1)));
 				//increase indicies based on how many were taken in the new directory
-				index += dirs[subCount].getCount();
+				index += dirs[subCount].getCount() + 1;
 
 				index++;
 				subCount++;
@@ -153,6 +153,8 @@ public class Directory
 		name = attributes[6];
 	}
 
+	
+	
 	/*MUTATORS*/
 
 	/**
@@ -233,6 +235,8 @@ public class Directory
 			}
 		}
 	}
+	
+	
 
 	/*ACCESSORS*/
 
@@ -315,6 +319,48 @@ public class Directory
 	public ArrayList<GenFile> getFiles()
 	{
 		return files;
+	}
+	
+	/**
+	*Returns a reference to a GenFile that is in this directory or 
+	*subdirectories. Returns null if non-existant.
+	*
+	*WARNING: method is not written effeicently!
+	*
+	*@param path of file
+	*@return refernece to GenFile object
+	*/
+	public GenFile getFile(String path)
+	{
+		boolean found = false;	//flag: if file has been found
+		int count = 0;			//loop control counter
+		GenFile file = null;	//refernece to desired file
+		
+		//search for file in this directory
+		while(!found && count < files.size())
+		{
+			if(files.get(count).getPath().equals(path))
+			{
+				file = files.get(count);
+				found = true;
+			}
+			else
+				count++;
+		}
+		
+		count = 0;
+		
+		//search for file in subdirectories
+		while(!found && count < sub.size())
+		{
+			file = sub.get(count).getFile(path);
+			if(file != null)
+				found = true;
+			else
+				count++;
+		}
+		
+		return file;
 	}
 
 	/*****************************************/
