@@ -17,10 +17,10 @@ public class UnitTest
 		//Prin.tln(file.toString());
 		
 		
-		Directory dir1 = new Directory("C:\\Users\\Dan\\ProgrammingProjects\\FileSynch\\testDir\\", "0", "1");
+		Directory dir1 = new Directory("C:\\Users\\Dan\\ProgrammingProjects\\FileSynch\\", "0", "1");
 		Prin.tln(dir1.toString() + "\n\n\n");
-		GenFile file = dir1.getFile("C:\\Users\\Dan\\ProgrammingProjects\\FileSynch\\testDir\\subdir1\\subdir1a\\ii.rtf");
-		Prin.tln(file.toString() + "\n");
+		//GenFile file = dir1.getFile("C:\\Users\\Dan\\ProgrammingProjects\\FileSynch\\testDir\\subdir1\\subdir1a\\ii.rtf");
+		//Prin.tln(file.toString() + "\n");
 		
 		
 		//Directory dir2 = new Directory(dir1.toString());
