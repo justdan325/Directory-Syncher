@@ -258,7 +258,7 @@ public class SynchModule
 					
 					//write to log whether or not operation was successful
 					if(success)
-						log += ("Deleted \"" + curr + "\n");
+						log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
 					else
 						log += ("Failed to delete \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
 				}
@@ -272,5 +272,101 @@ public class SynchModule
 		}
 		
 		//compare and recursivley manage directories
+		for(int i = 0; i < dirs1.length; i++)
+		{
+			curr = dirs1[i];
+			inDest = false;
+			//exist = synchrc.exist(curr);
+			
+			//if the current file is in synchrc, deal with it according to that
+			if(exist)
+			{
+//IMPLEMENT
+				Prin.tln("I exist, yo!");
+			}
+			//else preform default actions on dir
+			else
+			{
+				//check to see if file exisits in destination
+				itt = 0;
+				while(itt < dirs2.length)
+				{
+					if(FileCMD.getName(curr).equals(FileCMD.getName(dirs2[itt])))
+					{
+						inDest = true;
+						break;
+					}
+					itt++;
+				}
+				
+				//if read enabled and directory is not in destination
+				if(read && !inDest)
+				{
+					//attempt to make directory
+					success = FileCMD.mkdirs(destination + File.separatorChar + FileCMD.getName(curr));
+					
+					if(success)
+					{
+						log += ("Added directory \"" + FileCMD.getName(curr) + "\" to " + destination + "\n");
+						
+						//preform synchJob on new subdir
+						synchJob(curr, destination + File.separatorChar + FileCMD.getName(curr));
+					}
+					else
+						log += ("Failed to add directory \"" + FileCMD.getName(curr) + "\" to " + destination + "\n");
+				}
+				//if read enabled and sub dir already exists
+				else if(read && inDest)
+				{
+					//preform synchJob on new subdir
+					synchJob(curr, destination + File.separatorChar + FileCMD.getName(curr));
+				}
+			}
+		}
+		for(int i = 0; i < dirs2.length; i++)
+		{
+			curr = dirs2[i];
+			inOrigin = false;
+			//exist = synchrc.exist(curr);
+			
+			//if the current dir is in synchrc, deal with it according to that
+			if(exist)
+			{
+//IMPLEMENT
+				Prin.tln("I exist, yo!");
+			}
+			//else preform default actions on dir
+			else
+			{
+				//check to see if dir exisits in origin
+				itt = 0;
+				while(itt < dirs1.length)
+				{
+					if(FileCMD.getName(curr).equals(FileCMD.getName(dirs1[itt])))
+					{
+						inOrigin = true;
+						break;
+					}
+					itt++;
+				}
+				
+				//if read is enabled and the dir is not in destination (no point in executing if it is there already)
+				if(delete && !inOrigin)
+				{
+					//attempt to delete the dir--assert the paths are valid first
+					assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
+					FileCMD.deleteDir(curr);
+					
+					//write to log whether or not operation was successful
+					log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
+				}
+				//else ignore file
+				else if(!(delete || inOrigin))
+				{
+					//write to log
+					log += ("Skipped the deletion of \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
+				}
+			}
+		}	
 	}
 }
