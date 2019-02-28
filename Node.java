@@ -178,13 +178,38 @@ public class Node
 	public String toString()
 	{
 		String str = "";
+		String hold = "";
 		
 		str += read + "," + modify + "," + delete + " " + path + "\n";
 		
 		if(left != null)
-			str += "     left : " + left.toString() + "\n";
+		{
+			hold = "";
+			hold += "     left : " + left.toString();
+
+			for(int j = 0; j < hold.length(); j++)
+			{
+				if(hold.charAt(j) == '\n' && j+1 < hold.length())
+					hold = hold.substring(0, j+1) + "     " + hold.substring(j+1);
+			}
+
+			//add to string
+			str += ("     " + hold);
+		}
 		if(right != null)
-			str += "     right: " + right.toString() + "\n";
+		{
+			hold = "";
+			hold += "     right: " + right.toString() + "\n";
+
+			for(int j = 0; j < hold.length(); j++)
+			{
+				if(hold.charAt(j) == '\n' && j+1 < hold.length())
+					hold = hold.substring(0, j+1) + "     " + hold.substring(j+1);
+			}
+
+			//add to string
+			str += ("     " + hold + "\n");
+		}
 		
 		return str;
 	}
