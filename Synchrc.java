@@ -35,6 +35,27 @@ public class Synchrc
 		
 		determinePathToUpp();
 		decodeFile();
+		
+		Prin.tln(pathToUpp);
+	}
+	
+	/**
+	*Returns a Node based upon given path/null if non-existant
+	*@param path of file
+	*@return Node
+	*/
+	public Node getNode(String nodePath)
+	{
+		Node node;
+		
+		Prin.tln("Root: " + root.getPath() + "\nThis: " + nodePath);
+		
+		if(nodePath.equals(root.getPath()))
+			node = root;
+		else
+			node = root.getNode(nodePath);
+		
+		return node;
 	}
 	
 	/**
@@ -47,9 +68,9 @@ public class Synchrc
 		
 		//set pathToUpp equal to synchrcPath minus the file and its containing directory
 		hold = FileCMD.getName(synchrcPath);
-		hold = synchrcPath.substring(0, synchrcPath.length()-hold.length());
+		pathToUpp = synchrcPath.substring(0, synchrcPath.length()-hold.length());
 		hold = FileCMD.getName(hold);
-		hold = synchrcPath.substring(0, synchrcPath.length()-hold.length());
+		hold = pathToUpp.substring(0, pathToUpp.length()-(hold.length()+1));
 		pathToUpp = hold;
 		
 		//assert that the path exists
@@ -87,31 +108,31 @@ public class Synchrc
 			line = line.substring(line.length()-1);
 		
 		//read first bit
-		if(line.charAt(0) == 0)
+		if(line.charAt(0) == '0')
 			read = false;
-		else if(line.charAt(0) == 1)
+		else if(line.charAt(0) == '1')
 			read = true;
 		else
 			throw new RuntimeException("Line format is invalid: " + line);
 		
 		//read second bit
-		if(line.charAt(1) == 0)
+		if(line.charAt(1) == '0')
 			modify = false;
-		else if(line.charAt(1) == 1)
+		else if(line.charAt(1) == '1')
 			modify = true;
 		else
 			throw new RuntimeException("Line format is invalid: " + line);
 		
 		//read third bit
-		if(line.charAt(2) == 0)
+		if(line.charAt(2) == '0')
 			delete = false;
-		else if(line.charAt(2) == 1)
+		else if(line.charAt(2) == '1')
 			delete = true;
 		else
 			throw new RuntimeException("Line format is invalid: " + line);
 		
 		//set canonicalPath
-		canonicalPath = pathToUpp + File.separatorChar + line.substring(4).replace(rcDelim, File.separatorChar);
+		canonicalPath = pathToUpp + line.substring(4).replace(rcDelim, File.separatorChar);
 		
 		//make and add the Node to the tree
 		if(root == null)
