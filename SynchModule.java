@@ -22,7 +22,7 @@ public class SynchModule
 	private String dir2;			//canonical path of dir2
 	
 	/*CONSTANTS*/
-	public String DEFAULT_SYNCHRC = "synchrc";
+	public static String DEFAULT_SYNCHRC = "synchrc";
 	
 	/**
 	*Constructor for a default synch job
@@ -33,10 +33,10 @@ public class SynchModule
 	public SynchModule(String path1, String path2, String rcname)
 	{
 		//assign parameters to their instance varibales and assert paths are valid
-		assert FileCMD.isDir(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
+		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
 		dir1 = standardizePath(path1);
 		
-		assert FileCMD.isDir(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
+		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
 		dir2 = standardizePath(path2);
 		
 		read = true;
@@ -47,6 +47,9 @@ public class SynchModule
 		
 		//create synchrc object
 		createSynch(rcname);
+		
+		//start synch job
+		synchJob(dir1, dir2);
 	}
 	
 	/**
@@ -61,10 +64,10 @@ public class SynchModule
 	public SynchModule(String path1, String path2, String rcname, boolean read, boolean modify, boolean delete)
 	{
 		//assign parameters to their instance varibales and assert paths are valid
-		assert FileCMD.isDir(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
+		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
 		dir1 = standardizePath(path1);
 		
-		assert FileCMD.isDir(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
+		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
 		dir2 = standardizePath(path2);
 		
 		this.read = read;
@@ -75,6 +78,9 @@ public class SynchModule
 		
 		//create synchrc object
 		createSynch(rcname);
+		
+		//start synch job
+		synchJob(dir1, dir2);
 	}
 	
 	/*ACCESSORS*/
@@ -98,23 +104,23 @@ public class SynchModule
 	{
 		String filePath;
 		
-		//parse path to synchrc file
-		if(path.charAt(path.size()-1) == File.pathSeparatorChar)
+		//parse name to synchrc file
+		if(name.charAt(name.length()-1) == File.separatorChar)
 			filePath = dir1 + name;
 		else
-			filePath = dir1 + File.pathSeparatorChar + name;
+			filePath = dir1 + File.separatorChar + name;
 		
 		//assert file exisits
 		assert FileCMD.existFile(filePath) : "Synchrc file does not exist! Should be handled outside of SynchModule.";
 		
 //IMPLEMENT
 		Prin.tln("Implement synchrc onject in createSynch() within SynchModule.");
-		log += ("Synching " + dir1 + " --> " + dir2 " using \"" + name + "\"\n");
+		log += ("Synching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
 //***************
 	}
 	
 	/**
-	*Removes the pathSeparatorChar from the end of a path if it is there
+	*Removes the separatorChar from the end of a path if it is there
 	*@param path string
 	*@return String correct path string
 	*/
@@ -122,8 +128,8 @@ public class SynchModule
 	{
 		String fixed;
 		
-		if(raw.charAt(raw.size()-1) == File.pathSeparatorChar)
-			fixed = raw.substring(0,raw.size()-1);
+		if(raw.charAt(raw.length()-1) == File.separatorChar)
+			fixed = raw.substring(0,raw.length()-1);
 		else 
 			fixed = raw;
 		
@@ -155,6 +161,7 @@ public class SynchModule
 		for(int i = 0; i < files1.length; i++)
 		{
 			curr = files1[i];
+			inDest = false;
 			//exist = synchrc.exist(curr);
 			
 			//if the current file is in synchrc, deal with it according to that
@@ -167,49 +174,50 @@ public class SynchModule
 			else
 			{
 				//check to see if file exisits in destination
-				for(itt = 0; i < files2.length; itt++)
+				itt = 0;
+				while(itt < files2.length)
 				{
-					if(curr.equals(files2[itt]))
+					if(FileCMD.getName(curr).equals(FileCMD.getName(files2[itt])))
 					{
 						inDest = true;
 						break;
 					}
+					itt++;
 				}
 				
 				//if read is enabled and the file is not in destination (no point in executing if it is there already)
 				if(read && !inDest)
 				{
 					//copy the file to where it belongs--assert the paths are valid first
-					assert FileCMD.existFile(origin + File.pathSeparatorChar + curr) : ("It seems that " + origin + File.pathSeparatorChar + curr + " does not exist.");
-					assert FileCMD.existFile(destination + File.pathSeparatorChar) : ("It seems that " + destination + File.pathSeparatorChar + " does not exist.");
-					success = FileCMD.copyFile((origin + File.pathSeparatorChar + curr), (destination + File.pathSeparatorChar + curr), false);
+					assert FileCMD.existFile(curr) : ("It seems that " + origin + File.separatorChar + curr + " does not exist.");
+					assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
+					success = FileCMD.copyFile(curr, (destination + File.separatorChar + FileCMD.getName(curr)), false);
 					
 					//write to log whether or not operation was successful
 					if(success)
-						log += ("Copied \"" + curr + "\" from " + origin + " to " + destination "\n");
+						log += ("Copied \"" +  FileCMD.getName(curr) + "\" from " + origin + " to " + destination + "\n");
 					else
-						log += ("Failed to copy \"" + curr + "\" from " + origin + " to " + destination "\n");
+						log += ("Failed to copy \"" +  FileCMD.getName(curr) + "\" from " + origin + " to " + destination + "\n");
 				}
 				//if modify is enabled and the file is already in destination
-				elseif(modify && inDest)
+				else if(modify && inDest)
 				{
 					//compare the mod times to see if file should be copied--assert parths are valid first
-					assert FileCMD.existFile(origin + File.pathSeparatorChar + curr) : ("It seems that " + origin + File.pathSeparatorChar + curr + " does not exist.");
-					assert FileCMD.existFile(destination + File.pathSeparatorChar) : ("It seems that " + destination + File.pathSeparatorChar + " does not exist.");
-					comp = FileCMD.compModTime((origin + File.pathSeparatorChar + curr), (destination + File.pathSeparatorChar + curr));
+					assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
+					assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
+					comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
 					
 					//if curr is newer, overwrite the file in destination
 					if(comp == 1)
-						FileCMD.copyFile((origin + File.pathSeparatorChar + curr), (destination + File.pathSeparatorChar + curr), true);
+					{
+						FileCMD.copyFile(curr, (destination + File.separatorChar +  FileCMD.getName(curr)), true);
+						log += ("Replaced \"" + FileCMD.getName(curr) + "\" in " +  destination + " with \"" + FileCMD.getName(curr) + "\" in " + origin + "\n");
+					}
 					//if there is an error
-					elseif(comp == -1)
-						log += ("There was an error comparing the mod times of " + (origin + File.pathSeparatorChar + curr) + " and " + (destination + File.pathSeparatorChar + curr) + "\n");
-				}
-				//else ignore file
-				else
-				{
-					//write to log
-					log += ("Ignored \"" + curr + "\" in " + origin + "\n");
+					else if(comp == -1)
+						log += ("There was an error comparing the mod times of " + curr + " and " + (destination + File.separatorChar +  FileCMD.getName(curr)) + "\n");
+					else
+						log += ("Ignored \"" +  FileCMD.getName(curr) + "\" in " + origin + "\n");
 				}
 			}
 		}
@@ -217,6 +225,7 @@ public class SynchModule
 		for(int i = 0; i < files2.length; i++)
 		{
 			curr = files2[i];
+			inOrigin = false;
 			//exist = synchrc.exist(curr);
 			
 			//if the current file is in synchrc, deal with it according to that
@@ -229,33 +238,35 @@ public class SynchModule
 			else
 			{
 				//check to see if file exisits in origin
-				for(itt = 0; i < files1.length; itt++)
+				itt = 0;
+				while(itt < files1.length)
 				{
-					if(curr.equals(files1[itt]))
+					if(FileCMD.getName(curr).equals(FileCMD.getName(files1[itt])))
 					{
 						inOrigin = true;
 						break;
 					}
+					itt++;
 				}
 				
 				//if read is enabled and the file is not in destination (no point in executing if it is there already)
 				if(delete && !inOrigin)
 				{
 					//attempt to delete the file--assert the paths are valid first
-					assert FileCMD.existFile(destination + File.pathSeparatorChar + curr) : ("It seems that " + destination + File.pathSeparatorChar + " does not exist.");
-					success = FileCMD.deleteFile((destination + File.pathSeparatorChar + curr));
+					assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
+					success = FileCMD.deleteFile(curr);
 					
 					//write to log whether or not operation was successful
 					if(success)
-						log += ("Deleted \"" + curr + "\" in " + destination "\n");
+						log += ("Deleted \"" + curr + "\n");
 					else
-						log += ("Failed to delete \"" + curr + "\" in " + destination "\n");
+						log += ("Failed to delete \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
 				}
 				//else ignore file
-				else
+				else if(!(delete || inOrigin))
 				{
 					//write to log
-					log += ("Skipped the deletion of \"" + curr + "\" in " + destination + "\n");
+					log += ("Skipped the deletion of \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
 				}
 			}
 		}
