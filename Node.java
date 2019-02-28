@@ -172,4 +172,20 @@ public class Node
 				left.addNode(toAdd);
 		}
 	}
+	
+	/**************************/
+	
+	public String toString()
+	{
+		String str = "";
+		
+		str += read + "," + modify + "," + delete + " " + path + "\n";
+		
+		if(left != null)
+			str += "     left : " + left.toString() + "\n";
+		if(right != null)
+			str += "     right: " + right.toString() + "\n";
+		
+		return str;
+	}
 }
