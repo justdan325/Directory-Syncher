@@ -10,13 +10,15 @@ import java.io.File;
 
 public class Main
 {
-	private static String log = "";
+	private static String log;
+	private static boolean verbose;
 	
 	private static final String PROG_NAME = "java synch";	//what one would use to call this program via commandline
 	
 	public static void main(String[] args)
 	{
-		log += "Beginning synch...\n";
+		log = "Beginning synch...\n";
+		verbose = false;
 		
 		decodeArgs(args);
 	}
@@ -38,11 +40,238 @@ public class Main
 			case 4:
 			case 5:
 			case 6:
-				//customSynch();
+			case 7:
+			case 8:
+				customSynch(args);
 				break;
 			default:
 				Prin.tln("Invalid arguments! Use --help for list of options.");
 		}
+	}
+	
+	private static void customSynch(String[] args)
+	{
+		boolean read = true;
+		boolean modify = false;
+		boolean delete = false;
+		boolean unidirectional = false;
+		boolean saveLog = false;
+		String primrc = SynchModule.DEFAULT_SYNCHRC;
+		String secrc = SynchModule.DEFAULT_SYNCHRC;
+		String dir1 = null;
+		String dir2 = null;
+		
+		//if first has dash, then it is the flags
+		if(args[0].contains("-"))
+		{
+			for(int i = 0; i < args[0].length(); i++)
+			{
+				switch(args[0].charAt(i))
+				{
+					case '-':
+						break;
+					case 'u':
+						unidirectional = true;
+						break;
+					case 'l':
+						saveLog = true;
+						break;
+					case 'v':
+						verbose = true;
+						break;
+					default:
+						Prin.tln("Invalid flag series: " + args[0] + "\nRun with --help for list of flags.");
+						System.exit(-1);
+				}
+			}
+			
+			//see if next of args is permissions
+			if((args[1].contains("0") || args[1].contains("1")) && args[1].length() == 3 && !FileCMD.isDir(args[1]) && args.length >= 4)
+			{
+				if(args[1].charAt(0) == '0')
+					read = false;
+				else if(args[1].charAt(0) == '1')
+					read = true;
+				else
+				{
+					Prin.tln("Invalid permissions entered: " + args[1]);
+					System.exit(-1);
+				}
+				
+				if(args[1].charAt(1) == '0')
+					modify = false;
+				else if(args[1].charAt(1) == '1')
+					modify = true;
+				else
+				{
+					Prin.tln("Invalid permissions entered: " + args[1]);
+					System.exit(-1);
+				}
+				
+				if(args[1].charAt(2) == '0')
+					delete = false;
+				else if(args[1].charAt(2) == '1')
+					delete = true;
+				else
+				{
+					Prin.tln("Invalid permissions entered: " + args[1]);
+					System.exit(-1);
+				}
+				
+				//check to see if next two args are dirs
+				if(!(FileCMD.isDir(args[2]) && FileCMD.isDir(args[3])))
+				{
+					Prin.tln("Invalid directory entered!");
+					System.exit(-1);
+				}
+				else
+				{
+					dir1 = args[2];
+					dir2 = args[3];
+				}
+			}
+			else
+			{
+				//check to see if next two args are dirs
+				if(!(FileCMD.isDir(args[1]) && FileCMD.isDir(args[2])))
+				{
+					Prin.tln("Invalid directory entered!");
+					System.exit(-1);
+				}
+				else
+				{
+					dir1 = args[1];
+					dir2 = args[2];
+				}
+			}
+		}
+		//if first has zeros or ones and a length of three, then it is permissions
+		else if((args[0].contains("0") || args[0].contains("1")) && args[0].length() == 3 && !FileCMD.isDir(args[0]))
+		{
+			if(args[0].charAt(0) == '0')
+					read = false;
+			else if(args[0].charAt(0) == '1')
+				read = true;
+			else
+			{
+				Prin.tln("Invalid permissions entered: " + args[0]);
+				System.exit(-1);
+			}
+			
+			if(args[0].charAt(1) == '0')
+				modify = false;
+			else if(args[0].charAt(1) == '1')
+				modify = true;
+			else
+			{
+				Prin.tln("Invalid permissions entered: " + args[0]);
+				System.exit(-1);
+			}
+			
+			if(args[0].charAt(2) == '0')
+				delete = false;
+			else if(args[0].charAt(2) == '1')
+				delete = true;
+			else
+			{
+				Prin.tln("Invalid permissions entered: " + args[0]);
+				System.exit(-1);
+			}
+			
+			//check to see if next two args are dirs
+			if(!(FileCMD.isDir(args[1]) && FileCMD.isDir(args[2])))
+			{
+				Prin.tln("Invalid directory entered!");
+				System.exit(-1);
+			}
+			else
+			{
+				dir1 = args[1];
+				dir2 = args[2];
+			}
+		}
+		//else it must be a default synch with extra flags
+		else
+		{
+			if(!(FileCMD.isDir(args[0]) && FileCMD.isDir(args[1])))
+			{
+				Prin.tln("Invalid directory entered!");
+				System.exit(-1);
+			}
+			else
+			{
+				dir1 = args[0];
+				dir2 = args[1];
+			}
+		}
+		
+		//handle the final args to see if they are extra flags
+		if(args.length >= 4 && args[args.length-2].equals("--rcPrim"))
+		{
+			//make sure file exisits
+			if(!FileCMD.existFile(args[args.length-1]))
+			{
+				Prin.tln("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.");
+				System.exit(-1);
+			}
+			else
+				primrc = args[args.length-1];
+		}
+		else if(args.length >= 4 && args[args.length-2].equals("--rcSec"))
+		{
+			//make sure file exisits
+			if(!FileCMD.existFile(args[args.length-1]))
+			{
+				Prin.tln("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.");
+				System.exit(-1);
+			}
+			else
+				secrc = args[args.length-1];
+		}
+		
+		if(args.length >= 6 && args[args.length-4].equals("--rcPrim"))
+		{
+			//make sure file exisits
+			if(!FileCMD.existFile(args[args.length-3]))
+			{
+				Prin.tln("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.");
+				System.exit(-1);
+			}
+			else
+				primrc = args[args.length-3];
+		}
+		else if(args.length >= 6 && args[args.length-4].equals("--rcSec"))
+		{
+			//make sure file exisits
+			if(!FileCMD.existFile(args[args.length-3]))
+			{
+				Prin.tln("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.");
+				System.exit(-1);
+			}
+			else
+				secrc = args[args.length-3];
+		}
+		
+		//begin synch job
+		
+		//synch from primary to secondary
+		SynchModule part1 = new SynchModule(dir1, dir2, primrc, read, modify, delete);
+		
+		log += part1.getLog();
+		
+		//synch from secondary to primary if not unidirectional
+		if(!unidirectional)
+		{
+			SynchModule part2 = new SynchModule(dir1, dir2, secrc, read, modify, delete);
+			
+			log += part2.getLog() + "\nFinished synch job!";
+		}
+		
+		if(verbose)
+			Prin.tln(log);
+		
+		if(saveLog)
+			saveLogFile();
 	}
 	
 	private static void defaultSynch(String[] args)
@@ -115,5 +344,10 @@ public class Main
 		//cehck to see if synchrc exisits
 		if(!FileCMD.existFile(path))
 			FileCMD.writeFile(DEFAULT_RC_CONT, path);
+	}
+
+	private static void saveLogFile()
+	{
+		Prin.tln("IMPLEMENT saveLogFile()!");
 	}
 }
