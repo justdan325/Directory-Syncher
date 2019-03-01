@@ -7,6 +7,7 @@
 */
 
 import java.io.File;
+import java.util.Date;
 
 public class Main
 {
@@ -17,7 +18,12 @@ public class Main
 	
 	public static void main(String[] args)
 	{
-		log = "Beginning synch...\n";
+		log = "synch ";
+		
+		for(int i = 0; i < args.length; i++)
+			log += args[i] + " ";
+		
+		log += "\n\nBeginning synch...\n";
 		verbose = false;
 		
 		decodeArgs(args);
@@ -271,7 +277,10 @@ public class Main
 			Prin.tln(log);
 		
 		if(saveLog)
-			saveLogFile();
+		{
+			saveLogFile(dir1);
+			saveLogFile(dir2);
+		}
 	}
 	
 	private static void defaultSynch(String[] args)
@@ -346,8 +355,17 @@ public class Main
 			FileCMD.writeFile(DEFAULT_RC_CONT, path);
 	}
 
-	private static void saveLogFile()
+	private static void saveLogFile(String path)
 	{
-		Prin.tln("IMPLEMENT saveLogFile()!");
+		if(path.charAt(path.length()-1) == File.separatorChar)
+			path = path.substring(0, path.length()-1);
+		
+		String fileName = "synchlog_" + (new Date(System.currentTimeMillis())).toString() + ".txt";
+		String destination = path + File.separatorChar + "synchlogs" + File.separatorChar + fileName;
+		
+		if(!FileCMD.isDir(path + File.separatorChar + "synchlogs"))
+			FileCMD.mkdirs(path + File.separatorChar + "synchlogs");
+		
+		FileCMD.writeFile(log, destination);
 	}
 }
