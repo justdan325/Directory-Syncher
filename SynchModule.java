@@ -15,8 +15,7 @@ public class SynchModule
 	private boolean read;		//read (copy)  files in dir1 not in dir2 by default
 	private boolean modify;	//modify files in dir2 not in dir1 by default
 	private boolean delete;	//delete files in dir2 not in dir1 by default
-	
-	//private <DataType> synchrc
+	private Synchrc synchrc;//synchrc file object
 	private String log;			//log of synch
 	private String dir1;			//canonical path of dir1
 	private String dir2;			//canonical path of dir2
@@ -28,7 +27,7 @@ public class SynchModule
 	*Constructor for a default synch job
 	*@param dir1 path
 	*@param dir2 path
-	*@param synchrc file path
+	*@param synchrc file name
 	*/
 	public SynchModule(String path1, String path2, String rcname)
 	{
@@ -113,10 +112,10 @@ public class SynchModule
 		//assert file exisits
 		assert FileCMD.existFile(filePath) : "Synchrc file does not exist! Should be handled outside of SynchModule.";
 		
-//IMPLEMENT
-		Prin.tln("Implement synchrc onject in createSynch() within SynchModule.");
+		//instantiate synchrc
+		synchrc = new Synchrc(filePath);
+		
 		log += ("Synching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
-//***************
 	}
 	
 	/**
@@ -149,126 +148,40 @@ public class SynchModule
 		String[] dirs2 = FileCMD.listDirs(destination);	//directories in destination
 		
 		String curr = "";				//current file in question
-		boolean exist = false;	//whether or not a file exisits
+		Node node;					//holder for the current Node
 		boolean inDest = false;	//whether or not a file exisits in destination
 		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
 		int itt;							//secondary itterator
 		int comp;						//holder for compareTo methods
-		//Node currNode  = null;	//current node for file from synchrc
 		
 		//compare and manage local files (reading and modifying)
 		for(int i = 0; i < files1.length; i++)
 		{
 			curr = files1[i];
 			inDest = false;
-			//exist = synchrc.exist(curr);
+			node = synchrc.getNode(curr);
 			
 			//if the current file is in synchrc, deal with it according to that
-			if(exist)
-			{
-//IMPLEMENT
-				Prin.tln("I exist, yo!");
-			}
+			if(node != null)
+				readAndModHelperFile(origin, destination, curr, node.getRead(), node.getModify(), node.getDelete(), files1, files2);
 			//else preform default actions on file
 			else
-			{
-				//check to see if file exisits in destination
-				itt = 0;
-				while(itt < files2.length)
-				{
-					if(FileCMD.getName(curr).equals(FileCMD.getName(files2[itt])))
-					{
-						inDest = true;
-						break;
-					}
-					itt++;
-				}
-				
-				//if read is enabled and the file is not in destination (no point in executing if it is there already)
-				if(read && !inDest)
-				{
-					//copy the file to where it belongs--assert the paths are valid first
-					assert FileCMD.existFile(curr) : ("It seems that " + origin + File.separatorChar + curr + " does not exist.");
-					assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-					success = FileCMD.copyFile(curr, (destination + File.separatorChar + FileCMD.getName(curr)), false);
-					
-					//write to log whether or not operation was successful
-					if(success)
-						log += ("Copied \"" +  FileCMD.getName(curr) + "\" from " + origin + " to " + destination + "\n");
-					else
-						log += ("Failed to copy \"" +  FileCMD.getName(curr) + "\" from " + origin + " to " + destination + "\n");
-				}
-				//if modify is enabled and the file is already in destination
-				else if(modify && inDest)
-				{
-					//compare the mod times to see if file should be copied--assert parths are valid first
-					assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
-					assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-					comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
-					
-					//if curr is newer, overwrite the file in destination
-					if(comp == 1)
-					{
-						FileCMD.copyFile(curr, (destination + File.separatorChar +  FileCMD.getName(curr)), true);
-						log += ("Replaced \"" + FileCMD.getName(curr) + "\" in " +  destination + " with \"" + FileCMD.getName(curr) + "\" in " + origin + "\n");
-					}
-					//if there is an error
-					else if(comp == -1)
-						log += ("There was an error comparing the mod times of " + curr + " and " + (destination + File.separatorChar +  FileCMD.getName(curr)) + "\n");
-					else
-						log += ("Ignored \"" +  FileCMD.getName(curr) + "\" in " + origin + "\n");
-				}
-			}
+				readAndModHelperFile(origin, destination, curr, read, modify, delete, files1, files2);
 		}
 		//compare and manage local files (deletion)
 		for(int i = 0; i < files2.length; i++)
 		{
 			curr = files2[i];
 			inOrigin = false;
-			//exist = synchrc.exist(curr);
+			node = synchrc.getNode(curr);
 			
 			//if the current file is in synchrc, deal with it according to that
-			if(exist)
-			{
-//IMPLEMENT
-				Prin.tln("I exist, yo!");
-			}
+			if(node != null)
+				deleteHelperFile(origin, destination, curr, node.getRead(), node.getModify(), node.getDelete(), files1, files2);
 			//else preform default actions on file
 			else
-			{
-				//check to see if file exisits in origin
-				itt = 0;
-				while(itt < files1.length)
-				{
-					if(FileCMD.getName(curr).equals(FileCMD.getName(files1[itt])))
-					{
-						inOrigin = true;
-						break;
-					}
-					itt++;
-				}
-				
-				//if read is enabled and the file is not in destination (no point in executing if it is there already)
-				if(delete && !inOrigin)
-				{
-					//attempt to delete the file--assert the paths are valid first
-					assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
-					success = FileCMD.deleteFile(curr);
-					
-					//write to log whether or not operation was successful
-					if(success)
-						log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
-					else
-						log += ("Failed to delete \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
-				}
-				//else ignore file
-				else if(!(delete || inOrigin))
-				{
-					//write to log
-					log += ("Skipped the deletion of \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
-				}
-			}
+				deleteHelperFile(origin, destination, curr, read, modify, delete, files1, files2);
 		}
 		
 		//compare and recursivley manage directories
@@ -276,97 +189,210 @@ public class SynchModule
 		{
 			curr = dirs1[i];
 			inDest = false;
-			//exist = synchrc.exist(curr);
+			node = synchrc.getNode(curr);
 			
 			//if the current file is in synchrc, deal with it according to that
-			if(exist)
-			{
-//IMPLEMENT
-				Prin.tln("I exist, yo!");
-			}
+			if(node != null)
+				readAndModHelperDir(origin, destination, curr, node.getRead(), node.getModify(), node.getDelete(), dirs1, dirs2);
 			//else preform default actions on dir
 			else
-			{
-				//check to see if file exisits in destination
-				itt = 0;
-				while(itt < dirs2.length)
-				{
-					if(FileCMD.getName(curr).equals(FileCMD.getName(dirs2[itt])))
-					{
-						inDest = true;
-						break;
-					}
-					itt++;
-				}
-				
-				//if read enabled and directory is not in destination
-				if(read && !inDest)
-				{
-					//attempt to make directory
-					success = FileCMD.mkdirs(destination + File.separatorChar + FileCMD.getName(curr));
-					
-					if(success)
-					{
-						log += ("Added directory \"" + FileCMD.getName(curr) + "\" to " + destination + "\n");
-						
-						//preform synchJob on new subdir
-						synchJob(curr, destination + File.separatorChar + FileCMD.getName(curr));
-					}
-					else
-						log += ("Failed to add directory \"" + FileCMD.getName(curr) + "\" to " + destination + "\n");
-				}
-				//if read enabled and sub dir already exists
-				else if(read && inDest)
-				{
-					//preform synchJob on new subdir
-					synchJob(curr, destination + File.separatorChar + FileCMD.getName(curr));
-				}
-			}
+				readAndModHelperDir(origin, destination, curr, read, modify, delete, dirs1, dirs2);
 		}
 		for(int i = 0; i < dirs2.length; i++)
 		{
 			curr = dirs2[i];
 			inOrigin = false;
-			//exist = synchrc.exist(curr);
+			node = synchrc.getNode(curr);
 			
 			//if the current dir is in synchrc, deal with it according to that
-			if(exist)
-			{
-//IMPLEMENT
-				Prin.tln("I exist, yo!");
-			}
+			if(node != null)
+				deleteHelperDir(origin, destination, curr, node.getRead(), node.getModify(), node.getDelete(), dirs1, dirs2);
 			//else preform default actions on dir
 			else
-			{
-				//check to see if dir exisits in origin
-				itt = 0;
-				while(itt < dirs1.length)
-				{
-					if(FileCMD.getName(curr).equals(FileCMD.getName(dirs1[itt])))
-					{
-						inOrigin = true;
-						break;
-					}
-					itt++;
-				}
-				
-				//if read is enabled and the dir is not in destination (no point in executing if it is there already)
-				if(delete && !inOrigin)
-				{
-					//attempt to delete the dir--assert the paths are valid first
-					assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
-					FileCMD.deleteDir(curr);
-					
-					//write to log whether or not operation was successful
-					log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
-				}
-				//else ignore file
-				else if(!(delete || inOrigin))
-				{
-					//write to log
-					log += ("Skipped the deletion of \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
-				}
-			}
+				deleteHelperDir(origin, destination, curr, read, modify, delete, dirs1, dirs2);
 		}	
+	}
+	
+	private void readAndModHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, String[] files1, String[] files2)
+	{
+		Node node;					//holder for the current Node
+		boolean inDest = false;	//whether or not a file exisits in destination
+		boolean inOrigin = false;//whether or not a file exisits in origin
+		boolean success;			//whether or not an operation was successful
+		int itt;							//secondary itterator
+		int comp;						//holder for compareTo methods
+		
+		//check to see if file exisits in destination
+		itt = 0;
+		while(itt < files2.length)
+		{
+			if(FileCMD.getName(curr).equals(FileCMD.getName(files2[itt])))
+			{
+				inDest = true;
+				break;
+			}
+			itt++;
+		}
+		
+		//if read is enabled and the file is not in destination (no point in executing if it is there already)
+		if(localRead && !inDest)
+		{
+			//copy the file to where it belongs--assert the paths are valid first
+			assert FileCMD.existFile(curr) : ("It seems that " + origin + File.separatorChar + curr + " does not exist.");
+			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
+			success = FileCMD.copyFile(curr, (destination + File.separatorChar + FileCMD.getName(curr)), false);
+			
+			//write to log whether or not operation was successful
+			if(success)
+				log += ("Copied \"" +  FileCMD.getName(curr) + "\" from " + origin + " to " + destination + "\n");
+			else
+				log += ("Failed to copy \"" +  FileCMD.getName(curr) + "\" from " + origin + " to " + destination + "\n");
+		}
+		//if modify is enabled and the file is already in destination
+		else if(localModify && inDest)
+		{
+			//compare the mod times to see if file should be copied--assert parths are valid first
+			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
+			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
+			comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
+			
+			//if curr is newer, overwrite the file in destination
+			if(comp == 1)
+			{
+				FileCMD.copyFile(curr, (destination + File.separatorChar +  FileCMD.getName(curr)), true);
+				log += ("Replaced \"" + FileCMD.getName(curr) + "\" in " +  destination + " with \"" + FileCMD.getName(curr) + "\" in " + origin + "\n");
+			}
+			//if there is an error
+			else if(comp == -1)
+				log += ("There was an error comparing the mod times of " + curr + " and " + (destination + File.separatorChar +  FileCMD.getName(curr)) + "\n");
+			else
+				log += ("Ignored \"" +  FileCMD.getName(curr) + "\" in " + origin + "\n");
+		}
+	}
+	
+	private void deleteHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, String[] files1, String[] files2)
+	{
+		Node node;					//holder for the current Node
+		boolean inDest = false;	//whether or not a file exisits in destination
+		boolean inOrigin = false;//whether or not a file exisits in origin
+		boolean success;			//whether or not an operation was successful
+		int itt;							//secondary itterator
+		int comp;						//holder for compareTo methods
+		
+		//check to see if file exisits in origin
+		itt = 0;
+		while(itt < files1.length)
+		{
+			if(FileCMD.getName(curr).equals(FileCMD.getName(files1[itt])))
+			{
+				inOrigin = true;
+				break;
+			}
+			itt++;
+		}
+		
+		//if read is enabled and the file is not in destination (no point in executing if it is there already)
+		if(localDelete && !inOrigin)
+		{
+			//attempt to delete the file--assert the paths are valid first
+			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
+			success = FileCMD.deleteFile(curr);
+			
+			//write to log whether or not operation was successful
+			if(success)
+				log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
+			else
+				log += ("Failed to delete \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
+		}
+		//else ignore file
+		else if(!(delete || inOrigin))
+		{
+			//write to log
+			log += ("Skipped the deletion of \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
+		}
+	}
+	
+	private void readAndModHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, String[] dirs1, String[] dirs2)
+	{
+		Node node;					//holder for the current Node
+		boolean inDest = false;	//whether or not a file exisits in destination
+		boolean inOrigin = false;//whether or not a file exisits in origin
+		boolean success;			//whether or not an operation was successful
+		int itt;							//secondary itterator
+		int comp;						//holder for compareTo methods
+		
+		//check to see if file exisits in destination
+		itt = 0;
+		while(itt < dirs2.length)
+		{
+			if(FileCMD.getName(curr).equals(FileCMD.getName(dirs2[itt])))
+			{
+				inDest = true;
+				break;
+			}
+			itt++;
+		}
+		
+		//if read enabled and directory is not in destination
+		if(localRead && !inDest)
+		{
+			//attempt to make directory
+			success = FileCMD.mkdirs(destination + File.separatorChar + FileCMD.getName(curr));
+			
+			if(success)
+			{
+				log += ("Added directory \"" + FileCMD.getName(curr) + "\" to " + destination + "\n");
+				
+				//preform synchJob on new subdir
+				synchJob(curr, destination + File.separatorChar + FileCMD.getName(curr));
+			}
+			else
+				log += ("Failed to add directory \"" + FileCMD.getName(curr) + "\" to " + destination + "\n");
+		}
+		//if read enabled and sub dir already exists
+		else if(localRead && inDest)
+		{
+			//preform synchJob on new subdir
+			synchJob(curr, destination + File.separatorChar + FileCMD.getName(curr));
+		}
+	}
+	
+	private void deleteHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, String[] dirs1, String[] dirs2)
+	{
+		Node node;					//holder for the current Node
+		boolean inDest = false;	//whether or not a file exisits in destination
+		boolean inOrigin = false;//whether or not a file exisits in origin
+		boolean success;			//whether or not an operation was successful
+		int itt;							//secondary itterator
+		int comp;						//holder for compareTo methods
+		
+		//check to see if dir exisits in origin
+		itt = 0;
+		while(itt < dirs1.length)
+		{
+			if(FileCMD.getName(curr).equals(FileCMD.getName(dirs1[itt])))
+			{
+				inOrigin = true;
+				break;
+			}
+			itt++;
+		}
+		
+		//if read is enabled and the dir is not in destination (no point in executing if it is there already)
+		if(localDelete && !inOrigin)
+		{
+			//attempt to delete the dir--assert the paths are valid first
+			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
+			FileCMD.deleteDir(curr);
+			
+			//write to log whether or not operation was successful
+			log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
+		}
+		//else ignore file
+		else if(!(localDelete || inOrigin))
+		{
+			//write to log
+			log += ("Skipped the deletion of \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
+		}
 	}
 }

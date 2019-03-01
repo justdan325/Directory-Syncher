@@ -7,9 +7,9 @@ public class UnitTest
 {
 	public static void main(String[] args)
 	{
-		//SynchModule test = new SynchModule("/home/dan/Programming Projects/FileSynch/testDir", "/home/dan/Programming Projects/FileSynch/newDir", SynchModule.DEFAULT_SYNCHRC, true, true, true);
+		SynchModule test = new SynchModule("/home/dan/Programming Projects/FileSynch/testDir", "/home/dan/Programming Projects/FileSynch/newDir", SynchModule.DEFAULT_SYNCHRC, true, true, true);
 		
-		//Prin.tln("\n\n\n" + test.getLog());
+		Prin.tln("\n\n\n" + test.getLog());
 		
 		/*Node root = new Node("/home/dan/Programming Projects/FileSynch/testDir/b", false, false, false);
 		root.addNode(new Node("/home/dan/Programming Projects/FileSynch/testDir/a", false, false, false));
@@ -21,8 +21,8 @@ public class UnitTest
 		
 		//Prin.tln(root.toString());
 		
-		Synchrc test = new Synchrc("/home/dan/Programming Projects/FileSynch/testDir/synchrc");
+		//Synchrc test = new Synchrc("/home/dan/Programming Projects/FileSynch/testDir/synchrc");
 		
-		Prin.tln("" + test.getNode("/home/dan/Programming Projects/FileSynch/testDir/synchrc"));
+		//Prin.tln("" + test.getNode("/home/dan/Programming Projects/FileSynch/testDir/synchrc"));
 	}
 }

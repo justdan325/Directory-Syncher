@@ -35,8 +35,6 @@ public class Synchrc
 		
 		determinePathToUpp();
 		decodeFile();
-		
-		Prin.tln(pathToUpp);
 	}
 	
 	/**
@@ -47,8 +45,6 @@ public class Synchrc
 	public Node getNode(String nodePath)
 	{
 		Node node;
-		
-		Prin.tln("Root: " + root.getPath() + "\nThis: " + nodePath);
 		
 		if(nodePath.equals(root.getPath()))
 			node = root;
