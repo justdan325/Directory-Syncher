@@ -14,11 +14,13 @@ public class Main
 	private static String log;
 	private static boolean verbose;
 	
+	private static final double version = 0.3;
+	private static final String PREAMBLE = "Directory Syncher version " + version + "\nMade and Maintaned by Dan Martineau.\n\n";
 	private static final String PROG_NAME = "java synch";	//what one would use to call this program via commandline
 	
 	public static void main(String[] args)
 	{
-		log = "synch ";
+		log = PREAMBLE + "synch ";
 		
 		for(int i = 0; i < args.length; i++)
 			log += args[i] + " ";
