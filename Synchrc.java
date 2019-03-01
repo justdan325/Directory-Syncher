@@ -99,41 +99,49 @@ public class Synchrc
 		boolean delete;
 		String canonicalPath;
 		
-		//remove new line char from line
-		if(line.charAt(line.length()-1) == '\n')
-			line = line.substring(line.length()-1);
-		
-		//read first bit
-		if(line.charAt(0) == '0')
-			read = false;
-		else if(line.charAt(0) == '1')
-			read = true;
-		else
-			throw new RuntimeException("Line format is invalid: " + line);
-		
-		//read second bit
-		if(line.charAt(1) == '0')
-			modify = false;
-		else if(line.charAt(1) == '1')
-			modify = true;
-		else
-			throw new RuntimeException("Line format is invalid: " + line);
-		
-		//read third bit
-		if(line.charAt(2) == '0')
-			delete = false;
-		else if(line.charAt(2) == '1')
-			delete = true;
-		else
-			throw new RuntimeException("Line format is invalid: " + line);
-		
-		//set canonicalPath
-		canonicalPath = pathToUpp + line.substring(4).replace(rcDelim, File.separatorChar);
-		
-		//make and add the Node to the tree
-		if(root == null)
-			root = new Node(canonicalPath, read, modify, delete);
-		else
-			root.addNode(new Node(canonicalPath, read, modify, delete));
+		//Reading short lines causes exceptions, and a short line should be ignored anyhow.
+		if(line.length() > 1)
+		{
+			//remove new line char from line
+			if(line.charAt(line.length()-1) == '\n')
+				line = line.substring(line.length()-1);
+			
+			//read first bit
+			if(line.charAt(0) == '0')
+				read = false;
+			else if(line.charAt(0) == '1')
+				read = true;
+			//if line begins with "#," it is a comment and should be overlooked
+			//should also be overlooked if line is blank
+			else if(line.charAt(0) == '#' || line.charAt(0) == ' ')
+				return;
+			else
+				throw new RuntimeException("Line format is invalid: " + line);
+			
+			//read second bit
+			if(line.charAt(1) == '0')
+				modify = false;
+			else if(line.charAt(1) == '1')
+				modify = true;
+			else
+				throw new RuntimeException("Line format is invalid: " + line);
+			
+			//read third bit
+			if(line.charAt(2) == '0')
+				delete = false;
+			else if(line.charAt(2) == '1')
+				delete = true;
+			else
+				throw new RuntimeException("Line format is invalid: " + line);
+			
+			//set canonicalPath
+			canonicalPath = pathToUpp + line.substring(4).replace(rcDelim, File.separatorChar);
+			
+			//make and add the Node to the tree
+			if(root == null)
+				root = new Node(canonicalPath, read, modify, delete);
+			else
+				root.addNode(new Node(canonicalPath, read, modify, delete));
+		}
 	}
 }

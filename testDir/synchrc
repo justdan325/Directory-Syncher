@@ -1,1 +1,5 @@
+#This is muh synchrc file
+
+#This line prevents your synchrc files from overwriting eachother across directories. 
+#It is not reccommended that it be changed
 000 testDir,synchrc
