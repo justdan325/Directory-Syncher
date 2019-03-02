@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 1.0
+*@version 1.1
 */
 
 import java.io.File;
@@ -35,7 +35,7 @@ public class SynchModule
 		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
 		dir1 = standardizePath(path1);
 		
-		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
+		assert FileCMD.existFile(path2) : "Path 2 is not a directory! This should be handled before SynchModule is called.";
 		dir2 = standardizePath(path2);
 		
 		read = true;
@@ -115,7 +115,7 @@ public class SynchModule
 		//instantiate synchrc
 		synchrc = new Synchrc(filePath);
 		
-		log += ("Synching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
+		log += ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
 	}
 	
 	/**

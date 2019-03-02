@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 1.0
+*@version 1.1
 */
 
 import java.io.File;
@@ -14,13 +14,13 @@ public class Main
 	private static String log;
 	private static boolean verbose;
 	
-	private static final double version = 0.3;
+	private static final double version = 0.4;
 	private static final String PREAMBLE = "Directory Syncher version " + version + "\nMade and Maintaned by Dan Martineau.\n\n";
-	private static final String PROG_NAME = "java synch";	//what one would use to call this program via commandline
+	private static final String PROG_NAME = "java -jar synch.jar";	//what one would use to call this program via commandline
 	
 	public static void main(String[] args)
 	{
-		log = PREAMBLE + "synch ";
+		log = PREAMBLE + PROG_NAME + " ";
 		
 		for(int i = 0; i < args.length; i++)
 			log += args[i] + " ";
@@ -127,30 +127,62 @@ public class Main
 				}
 				
 				//check to see if next two args are dirs
-				if(!(FileCMD.isDir(args[2]) && FileCMD.isDir(args[3])))
+				if(!FileCMD.isDir(args[2]))
 				{
-					Prin.tln("Invalid directory entered!");
+					Prin.tln("Invalid primary directory: " + args[2]);
 					System.exit(-1);
 				}
-				else
+				//test to see if secondary directory exists
+				if(!FileCMD.existFile(args[3]))
 				{
-					dir1 = args[2];
-					dir2 = args[3];
+					log += "Creating secondary directory: " + args[3] + "\n";
+					
+					//attempt to make secondary directory
+					boolean attempt = FileCMD.mkdirs(args[3]);
+					
+					if(attempt)
+						log += "Directory was successfully created!\n";
+					//exit if unsuccessful
+					else
+					{
+						log += "Failed to create directory. Ending synch...\n";
+						Prin.tln("Could not create secondary directory.");
+						System.exit(-1);
+					}
 				}
+				
+				dir1 = args[2];
+				dir2 = args[3];
 			}
 			else
 			{
 				//check to see if next two args are dirs
-				if(!(FileCMD.isDir(args[1]) && FileCMD.isDir(args[2])))
+				if(!FileCMD.isDir(args[1]))
 				{
-					Prin.tln("Invalid directory entered!");
+					Prin.tln("Invalid primary directory: " + args[1]);
 					System.exit(-1);
 				}
-				else
+				//test to see if secondary directory exists
+				if(!FileCMD.existFile(args[2]))
 				{
-					dir1 = args[1];
-					dir2 = args[2];
+					log += "Creating secondary directory: " + args[2] + "\n";
+					
+					//attempt to make secondary directory
+					boolean attempt = FileCMD.mkdirs(args[2]);
+					
+					if(attempt)
+						log += "Directory was successfully created!\n";
+					//exit if unsuccessful
+					else
+					{
+						log += "Failed to create directory. Ending synch...\n";
+						Prin.tln("Could not create secondary directory.");
+						System.exit(-1);
+					}
 				}
+				
+				dir1 = args[1];
+				dir2 = args[2];
 			}
 		}
 		//if first has zeros or ones and a length of three, then it is permissions
@@ -187,30 +219,62 @@ public class Main
 			}
 			
 			//check to see if next two args are dirs
-			if(!(FileCMD.isDir(args[1]) && FileCMD.isDir(args[2])))
+			if(!FileCMD.isDir(args[1]))
 			{
-				Prin.tln("Invalid directory entered!");
+				Prin.tln("Invalid primary directory: " + args[1]);
 				System.exit(-1);
 			}
-			else
+			//test to see if secondary directory exists
+			if(!FileCMD.existFile(args[2]))
 			{
-				dir1 = args[1];
-				dir2 = args[2];
+				log += "Creating secondary directory: " + args[2] + "\n";
+				
+				//attempt to make secondary directory
+				boolean attempt = FileCMD.mkdirs(args[2]);
+				
+				if(attempt)
+					log += "Directory was successfully created!\n";
+				//exit if unsuccessful
+				else
+				{
+					log += "Failed to create directory. Ending synch...\n";
+					Prin.tln("Could not create secondary directory.");
+					System.exit(-1);
+				}
 			}
+			
+			dir1 = args[1];
+			dir2 = args[2];
 		}
 		//else it must be a default synch with extra flags
 		else
 		{
-			if(!(FileCMD.isDir(args[0]) && FileCMD.isDir(args[1])))
+			if(!FileCMD.isDir(args[0]))
 			{
-				Prin.tln("Invalid directory entered!");
+				Prin.tln("Invalid primary directory: " + args[0]);
 				System.exit(-1);
 			}
-			else
+			//test to see if secondary directory exists
+			if(!FileCMD.existFile(args[1]))
 			{
-				dir1 = args[0];
-				dir2 = args[1];
+				log += "Creating secondary directory: " + args[1] + "\n";
+				
+				//attempt to make secondary directory
+				boolean attempt = FileCMD.mkdirs(args[1]);
+				
+				if(attempt)
+					log += "Directory was successfully created!\n";
+				//exit if unsuccessful
+				else
+				{
+					log += "Failed to create directory. Ending synch...\n";
+					Prin.tln("Could not create secondary directory.");
+					System.exit(-1);
+				}
 			}
+			
+			dir1 = args[0];
+			dir2 = args[1];
 		}
 		
 		//handle the final args to see if they are extra flags
@@ -260,6 +324,10 @@ public class Main
 				secrc = args[args.length-3];
 		}
 		
+		//check to ensure that the rc files exist
+		checkSynchrc(dir1);
+		checkSynchrc(dir2);
+		
 		//begin synch job
 		
 		//synch from primary to secondary
@@ -270,7 +338,7 @@ public class Main
 		//synch from secondary to primary if not unidirectional
 		if(!unidirectional)
 		{
-			SynchModule part2 = new SynchModule(dir1, dir2, secrc, read, modify, delete);
+			SynchModule part2 = new SynchModule(dir2, dir1, secrc, read, modify, delete);
 			
 			log += part2.getLog() + "\nFinished synch job!";
 		}
@@ -332,20 +400,20 @@ public class Main
 	
 	private static void displayOptions()
 	{
-		Prin.t("Usage:\n\t" + PROG_NAME + " [primary directory] [secondary directory]\n\t");
+		Prin.t("Directory Syncher version " + version + " Usage:\n\t" + PROG_NAME + " [primary directory] [secondary directory]\n\t");
 		Prin.t(PROG_NAME + " [permissions] [primary directory] [secondary directory]\n\t");
 		Prin.t(PROG_NAME + " -[flags] [primary directory] [secondary directory]\n\t");
 		Prin.t(PROG_NAME + " -[flags] [permissions] [primary directory] [secondary directory]\n\t");
-		Prin.t("\n\tPermissions:\n\t\t000 --> <Read><Modify><Delete> where 0 = false and 1 = true\n\t");
+		Prin.t("\n\tPermissions:\n\t\t000 --> [<Read><Modify><Delete>] where 0 = false and 1 = true\n\t");
 		Prin.t("\n\tFlags: \n\t\t-u : unidirectional (from primary to secondary)\n\t\t");
-		Prin.t("-l : save log file\n\t");
+		Prin.t("-l : save log file\n\t\t-v : verbose (prints log to std out)\n\t");
 		Prin.t("End Flags:\n\t\t--rcPrim [custom synchrc file for primary directory]\n\t\t");
 		Prin.t("--rcSec [custom synchrc file for secondary directory]\n");
 	}
 	
 	private static void checkSynchrc(String path)
 	{
-		final String DEFAULT_RC_CONT = "#This is your synchrc file\n\n#This line prevents your synchrc files from overwriting eachother across directories.\n000 testDir,synchrc";
+		final String DEFAULT_RC_CONT = "#This is your synchrc file\n\n#This line prevents your synchrc files from overwriting eachother across directories.\n000 " + FileCMD.getName(path) + ",synchrc";
 		
 		if(path.charAt(path.length()-1) == File.separatorChar)
 			path += SynchModule.DEFAULT_SYNCHRC;

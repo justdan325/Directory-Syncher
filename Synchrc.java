@@ -2,7 +2,7 @@
 *Class represents a synchrc file
 *
 *@author Dan Martineau
-*@version 1.0
+*@version 1.1
 */
 
 import java.io.File;
@@ -44,7 +44,7 @@ public class Synchrc
 	*/
 	public Node getNode(String nodePath)
 	{
-		Node node;
+		Node node = null;
 		
 		if(nodePath.equals(root.getPath()))
 			node = root;
@@ -65,7 +65,7 @@ public class Synchrc
 		//set pathToUpp equal to synchrcPath minus the file and its containing directory
 		hold = FileCMD.getName(synchrcPath);
 		pathToUpp = synchrcPath.substring(0, synchrcPath.length()-hold.length());
-		hold = FileCMD.getName(hold);
+		hold = FileCMD.getName(pathToUpp);
 		hold = pathToUpp.substring(0, pathToUpp.length()-(hold.length()+1));
 		pathToUpp = hold;
 		
