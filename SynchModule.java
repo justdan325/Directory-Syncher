@@ -162,7 +162,7 @@ public class SynchModule
 		int comp;						//holder for compareTo methods
 		
 		if(verbose)
-			Prin.tln("\tCurrently synching: " + origin + " --> " + destination);
+			Prin.tln("\nCurrently synching: " + origin + " --> " + destination);
 		
 		//compare and manage local files (reading and modifying)
 		if(verbose)
@@ -188,7 +188,7 @@ public class SynchModule
 		}
 		//compare and manage local files (deletion)
 		if(verbose)
-			Prin.tln("\tDelete cycle...");
+			Prin.tln("\n\tDelete cycle...");
 		for(int i = 0; i < files2.length; i++)
 		{
 			if(verbose)
@@ -211,7 +211,7 @@ public class SynchModule
 		
 		//compare and recursivley manage directories
 		if(verbose)
-			Prin.tln("\tManaging primary subdirectories...");
+			Prin.tln("\n\tManaging primary subdirectories...");
 		for(int i = 0; i < dirs1.length; i++)
 		{
 			if(verbose)
@@ -232,7 +232,7 @@ public class SynchModule
 				readAndModHelperDir(origin, destination, curr, read, modify, delete, dirs1, dirs2);
 		}
 		if(verbose)
-			Prin.tln("\tManaging secondary subdirectories...");
+			Prin.tln("\n\tManaging secondary subdirectories...");
 		for(int i = 0; i < dirs2.length; i++)
 		{
 			if(verbose)

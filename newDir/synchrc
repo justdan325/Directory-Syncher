@@ -1,0 +1,4 @@
+#This is your synchrc file
+
+#This line prevents your synchrc files from overwriting eachother across directories.
+000 newDir,synchrc
