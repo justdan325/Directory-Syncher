@@ -331,14 +331,14 @@ public class Main
 		//begin synch job
 		
 		//synch from primary to secondary
-		SynchModule part1 = new SynchModule(dir1, dir2, primrc, read, modify, delete);
+		SynchModule part1 = new SynchModule(dir1, dir2, primrc, read, modify, delete, verbose);
 		
 		log += part1.getLog();
 		
 		//synch from secondary to primary if not unidirectional
 		if(!unidirectional)
 		{
-			SynchModule part2 = new SynchModule(dir2, dir1, secrc, read, modify, delete);
+			SynchModule part2 = new SynchModule(dir2, dir1, secrc, read, modify, delete, verbose);
 			
 			log += part2.getLog() + "\nFinished synch job!";
 		}

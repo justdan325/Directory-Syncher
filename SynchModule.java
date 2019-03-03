@@ -15,6 +15,7 @@ public class SynchModule
 	private boolean read;		//read (copy)  files in dir1 not in dir2 by default
 	private boolean modify;	//modify files in dir2 not in dir1 by default
 	private boolean delete;	//delete files in dir2 not in dir1 by default
+	private boolean verbose;	//true if program running in verbose mode
 	private Synchrc synchrc;//synchrc file object
 	private String log;			//log of synch
 	private String dir1;			//canonical path of dir1
@@ -41,6 +42,7 @@ public class SynchModule
 		read = true;
 		modify = false;
 		delete = false;
+		verbose = false;
 		
 		log = "";
 		
@@ -60,7 +62,7 @@ public class SynchModule
 	*@param modify
 	*@param delete
 	*/
-	public SynchModule(String path1, String path2, String rcname, boolean read, boolean modify, boolean delete)
+	public SynchModule(String path1, String path2, String rcname, boolean read, boolean modify, boolean delete, boolean verbose)
 	{
 		//assign parameters to their instance varibales and assert paths are valid
 		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
@@ -72,6 +74,7 @@ public class SynchModule
 		this.read = read;
 		this.modify = modify;
 		this.delete = delete;
+		this.verbose = verbose;
 		
 		log = "";
 		
@@ -116,6 +119,9 @@ public class SynchModule
 		synchrc = new Synchrc(filePath);
 		
 		log += ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
+		
+		if(verbose)
+			Prin.t("\nSynching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
 	}
 	
 	/**
@@ -155,9 +161,20 @@ public class SynchModule
 		int itt;							//secondary itterator
 		int comp;						//holder for compareTo methods
 		
+		if(verbose)
+			Prin.tln("\tCurrently synching: " + origin + " --> " + destination);
+		
 		//compare and manage local files (reading and modifying)
+		if(verbose)
+			Prin.tln("\tRead/mod cycle...");
 		for(int i = 0; i < files1.length; i++)
 		{
+			if(verbose)
+			{
+				Prin.clearCurrLine();
+				Prin.t("\tFile: " + i + "out of" + files1.length);
+			}
+
 			curr = files1[i];
 			inDest = false;
 			node = synchrc.getNode(curr);
@@ -170,8 +187,16 @@ public class SynchModule
 				readAndModHelperFile(origin, destination, curr, read, modify, delete, files1, files2);
 		}
 		//compare and manage local files (deletion)
+		if(verbose)
+			Prin.tln("\tDelete cycle...");
 		for(int i = 0; i < files2.length; i++)
 		{
+			if(verbose)
+			{
+				Prin.clearCurrLine();
+				Prin.t("\tFile: " + i + "out of" + files2.length);
+			}
+			
 			curr = files2[i];
 			inOrigin = false;
 			node = synchrc.getNode(curr);
@@ -185,8 +210,16 @@ public class SynchModule
 		}
 		
 		//compare and recursivley manage directories
+		if(verbose)
+			Prin.tln("\tManaging primary subdirectories...");
 		for(int i = 0; i < dirs1.length; i++)
 		{
+			if(verbose)
+			{
+				Prin.clearCurrLine();
+				Prin.t("\tDir: " + i + "out of" + dirs1.length);
+			}
+			
 			curr = dirs1[i];
 			inDest = false;
 			node = synchrc.getNode(curr);
@@ -198,8 +231,16 @@ public class SynchModule
 			else
 				readAndModHelperDir(origin, destination, curr, read, modify, delete, dirs1, dirs2);
 		}
+		if(verbose)
+			Prin.tln("\tManaging secondary subdirectories...");
 		for(int i = 0; i < dirs2.length; i++)
 		{
+			if(verbose)
+			{
+				Prin.clearCurrLine();
+				Prin.t("\tDir: " + i + "out of" + dirs2.length);
+			}
+			
 			curr = dirs2[i];
 			inOrigin = false;
 			node = synchrc.getNode(curr);
