@@ -404,11 +404,12 @@ public class Main
 		Prin.t(PROG_NAME + " [permissions] [primary directory] [secondary directory]\n\t");
 		Prin.t(PROG_NAME + " -[flags] [primary directory] [secondary directory]\n\t");
 		Prin.t(PROG_NAME + " -[flags] [permissions] [primary directory] [secondary directory]\n\t");
-		Prin.t("\n\tPermissions:\n\t\t000 --> [<Read><Modify><Delete>] where 0 = false and 1 = true\n\t");
+		Prin.t("\n\tPermissions:\n\t\t000 --> [<Read><Modify><Delete>] where 0 = false and 1 = true");
 		Prin.t("\n\tFlags: \n\t\t-u : unidirectional (from primary to secondary)\n\t\t");
 		Prin.t("-l : save log file\n\t\t-v : verbose (prints log to std out)\n\t");
 		Prin.t("End Flags:\n\t\t--rcPrim [custom synchrc file for primary directory]\n\t\t");
 		Prin.t("--rcSec [custom synchrc file for secondary directory]\n");
+		Prin.tln("Note: The default permissions for the first regex are \"100\"");
 	}
 	
 	private static void checkSynchrc(String path)
