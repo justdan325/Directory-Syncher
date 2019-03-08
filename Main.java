@@ -409,7 +409,7 @@ public class Main
 		Prin.t("-l : save log file\n\t\t-v : verbose (prints log to std out)\n\t");
 		Prin.t("End Flags:\n\t\t--rcPrim [custom synchrc file for primary directory]\n\t\t");
 		Prin.t("--rcSec [custom synchrc file for secondary directory]\n");
-		Prin.tln("Note: The default permissions for the first regex are \"100\"");
+		Prin.tln("Note: The default permissions are \"100\" unless specified.");
 	}
 	
 	private static void checkSynchrc(String path)

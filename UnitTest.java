@@ -7,22 +7,44 @@ public class UnitTest
 {
 	public static void main(String[] args)
 	{
-		SynchModule test = new SynchModule("/home/dan/Programming Projects/FileSynch/testDir", "/home/dan/Programming Projects/FileSynch/newDir", SynchModule.DEFAULT_SYNCHRC, true, true, true);
+		String[] list = {"/home/dan/Programming Projects/FileSynch/testDir/c", "/home/dan/Programming Projects/FileSynch/testDir/a", "/home/dan/Programming Projects/FileSynch/testDir/b", "/home/dan/Programming Projects/FileSynch/testDir/1.txt"};
 		
-		Prin.tln("\n\n\n" + test.getLog());
+		Prin.tln("" + findInList(-30, "a", list));
+	}
+	
+	private static boolean findInList(int index, String fileName, String[] list)
+	{
+		boolean found = false;
+		int rearIndex = index - 1;
+		int frontIndex = index + 1;
 		
-		/*Node root = new Node("/home/dan/Programming Projects/FileSynch/testDir/b", false, false, false);
-		root.addNode(new Node("/home/dan/Programming Projects/FileSynch/testDir/a", false, false, false));
-		root.addNode(new Node("/home/dan/Programming Projects/FileSynch/testDir/3/b", false, false, false));
-		root.addNode(new Node("/home/dan/Programming Projects/FileSynch/testDir/c", false, false, false));*/
+		if(index >= 0 && index < list.length && fileName.equals(FileCMD.getName(list[index])))
+			found = true;
 		
-		//try{Prin.tln(root.getNode("/home/dan/Programming Projects/FileSynch/testDir/3/b").getPath());}
-		//catch(Exception e){e.printStackTrace();}
+		//make sure we're not out of bounds
+		if(rearIndex < 0 || rearIndex >= list.length)
+			rearIndex = 0;
+		if(frontIndex >= list.length || frontIndex < 0)
+			frontIndex = list.length-1;
 		
-		//Prin.tln(root.toString());
+		while(!found)
+		{
+			if(fileName.equals(FileCMD.getName(list[rearIndex])) || fileName.equals(FileCMD.getName(list[frontIndex])))
+				found = true;
+			else
+			{
+				if(rearIndex == 0 && frontIndex == list.length-1)
+					break;
+				else
+				{
+					if(rearIndex > 0)
+						rearIndex--;
+					if(frontIndex < list.length-1)
+						frontIndex++;
+				}
+			}
+		}
 		
-		//Synchrc test = new Synchrc("/home/dan/Programming Projects/FileSynch/testDir/synchrc");
-		
-		//Prin.tln("" + test.getNode("/home/dan/Programming Projects/FileSynch/testDir/synchrc"));
+		return found;
 	}
 }
