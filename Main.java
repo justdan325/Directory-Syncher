@@ -344,7 +344,7 @@ public class Main
 		}
 		
 		if(verbose)
-			Prin.tln(log);
+			Prin.tln("\n" + log);
 		
 		if(saveLog)
 		{

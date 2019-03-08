@@ -4,10 +4,10 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 1.1
+*@version 1.2
 */
 
-import java.io.File;
+import java.io.*;
 
 public class SynchModule
 {
@@ -280,8 +280,14 @@ public class SynchModule
 			//compare the mod times to see if file should be copied--assert parths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-			comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
 			
+			//compare hashes first to avoid unnescessary copies in bidirectional synchjobs
+			//if the hashes differ, compare the mod times
+			if(CompareMD5.compareHashes(curr, (destination + File.separatorChar +  FileCMD.getName(curr))) == false)
+				comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
+			else
+				comp = 0;
+				
 			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
 			files2[index] = EMPTY_ELEMENT;
 			
@@ -294,7 +300,28 @@ public class SynchModule
 			//if there is an error
 			else if(comp == -1)
 				log += ("There was an error comparing the mod times of " + curr + " and " + (destination + File.separatorChar +  FileCMD.getName(curr)) + "\n");
+		}
+		//here we're simply letting the log know that files are being ignored
+		else if(!localModify && index >= 0)
+		{
+			//compare the mod times to see if file should be copied--assert parths are valid first
+			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
+			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
+			
+			//compare hashes first to avoid unnescessary copies in bidirectional synchjobs
+			//if the hashes differ, compare the mod times
+			if(CompareMD5.compareHashes(curr, (destination + File.separatorChar +  FileCMD.getName(curr))) == false)
+				comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
 			else
+				comp = 0;
+				
+			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
+			files2[index] = EMPTY_ELEMENT;
+			
+			//if there is an error
+			if(comp == -1)
+				log += ("There was an error comparing the mod times of " + curr + " and " + (destination + File.separatorChar +  FileCMD.getName(curr)) + "\n");
+			else if(comp == 1)
 				log += ("Ignored \"" +  FileCMD.getName(curr) + "\" in " + origin + "\n");
 		}
 		//if the file is in the destination whatsoever, we want to remove it from the list because there's no point in checking if it should be deleted in the deletion process
@@ -495,3 +522,5 @@ public class SynchModule
 		return -1;
 	}
 }
+
+
