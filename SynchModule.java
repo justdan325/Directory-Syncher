@@ -155,10 +155,7 @@ public class SynchModule
 		
 		String curr = "";				//current file in question
 		Node node;					//holder for the current Node
-		boolean inDest = false;	//whether or not a file exisits in destination
-		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
-		int itt;							//secondary itterator
 		int comp;						//holder for compareTo methods
 		
 		if(verbose)
@@ -176,7 +173,6 @@ public class SynchModule
 			}
 
 			curr = files1[i];
-			inDest = false;
 			node = synchrc.getNode(curr);
 			
 			//if the current file is in synchrc, deal with it according to that
@@ -198,7 +194,6 @@ public class SynchModule
 			}
 			
 			curr = files2[i];
-			inOrigin = false;
 			node = synchrc.getNode(curr);
 			
 			//if the current file is in synchrc, deal with it according to that
@@ -221,7 +216,6 @@ public class SynchModule
 			}
 			
 			curr = dirs1[i];
-			inDest = false;
 			node = synchrc.getNode(curr);
 			
 			//if the current file is in synchrc, deal with it according to that
@@ -242,7 +236,6 @@ public class SynchModule
 			}
 			
 			curr = dirs2[i];
-			inOrigin = false;
 			node = synchrc.getNode(curr);
 			
 			//if the current dir is in synchrc, deal with it according to that
@@ -260,7 +253,6 @@ public class SynchModule
 		boolean inDest = false;	//whether or not a file exisits in destination
 		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
-		//int itt;							//secondary itterator
 		int comp;						//holder for compareTo methods
 		
 		//check to see if file exisits in destination
@@ -318,7 +310,6 @@ public class SynchModule
 		boolean inDest = false;	//whether or not a file exisits in destination
 		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
-		//int itt;							//secondary itterator
 		int comp;						//holder for compareTo methods
 		
 		//check to see if file exisits in origin
@@ -361,7 +352,6 @@ public class SynchModule
 		boolean inDest = false;	//whether or not a file exisits in destination
 		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
-		//int itt;							//secondary itterator
 		int comp;						//holder for compareTo methods
 		
 		//check to see if file exisits in destination
@@ -406,7 +396,6 @@ public class SynchModule
 		boolean inDest = false;	//whether or not a file exisits in destination
 		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
-		//int itt;							//secondary itterator
 		int comp;						//holder for compareTo methods
 		
 		//check to see if dir exisits in origin
