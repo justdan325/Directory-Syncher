@@ -22,7 +22,8 @@ public class SynchModule
 	private String dir2;			//canonical path of dir2
 	
 	/*CONSTANTS*/
-	public static String DEFAULT_SYNCHRC = "synchrc";
+	public static String DEFAULT_SYNCHRC = "synchrc";		//Name of default synchrc file
+	private static String EMPTY_ELEMENT = "?<>";				//Signifies an empty array element
 	
 	/**
 	*Constructor for a default synch job
@@ -194,14 +195,17 @@ public class SynchModule
 			}
 			
 			curr = files2[i];
-			node = synchrc.getNode(curr);
-			
-			//if the current file is in synchrc, deal with it according to that
-			if(node != null)
-				deleteHelperFile(origin, destination, curr, node.getRead(), node.getModify(), node.getDelete(), i, files1, files2);
-			//else preform default actions on file
-			else
-				deleteHelperFile(origin, destination, curr, read, modify, delete, i, files1, files2);
+			if(!curr.equals(EMPTY_ELEMENT))
+			{
+				node = synchrc.getNode(curr);
+				
+				//if the current file is in synchrc, deal with it according to that
+				if(node != null)
+					deleteHelperFile(origin, destination, curr, node.getRead(), node.getModify(), node.getDelete(), i, files1, files2);
+				//else preform default actions on file
+				else
+					deleteHelperFile(origin, destination, curr, read, modify, delete, i, files1, files2);
+			}
 		}
 		
 		//compare and recursivley manage directories
@@ -250,26 +254,14 @@ public class SynchModule
 	private void readAndModHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] files1, String[] files2)
 	{
 		Node node;					//holder for the current Node
-		boolean inDest = false;	//whether or not a file exisits in destination
-		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
 		int comp;						//holder for compareTo methods
 		
 		//check to see if file exisits in destination
-		inDest = findInList(index, curr, files2);
-		/*itt = 0;
-		while(itt < files2.length)
-		{
-			if(FileCMD.getName(curr).equals(FileCMD.getName(files2[itt])))
-			{
-				inDest = true;
-				break;
-			}
-			itt++;
-		}*/
+		index = findIndexInList(index, curr, files2);
 		
 		//if read is enabled and the file is not in destination (no point in executing if it is there already)
-		if(localRead && !inDest)
+		if(localRead && index == -1)
 		{
 			//copy the file to where it belongs--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + origin + File.separatorChar + curr + " does not exist.");
@@ -283,12 +275,15 @@ public class SynchModule
 				log += ("Failed to copy \"" +  FileCMD.getName(curr) + "\" from " + origin + " to " + destination + "\n");
 		}
 		//if modify is enabled and the file is already in destination
-		else if(localModify && inDest)
+		else if(localModify && index >= 0)
 		{
 			//compare the mod times to see if file should be copied--assert parths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
 			comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
+			
+			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
+			files2[index] = EMPTY_ELEMENT;
 			
 			//if curr is newer, overwrite the file in destination
 			if(comp == 1)
@@ -302,28 +297,23 @@ public class SynchModule
 			else
 				log += ("Ignored \"" +  FileCMD.getName(curr) + "\" in " + origin + "\n");
 		}
+		//if the file is in the destination whatsoever, we want to remove it from the list because there's no point in checking if it should be deleted in the deletion process
+		else if(index >= 0)
+		{
+			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
+			files2[index] = EMPTY_ELEMENT;
+		}
 	}
 	
 	private void deleteHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] files1, String[] files2)
 	{
 		Node node;					//holder for the current Node
-		boolean inDest = false;	//whether or not a file exisits in destination
 		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
 		int comp;						//holder for compareTo methods
 		
 		//check to see if file exisits in origin
 		inOrigin = findInList(index, curr, files1);
-		/*itt = 0;
-		while(itt < files1.length)
-		{
-			if(FileCMD.getName(curr).equals(FileCMD.getName(files1[itt])))
-			{
-				inOrigin = true;
-				break;
-			}
-			itt++;
-		}*/
 		
 		//if read is enabled and the file is not in destination (no point in executing if it is there already)
 		if(localDelete && !inOrigin)
@@ -350,21 +340,11 @@ public class SynchModule
 	{
 		Node node;					//holder for the current Node
 		boolean inDest = false;	//whether or not a file exisits in destination
-		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
 		int comp;						//holder for compareTo methods
 		
 		//check to see if file exisits in destination
 		inDest = findInList(index, curr, dirs2);
-		/*while(itt < dirs2.length)
-		{
-			if(FileCMD.getName(curr).equals(FileCMD.getName(dirs2[itt])))
-			{
-				inDest = true;
-				break;
-			}
-			itt++;
-		}*/
 		
 		//if read enabled and directory is not in destination
 		if(localRead && !inDest)
@@ -393,23 +373,12 @@ public class SynchModule
 	private void deleteHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
 	{
 		Node node;					//holder for the current Node
-		boolean inDest = false;	//whether or not a file exisits in destination
 		boolean inOrigin = false;//whether or not a file exisits in origin
 		boolean success;			//whether or not an operation was successful
 		int comp;						//holder for compareTo methods
 		
 		//check to see if dir exisits in origin
 		inOrigin = findInList(index, curr, dirs1);
-		/*itt = 0;
-		while(itt < dirs1.length)
-		{
-			if(FileCMD.getName(curr).equals(FileCMD.getName(dirs1[itt])))
-			{
-				inOrigin = true;
-				break;
-			}
-			itt++;
-		}*/
 		
 		//if read is enabled and the dir is not in destination (no point in executing if it is there already)
 		if(localDelete && !inOrigin)
@@ -442,33 +411,87 @@ public class SynchModule
 		int rearIndex = index - 1;
 		int frontIndex = index + 1;
 		
-		if(index >= 0 && index < list.length && fileName.equals(FileCMD.getName(list[index])))
-			found = true;
+		fileName = FileCMD.getName(fileName);
 		
-		//make sure we're not out of bounds
-		if(rearIndex < 0 || rearIndex >= list.length)
-			rearIndex = 0;
-		if(frontIndex >= list.length || frontIndex < 0)
-			frontIndex = list.length-1;
-		
-		while(!found)
+		if(list.length > 0)
 		{
-			if(fileName.equals(FileCMD.getName(list[rearIndex])) || fileName.equals(FileCMD.getName(list[frontIndex])))
+			if(index >= 0 && index < list.length && fileName.equals(FileCMD.getName(list[index])))
 				found = true;
-			else
+			
+			//make sure we're not out of bounds
+			if(rearIndex < 0 || rearIndex >= list.length)
+				rearIndex = list.length/2;
+			if(frontIndex >= list.length || frontIndex < 0)
+				frontIndex = list.length/2;
+			
+			while(!found)
 			{
-				if(rearIndex == 0 && frontIndex == list.length-1)
-					break;
+				if(fileName.equals(FileCMD.getName(list[rearIndex])) || fileName.equals(FileCMD.getName(list[frontIndex])))
+					found = true;
 				else
 				{
-					if(rearIndex > 0)
-						rearIndex--;
-					if(frontIndex < list.length-1)
-						frontIndex++;
+					if(rearIndex == 0 && frontIndex == list.length-1)
+						break;
+					else
+					{
+						if(rearIndex > 0)
+							rearIndex--;
+						if(frontIndex < list.length-1)
+							frontIndex++;
+					}
 				}
 			}
 		}
 		
 		return found;
+	}
+	
+	/**
+	*Searches for mathcing file in an array--greatly improves speed when searching through massive lists
+	*@param index of occurance of file in first list
+	*@param name of file
+	*@param list to search through
+	*@return index if found, -1 if not found
+	*/
+	private static int findIndexInList(int index, String fileName, String[] list)
+	{
+		int rearIndex = index - 1;
+		int frontIndex = index + 1;
+		
+		fileName = FileCMD.getName(fileName);
+		
+		if(list.length > 0)
+		{
+			if(index >= 0 && index < list.length && fileName.equals(FileCMD.getName(list[index])))
+				return index;
+			
+			//make sure we're not out of bounds
+			if(rearIndex < 0 || rearIndex >= list.length)
+				rearIndex = list.length/2;
+			if(frontIndex >= list.length || frontIndex < 0)
+				frontIndex = list.length/2;
+			
+			while(true)
+			{
+				if(fileName.equals(FileCMD.getName(list[rearIndex])))
+					return rearIndex;
+				else if(fileName.equals(FileCMD.getName(list[frontIndex])))
+					return frontIndex;
+				else
+				{
+					if(rearIndex == 0 && frontIndex == list.length-1)
+						break;
+					else
+					{
+						if(rearIndex > 0)
+							rearIndex--;
+						if(frontIndex < list.length-1)
+							frontIndex++;
+					}
+				}
+			}
+		}
+		
+		return -1;
 	}
 }
