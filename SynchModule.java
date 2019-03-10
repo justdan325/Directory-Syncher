@@ -170,7 +170,7 @@ public class SynchModule
 			if(verbose)
 			{
 				Prin.clearCurrLine();
-				Prin.t("\tFile: " + i + "out of" + files1.length);
+				Prin.t("\tFile: " + (i+1) + " out of " + files1.length);
 			}
 
 			curr = files1[i];
@@ -191,7 +191,7 @@ public class SynchModule
 			if(verbose)
 			{
 				Prin.clearCurrLine();
-				Prin.t("\tFile: " + i + "out of" + files2.length);
+				Prin.t("\tFile: " + (i+1) + " out of " + files2.length);
 			}
 			
 			curr = files2[i];
@@ -216,7 +216,7 @@ public class SynchModule
 			if(verbose)
 			{
 				Prin.clearCurrLine();
-				Prin.t("\tDir: " + i + "out of" + dirs1.length);
+				Prin.t("\tDir: " + (i+1) + " out of " + dirs1.length);
 			}
 			
 			curr = dirs1[i];
@@ -236,7 +236,7 @@ public class SynchModule
 			if(verbose)
 			{
 				Prin.clearCurrLine();
-				Prin.t("\tDir: " + i + "out of" + dirs2.length);
+				Prin.t("\tDir: " + (i+1) + " out of " + dirs2.length);
 			}
 			
 			curr = dirs2[i];
@@ -308,20 +308,20 @@ public class SynchModule
 			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
 			
-			//compare hashes first to avoid unnescessary copies in bidirectional synchjobs
+			/*//compare hashes first to avoid unnescessary copies in bidirectional synchjobs
 			//if the hashes differ, compare the mod times
 			if(CompareMD5.compareHashes(curr, (destination + File.separatorChar +  FileCMD.getName(curr))) == false)
 				comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
 			else
-				comp = 0;
+				comp = 0;*/
 				
 			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
 			files2[index] = EMPTY_ELEMENT;
 			
-			//if there is an error
+			/*//if there is an error
 			if(comp == -1)
 				log += ("There was an error comparing the mod times of " + curr + " and " + (destination + File.separatorChar +  FileCMD.getName(curr)) + "\n");
-			else if(comp == 1)
+			else if(comp == 1)*/
 				log += ("Ignored \"" +  FileCMD.getName(curr) + "\" in " + origin + "\n");
 		}
 		//if the file is in the destination whatsoever, we want to remove it from the list because there's no point in checking if it should be deleted in the deletion process
