@@ -1,0 +1,14 @@
+Directory Syncher version 0.6
+Made and Maintaned by Dan Martineau.
+
+java -jar synch.jar -vl 111 /home/dan/Programs/DirSynch/testDir/ /home/dan/Programs/DirSynch/testDir/ 
+
+Beginning synch...
+
+Synching /home/dan/Programs/DirSynch/testDir --> /home/dan/Programs/DirSynch/testDir using "synchrc"
+Ignored "synchrc" in /home/dan/Programs/DirSynch/testDir
+
+Synching /home/dan/Programs/DirSynch/testDir --> /home/dan/Programs/DirSynch/testDir using "synchrc"
+Ignored "synchrc" in /home/dan/Programs/DirSynch/testDir
+
+Finished synch job!

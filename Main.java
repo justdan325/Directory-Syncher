@@ -14,9 +14,9 @@ public class Main
 	private static String log;
 	private static boolean verbose;
 	
-	private static final double version = 0.6;
-	private static final String PREAMBLE = "Directory Syncher version " + version + "\nMade and Maintaned by Dan Martineau.\n\n";
-	private static final String PROG_NAME = "java -jar synch.jar";	//what one would use to call this program via commandline
+	private static final double VERSION 	= 0.6;
+	private static final String PREAMBLE 	= "Directory Syncher Version " + VERSION + "\nMade and Maintaned by Dan Martineau.\n\n";
+	private static final String PROG_NAME 	= "java -jar synch.jar";	//what one would use to call this program via commandline
 	
 	public static void main(String[] args)
 	{
@@ -59,15 +59,15 @@ public class Main
 	
 	private static void customSynch(String[] args)
 	{
-		boolean read = true;
-		boolean modify = false;
-		boolean delete = false;
-		boolean unidirectional = false;
-		boolean saveLog = false;
-		String primrc = SynchModule.DEFAULT_SYNCHRC;
-		String secrc = SynchModule.DEFAULT_SYNCHRC;
-		String dir1 = null;
-		String dir2 = null;
+		boolean read 		= true;
+		boolean modify 		= false;
+		boolean delete 		= false;
+		boolean unidirectional 	= false;
+		boolean saveLog 	= false;
+		String primrc 		= SynchModule.DEFAULT_SYNCHRC;
+		String secrc 		= SynchModule.DEFAULT_SYNCHRC;
+		String dir1 		= null;
+		String dir2 		= null;
 		
 		//if first has dash, then it is the flags
 		if(args[0].contains("-"))
@@ -400,7 +400,7 @@ public class Main
 	
 	private static void displayOptions()
 	{
-		Prin.t("Directory Syncher version " + version + " Usage:\n\t" + PROG_NAME + " [primary directory] [secondary directory]\n\t");
+		Prin.t("Directory Syncher Version " + VERSION + " Usage:\n\t" + PROG_NAME + " [primary directory] [secondary directory]\n\t");
 		Prin.t(PROG_NAME + " [permissions] [primary directory] [secondary directory]\n\t");
 		Prin.t(PROG_NAME + " -[flags] [primary directory] [secondary directory]\n\t");
 		Prin.t(PROG_NAME + " -[flags] [permissions] [primary directory] [secondary directory]\n\t");

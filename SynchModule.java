@@ -13,17 +13,17 @@ public class SynchModule
 {
 	/*FIELDS*/
 	private boolean read;		//read (copy)  files in dir1 not in dir2 by default
-	private boolean modify;	//modify files in dir2 not in dir1 by default
-	private boolean delete;	//delete files in dir2 not in dir1 by default
+	private boolean modify;		//modify files in dir2 not in dir1 by default
+	private boolean delete;		//delete files in dir2 not in dir1 by default
 	private boolean verbose;	//true if program running in verbose mode
-	private Synchrc synchrc;//synchrc file object
-	private String log;			//log of synch
-	private String dir1;			//canonical path of dir1
-	private String dir2;			//canonical path of dir2
+	private Synchrc synchrc;	//synchrc file object
+	private String log;		//log of synch
+	private String dir1;		//canonical path of dir1
+	private String dir2;		//canonical path of dir2
 	
 	/*CONSTANTS*/
-	public static String DEFAULT_SYNCHRC = "synchrc";		//Name of default synchrc file
-	private static String EMPTY_ELEMENT = "?<>";				//Signifies an empty array element
+	public static String DEFAULT_SYNCHRC = "synchrc";	//Name of default synchrc file
+	private static String EMPTY_ELEMENT = "?<>";		//Signifies an empty array element
 	
 	/**
 	*Constructor for a default synch job
@@ -149,14 +149,14 @@ public class SynchModule
 	*/
 	private void synchJob(String origin, String destination)
 	{
-		String[] files1 = FileCMD.listFiles(origin);			//files in origin
+		String[] files1 = FileCMD.listFiles(origin);		//files in origin
 		String[] files2 = FileCMD.listFiles(destination);	//files in destination
-		String[] dirs1 = FileCMD.listDirs(origin);			//directories in origin
-		String[] dirs2 = FileCMD.listDirs(destination);	//directories in destination
+		String[] dirs1 = FileCMD.listDirs(origin);		//directories in origin
+		String[] dirs2 = FileCMD.listDirs(destination);		//directories in destination
 		
-		String curr = "";				//current file in question
-		Node node;					//holder for the current Node
-		boolean success;			//whether or not an operation was successful
+		String curr = "";					//current file in question
+		Node node;						//holder for the current Node
+		boolean success;					//whether or not an operation was successful
 		int comp;						//holder for compareTo methods
 		
 		if(verbose)
@@ -253,9 +253,9 @@ public class SynchModule
 	
 	private void readAndModHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] files1, String[] files2)
 	{
-		Node node;					//holder for the current Node
-		boolean success;			//whether or not an operation was successful
-		int comp;						//holder for compareTo methods
+		Node node;		//holder for the current Node
+		boolean success;	//whether or not an operation was successful
+		int comp;		//holder for compareTo methods
 		
 		//check to see if file exisits in destination
 		index = findIndexInList(index, curr, files2);
