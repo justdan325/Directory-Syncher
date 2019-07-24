@@ -307,22 +307,11 @@ public class SynchModule
 			//compare the mod times to see if file should be copied--assert parths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-			
-			/*//compare hashes first to avoid unnescessary copies in bidirectional synchjobs
-			//if the hashes differ, compare the mod times
-			if(CompareMD5.compareHashes(curr, (destination + File.separatorChar +  FileCMD.getName(curr))) == false)
-				comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
-			else
-				comp = 0;*/
 				
 			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
 			files2[index] = EMPTY_ELEMENT;
 			
-			/*//if there is an error
-			if(comp == -1)
-				log += ("There was an error comparing the mod times of " + curr + " and " + (destination + File.separatorChar +  FileCMD.getName(curr)) + "\n");
-			else if(comp == 1)*/
-				log += ("Ignored \"" +  FileCMD.getName(curr) + "\" in " + origin + "\n");
+			log += ("Ignored \"" +  FileCMD.getName(curr) + "\" in " + origin + "\n");
 		}
 		//if the file is in the destination whatsoever, we want to remove it from the list because there's no point in checking if it should be deleted in the deletion process
 		else if(index >= 0)
@@ -334,10 +323,10 @@ public class SynchModule
 	
 	private void deleteHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] files1, String[] files2)
 	{
-		Node node;					//holder for the current Node
-		boolean inOrigin = false;//whether or not a file exisits in origin
-		boolean success;			//whether or not an operation was successful
-		int comp;						//holder for compareTo methods
+		Node node;			//holder for the current Node
+		boolean inOrigin = false;	//whether or not a file exisits in origin
+		boolean success;		//whether or not an operation was successful
+		int comp;			//holder for compareTo methods
 		
 		//check to see if file exisits in origin
 		inOrigin = findInList(index, curr, files1);
@@ -365,10 +354,10 @@ public class SynchModule
 	
 	private void readAndModHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
 	{
-		Node node;					//holder for the current Node
-		boolean inDest = false;	//whether or not a file exisits in destination
-		boolean success;			//whether or not an operation was successful
-		int comp;						//holder for compareTo methods
+		Node node;			//holder for the current Node
+		boolean inDest = false;		//whether or not a file exisits in destination
+		boolean success;		//whether or not an operation was successful
+		int comp;			//holder for compareTo methods
 		
 		//check to see if file exisits in destination
 		inDest = findInList(index, curr, dirs2);
@@ -399,10 +388,10 @@ public class SynchModule
 	
 	private void deleteHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
 	{
-		Node node;					//holder for the current Node
-		boolean inOrigin = false;//whether or not a file exisits in origin
-		boolean success;			//whether or not an operation was successful
-		int comp;						//holder for compareTo methods
+		Node node;			//holder for the current Node
+		boolean inOrigin = false;	//whether or not a file exisits in origin
+		boolean success;		//whether or not an operation was successful
+		int comp;			//holder for compareTo methods
 		
 		//check to see if dir exisits in origin
 		inOrigin = findInList(index, curr, dirs1);
