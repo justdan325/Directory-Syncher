@@ -1,7 +1,0 @@
-Directory Syncher version 0.3
-Made and Maintaned by Dan Martineau.
-
-synch -lu /home/dan/Programming Projects/FileSynch/testDir /home/dan/Programming Projects/FileSynch/newDir/ 
-
-Beginning synch...
-Synching /home/dan/Programming Projects/FileSynch/testDir --> /home/dan/Programming Projects/FileSynch/newDir using "synchrc"
