@@ -11,7 +11,7 @@ public class UnitTest
 	{
 		//String[] list = {, , "/home/dan/Programming Projects/FileSynch/testDir/b", "/home/dan/Programming Projects/FileSynch/testDir/1.txt"};
 		
-		Prin.tln("" + compareHashes("/home/dan/Programming Projects/FileSynch/testDir/c", "/home/dan/Programming Projects/FileSynch/newDir/c"));
+		//Prin.tln("" + compareHashes("/home/dan/Programming Projects/FileSynch/testDir/c", "/home/dan/Programming Projects/FileSynch/n/c"));
 	}
 	
 	/**
@@ -79,7 +79,7 @@ public class UnitTest
 		return same;
 	}*/
 	
-	private static boolean compareHashes(String file1, String file2)
+	public static boolean compareHashes(String file1, String file2)
 	{
 		boolean same = false;
 		
@@ -96,7 +96,7 @@ public class UnitTest
 		return same;
 	}
 	
-	public static byte[] createChecksum(String filename) throws Exception 
+	private static byte[] createChecksum(String filename) throws Exception 
 	{
        InputStream fis =  new FileInputStream(filename);
 
@@ -118,7 +118,7 @@ public class UnitTest
 
    // see this How-to for a faster way to convert
    // a byte array to a HEX string
-   public static String getMD5Checksum(String filename) throws Exception 
+   private static String getMD5Checksum(String filename) throws Exception 
    {
        byte[] b = createChecksum(filename);
        String result = "";

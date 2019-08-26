@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 1.1
+*@version 1.2
 */
 
 import java.io.File;
@@ -432,6 +432,7 @@ public class Main
 			path = path.substring(0, path.length()-1);
 		
 		String fileName = "synchlog_" + (new Date(System.currentTimeMillis())).toString() + ".txt";
+		fileName = fileName.replace(':', '_');
 		String destination = path + File.separatorChar + "synchlogs" + File.separatorChar + fileName;
 		
 		if(!FileCMD.isDir(path + File.separatorChar + "synchlogs"))
