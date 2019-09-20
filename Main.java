@@ -39,7 +39,7 @@ public class Main
 				if(args[0].equals("--help"))
 					displayOptions();
 				else
-					Prin.tln("Invalid arguments! Use --help for list of options.");
+					Prin.err("Invalid arguments! Use --help for list of options.");
 				break;
 			case 2:
 				defaultSynch(args);
@@ -53,7 +53,7 @@ public class Main
 				customSynch(args);
 				break;
 			default:
-				Prin.tln("Invalid arguments! Use --help for list of options.");
+				Prin.err("Invalid arguments! Use --help for list of options.");
 		}
 	}
 	
@@ -88,7 +88,7 @@ public class Main
 						verbose = true;
 						break;
 					default:
-						Prin.tln("Invalid flag series: " + args[0] + "\nRun with --help for list of flags.");
+						Prin.err("Invalid flag series: " + args[0] + "\nRun with --help for list of flags.");
 						System.exit(-1);
 				}
 			}
@@ -102,7 +102,7 @@ public class Main
 					read = true;
 				else
 				{
-					Prin.tln("Invalid permissions entered: " + args[1]);
+					Prin.err("Invalid permissions entered: " + args[1]);
 					System.exit(-1);
 				}
 				
@@ -112,7 +112,7 @@ public class Main
 					modify = true;
 				else
 				{
-					Prin.tln("Invalid permissions entered: " + args[1]);
+					Prin.err("Invalid permissions entered: " + args[1]);
 					System.exit(-1);
 				}
 				
@@ -122,14 +122,14 @@ public class Main
 					delete = true;
 				else
 				{
-					Prin.tln("Invalid permissions entered: " + args[1]);
+					Prin.err("Invalid permissions entered: " + args[1]);
 					System.exit(-1);
 				}
 				
 				//check to see if next two args are dirs
 				if(!FileCMD.isDir(args[2]))
 				{
-					Prin.tln("Invalid primary directory: " + args[2]);
+					Prin.err("Invalid primary directory: " + args[2]);
 					System.exit(-1);
 				}
 				//test to see if secondary directory exists
@@ -146,7 +146,7 @@ public class Main
 					else
 					{
 						log += "Failed to create directory. Ending synch...\n";
-						Prin.tln("Could not create secondary directory.");
+						Prin.err("Could not create secondary directory.");
 						System.exit(-1);
 					}
 				}
@@ -159,7 +159,7 @@ public class Main
 				//check to see if next two args are dirs
 				if(!FileCMD.isDir(args[1]))
 				{
-					Prin.tln("Invalid primary directory: " + args[1]);
+					Prin.err("Invalid primary directory: " + args[1]);
 					System.exit(-1);
 				}
 				//test to see if secondary directory exists
@@ -176,7 +176,7 @@ public class Main
 					else
 					{
 						log += "Failed to create directory. Ending synch...\n";
-						Prin.tln("Could not create secondary directory.");
+						Prin.err("Could not create secondary directory.");
 						System.exit(-1);
 					}
 				}
@@ -194,7 +194,7 @@ public class Main
 				read = true;
 			else
 			{
-				Prin.tln("Invalid permissions entered: " + args[0]);
+				Prin.err("Invalid permissions entered: " + args[0]);
 				System.exit(-1);
 			}
 			
@@ -204,7 +204,7 @@ public class Main
 				modify = true;
 			else
 			{
-				Prin.tln("Invalid permissions entered: " + args[0]);
+				Prin.err("Invalid permissions entered: " + args[0]);
 				System.exit(-1);
 			}
 			
@@ -214,14 +214,14 @@ public class Main
 				delete = true;
 			else
 			{
-				Prin.tln("Invalid permissions entered: " + args[0]);
+				Prin.err("Invalid permissions entered: " + args[0]);
 				System.exit(-1);
 			}
 			
 			//check to see if next two args are dirs
 			if(!FileCMD.isDir(args[1]))
 			{
-				Prin.tln("Invalid primary directory: " + args[1]);
+				Prin.err("Invalid primary directory: " + args[1]);
 				System.exit(-1);
 			}
 			//test to see if secondary directory exists
@@ -238,7 +238,7 @@ public class Main
 				else
 				{
 					log += "Failed to create directory. Ending synch...\n";
-					Prin.tln("Could not create secondary directory.");
+					Prin.err("Could not create secondary directory.");
 					System.exit(-1);
 				}
 			}
@@ -251,7 +251,7 @@ public class Main
 		{
 			if(!FileCMD.isDir(args[0]))
 			{
-				Prin.tln("Invalid primary directory: " + args[0]);
+				Prin.err("Invalid primary directory: " + args[0]);
 				System.exit(-1);
 			}
 			//test to see if secondary directory exists
@@ -268,7 +268,7 @@ public class Main
 				else
 				{
 					log += "Failed to create directory. Ending synch...\n";
-					Prin.tln("Could not create secondary directory.");
+					Prin.err("Could not create secondary directory.");
 					System.exit(-1);
 				}
 			}
@@ -283,7 +283,7 @@ public class Main
 			//make sure file exisits
 			if(!FileCMD.existFile(args[args.length-1]))
 			{
-				Prin.tln("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.");
+				Prin.err("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.");
 				System.exit(-1);
 			}
 			else
@@ -294,7 +294,7 @@ public class Main
 			//make sure file exisits
 			if(!FileCMD.existFile(args[args.length-1]))
 			{
-				Prin.tln("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.");
+				Prin.err("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.");
 				System.exit(-1);
 			}
 			else
@@ -306,7 +306,7 @@ public class Main
 			//make sure file exisits
 			if(!FileCMD.existFile(args[args.length-3]))
 			{
-				Prin.tln("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.");
+				Prin.err("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.");
 				System.exit(-1);
 			}
 			else
@@ -317,7 +317,7 @@ public class Main
 			//make sure file exisits
 			if(!FileCMD.existFile(args[args.length-3]))
 			{
-				Prin.tln("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.");
+				Prin.err("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.");
 				System.exit(-1);
 			}
 			else
@@ -358,7 +358,7 @@ public class Main
 		//test to make sure primary exisits
 		if(!FileCMD.existFile(args[0]))
 		{
-			Prin.tln("Primary directory \"" + args[0] + "\" does not exist.");
+			Prin.err("Primary directory \"" + args[0] + "\" does not exist.");
 			System.exit(-1);
 		}
 		
@@ -376,7 +376,7 @@ public class Main
 			else
 			{
 				log += "Failed to create directory. Ending synch...\n";
-				Prin.tln("Could not create secondary directory.");
+				Prin.err("Could not create secondary directory.");
 				System.exit(-1);
 			}
 		}
