@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 1.3
+*@version 1.4
 */
 
 import java.io.File;
@@ -14,7 +14,7 @@ public class Main
 	private static String log;
 	private static boolean verbose;
 	
-	private static final double VERSION 	= 1.0;
+	private static final double VERSION 	= 1.01;
 	private static final String PREAMBLE 	= "Directory Syncher Version " + VERSION + "\nMade and Maintaned by Dan Martineau.\n\n";
 	private static final String PROG_NAME 	= "java -jar synch.jar";	//what one would use to call this program via commandline
 	
@@ -39,7 +39,7 @@ public class Main
 				if(args[0].equals("--help"))
 					displayOptions();
 				else
-					Prin.err("Invalid arguments! Use --help for list of options.");
+					Prin.err("Invalid arguments! Use --help for list of options.\n");
 				break;
 			case 2:
 				defaultSynch(args);
@@ -53,7 +53,7 @@ public class Main
 				customSynch(args);
 				break;
 			default:
-				Prin.err("Invalid arguments! Use --help for list of options.");
+				Prin.err("Invalid arguments! Use --help for list of options.\n");
 		}
 	}
 	
@@ -88,7 +88,7 @@ public class Main
 						verbose = true;
 						break;
 					default:
-						Prin.err("Invalid flag series: " + args[0] + "\nRun with --help for list of flags.");
+						Prin.err("Invalid flag series: " + args[0] + "\nRun with --help for list of flags.\n");
 						System.exit(-1);
 				}
 			}
@@ -102,7 +102,7 @@ public class Main
 					read = true;
 				else
 				{
-					Prin.err("Invalid permissions entered: " + args[1]);
+					Prin.err("Invalid permissions entered: " + args[1] + "\n");
 					System.exit(-1);
 				}
 				
@@ -112,7 +112,7 @@ public class Main
 					modify = true;
 				else
 				{
-					Prin.err("Invalid permissions entered: " + args[1]);
+					Prin.err("Invalid permissions entered: " + args[1] + "\n");
 					System.exit(-1);
 				}
 				
@@ -122,14 +122,14 @@ public class Main
 					delete = true;
 				else
 				{
-					Prin.err("Invalid permissions entered: " + args[1]);
+					Prin.err("Invalid permissions entered: " + args[1] + "\n");
 					System.exit(-1);
 				}
 				
 				//check to see if next two args are dirs
 				if(!FileCMD.isDir(args[2]))
 				{
-					Prin.err("Invalid primary directory: " + args[2]);
+					Prin.err("Invalid primary directory: " + args[2] + "\n");
 					System.exit(-1);
 				}
 				//test to see if secondary directory exists
@@ -146,7 +146,7 @@ public class Main
 					else
 					{
 						log += "Failed to create directory. Ending synch...\n";
-						Prin.err("Could not create secondary directory.");
+						Prin.err("Could not create secondary directory.\n");
 						System.exit(-1);
 					}
 				}
@@ -159,7 +159,7 @@ public class Main
 				//check to see if next two args are dirs
 				if(!FileCMD.isDir(args[1]))
 				{
-					Prin.err("Invalid primary directory: " + args[1]);
+					Prin.err("Invalid primary directory: " + args[1] + "\n");
 					System.exit(-1);
 				}
 				//test to see if secondary directory exists
@@ -176,7 +176,7 @@ public class Main
 					else
 					{
 						log += "Failed to create directory. Ending synch...\n";
-						Prin.err("Could not create secondary directory.");
+						Prin.err("Could not create secondary directory.\n");
 						System.exit(-1);
 					}
 				}
@@ -194,7 +194,7 @@ public class Main
 				read = true;
 			else
 			{
-				Prin.err("Invalid permissions entered: " + args[0]);
+				Prin.err("Invalid permissions entered: " + args[0] + "\n");
 				System.exit(-1);
 			}
 			
@@ -204,7 +204,7 @@ public class Main
 				modify = true;
 			else
 			{
-				Prin.err("Invalid permissions entered: " + args[0]);
+				Prin.err("Invalid permissions entered: " + args[0] + "\n");
 				System.exit(-1);
 			}
 			
@@ -214,14 +214,14 @@ public class Main
 				delete = true;
 			else
 			{
-				Prin.err("Invalid permissions entered: " + args[0]);
+				Prin.err("Invalid permissions entered: " + args[0] + "\n");
 				System.exit(-1);
 			}
 			
 			//check to see if next two args are dirs
 			if(!FileCMD.isDir(args[1]))
 			{
-				Prin.err("Invalid primary directory: " + args[1]);
+				Prin.err("Invalid primary directory: " + args[1] + "\n");
 				System.exit(-1);
 			}
 			//test to see if secondary directory exists
@@ -238,7 +238,7 @@ public class Main
 				else
 				{
 					log += "Failed to create directory. Ending synch...\n";
-					Prin.err("Could not create secondary directory.");
+					Prin.err("Could not create secondary directory.\n");
 					System.exit(-1);
 				}
 			}
@@ -251,7 +251,7 @@ public class Main
 		{
 			if(!FileCMD.isDir(args[0]))
 			{
-				Prin.err("Invalid primary directory: " + args[0]);
+				Prin.err("Invalid primary directory: " + args[0] + "\n");
 				System.exit(-1);
 			}
 			//test to see if secondary directory exists
@@ -268,7 +268,7 @@ public class Main
 				else
 				{
 					log += "Failed to create directory. Ending synch...\n";
-					Prin.err("Could not create secondary directory.");
+					Prin.err("Could not create secondary directory.\n");
 					System.exit(-1);
 				}
 			}
@@ -283,7 +283,7 @@ public class Main
 			//make sure file exisits
 			if(!FileCMD.existFile(args[args.length-1]))
 			{
-				Prin.err("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.");
+				Prin.err("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.\n");
 				System.exit(-1);
 			}
 			else
@@ -294,7 +294,7 @@ public class Main
 			//make sure file exisits
 			if(!FileCMD.existFile(args[args.length-1]))
 			{
-				Prin.err("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.");
+				Prin.err("Custom synchrc file \"" + args[args.length-1] + "\" does not exist.\n");
 				System.exit(-1);
 			}
 			else
@@ -306,7 +306,7 @@ public class Main
 			//make sure file exisits
 			if(!FileCMD.existFile(args[args.length-3]))
 			{
-				Prin.err("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.");
+				Prin.err("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.\n");
 				System.exit(-1);
 			}
 			else
@@ -317,7 +317,7 @@ public class Main
 			//make sure file exisits
 			if(!FileCMD.existFile(args[args.length-3]))
 			{
-				Prin.err("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.");
+				Prin.err("Custom synchrc file \"" + args[args.length-3] + "\" does not exist.\n");
 				System.exit(-1);
 			}
 			else
@@ -358,7 +358,7 @@ public class Main
 		//test to make sure primary exisits
 		if(!FileCMD.existFile(args[0]))
 		{
-			Prin.err("Primary directory \"" + args[0] + "\" does not exist.");
+			Prin.err("Primary directory \"" + args[0] + "\" does not exist.\n");
 			System.exit(-1);
 		}
 		
@@ -376,7 +376,7 @@ public class Main
 			else
 			{
 				log += "Failed to create directory. Ending synch...\n";
-				Prin.err("Could not create secondary directory.");
+				Prin.err("Could not create secondary directory.\n");
 				System.exit(-1);
 			}
 		}
@@ -400,11 +400,13 @@ public class Main
 	
 	private static void displayOptions()
 	{
-		Prin.t("Directory Syncher Version " + VERSION + " Usage:\n\t" + PROG_NAME + " [primary directory] [secondary directory]\n\t");
-		Prin.t(PROG_NAME + " [permissions] [primary directory] [secondary directory]\n\t");
-		Prin.t(PROG_NAME + " -[flags] [primary directory] [secondary directory]\n\t");
+		Prin.t("Directory Syncher Version " + VERSION + "\n\n\t");
+		Prin.t("Warning: The use of relative path names may result in undefined behavior.\n\t");
+		Prin.t("\n\tUsage:\n\t\t" + PROG_NAME + " [primary directory] [secondary directory]\n\t\t");
+		Prin.t(PROG_NAME + " [permissions] [primary directory] [secondary directory]\n\t\t");
+		Prin.t(PROG_NAME + " -[flags] [primary directory] [secondary directory]\n\t\t");
 		Prin.t(PROG_NAME + " -[flags] [permissions] [primary directory] [secondary directory]\n\t");
-		Prin.t("\n\tPermissions:\n\t\t000 --> [<Read><Modify><Delete>] where 0 = false and 1 = true");
+		Prin.t("Permissions:\n\t\t000 --> [<Read><Modify><Delete>] where 0 = false and 1 = true");
 		Prin.t("\n\tFlags: \n\t\t-u : unidirectional (from primary to secondary)\n\t\t");
 		Prin.t("-l : save log file\n\t\t-v : verbose (prints log to std out)\n\t");
 		Prin.t("End Flags:\n\t\t--rcPrim [custom synchrc file for primary directory]\n\t\t");
