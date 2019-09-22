@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 1.2
+*@version 1.3
 */
 
 import java.io.*;
@@ -254,11 +254,16 @@ public class SynchModule
 	private void readAndModHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] files1, String[] files2)
 	{
 		Node node;		//holder for the current Node
+		String destFile;	//holder for destination file canonicalPath with name
 		boolean success;	//whether or not an operation was successful
 		int comp;		//holder for compareTo methods
+		long time;		//holder for current timestamp
 		
 		//check to see if file exisits in destination
 		index = findIndexInList(index, curr, files2);
+		
+		//set destFile
+		destFile = (destination + File.separatorChar +  FileCMD.getName(curr));
 		
 		//if read is enabled and the file is not in destination (no point in executing if it is there already)
 		if(localRead && index == -1)
@@ -266,7 +271,7 @@ public class SynchModule
 			//copy the file to where it belongs--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + origin + File.separatorChar + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-			success = FileCMD.copyFile(curr, (destination + File.separatorChar + FileCMD.getName(curr)), false);
+			success = FileCMD.copyFile(curr, destFile, false);
 			
 			//write to log whether or not operation was successful
 			if(success)
@@ -281,12 +286,19 @@ public class SynchModule
 			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
 			
-			//compare hashes first to avoid unnescessary copies in bidirectional synchjobs
-			//if the hashes differ, compare the mod times
-			if(CompareMD5.compareHashes(curr, (destination + File.separatorChar +  FileCMD.getName(curr))) == false)
-				comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
-			else
+			//compare the mod times to see if one is newer
+			comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
+			//if one is newer than the other, see if the two files are indeed different using their hashes. 
+			if(comp > 0 && CompareMD5.compareHashes(curr, destFile) == true)
+			{
+				//If they are indeed the same, set comp to 0.
 				comp = 0;
+				
+				//Set the mod times of the files to the same time to make future runs more effecient.
+				time = System.currentTimeMillis();
+				FileCMD.touch(curr, time);
+				FileCMD.touch(destFile, time);
+			}
 				
 			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
 			files2[index] = EMPTY_ELEMENT;
@@ -294,12 +306,12 @@ public class SynchModule
 			//if curr is newer, overwrite the file in destination
 			if(comp == 1)
 			{
-				FileCMD.copyFile(curr, (destination + File.separatorChar +  FileCMD.getName(curr)), true);
+				FileCMD.copyFile(curr, destFile, true);
 				log += ("Replaced \"" + FileCMD.getName(curr) + "\" in " +  destination + " with \"" + FileCMD.getName(curr) + "\" in " + origin + "\n");
 			}
 			//if there is an error
 			else if(comp == -1)
-				log += ("There was an error comparing the mod times of " + curr + " and " + (destination + File.separatorChar +  FileCMD.getName(curr)) + "\n");
+				log += ("There was an error comparing the mod times of " + curr + " and " + destFile + "\n");
 		}
 		//here we're simply letting the log know that files are being ignored
 		else if(!localModify && index >= 0)
@@ -311,7 +323,7 @@ public class SynchModule
 			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
 			files2[index] = EMPTY_ELEMENT;
 			
-			log += ("Ignored \"" +  FileCMD.getName(curr) + "\" in " + origin + "\n");
+			log += ("Ignored checking \"" +  FileCMD.getName(curr) + "\" in " + origin + " for changes.\n");
 		}
 		//if the file is in the destination whatsoever, we want to remove it from the list because there's no point in checking if it should be deleted in the deletion process
 		else if(index >= 0)
