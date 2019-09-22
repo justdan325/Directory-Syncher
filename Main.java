@@ -14,7 +14,7 @@ public class Main
 	private static String log;
 	private static boolean verbose;
 	
-	private static final double VERSION 	= 1.01;
+	private static final double VERSION 	= 1.02;
 	private static final String PREAMBLE 	= "Directory Syncher Version " + VERSION + "\nMade and Maintaned by Dan Martineau.\n\n";
 	private static final String PROG_NAME 	= "java -jar synch.jar";	//what one would use to call this program via commandline
 	
