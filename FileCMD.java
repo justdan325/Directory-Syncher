@@ -8,7 +8,7 @@ import java.util.ArrayList;
 *This is a class that abstracts file io to suit my needs
 *
 *@author Dan Martineau
-*@version 1.6
+*@version 1.7
 */
 
 public class FileCMD
@@ -508,5 +508,17 @@ public class FileCMD
 		name = file.getName();
 		
 		return name;
+	}
+	
+	/**
+	Returns the size of a file in bytes.
+	@param file path
+	@return long size
+	*/
+	public static long getSize(String fileName)
+	{
+		File file = new File(fileName);
+		
+		return file.length();
 	}
 }
