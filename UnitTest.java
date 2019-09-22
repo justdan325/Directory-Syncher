@@ -12,6 +12,7 @@ public class UnitTest
 		//String[] list = {, , "/home/dan/Programming Projects/FileSynch/testDir/b", "/home/dan/Programming Projects/FileSynch/testDir/1.txt"};
 		
 		//Prin.tln("" + compareHashes("/home/dan/Programming Projects/FileSynch/testDir/c", "/home/dan/Programming Projects/FileSynch/n/c"));
+		FileCMD.touch("/home/dan/Programming Projects/FileSynch/LICENSE");
 	}
 	
 	/**

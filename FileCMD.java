@@ -3,12 +3,13 @@ import java.io.*;
 import java.nio.file.*;
 import java.nio.file.attribute.FileTime;
 import java.util.ArrayList;
+import java.sql.Time;
 
 /**
 *This is a class that abstracts file io to suit my needs
 *
 *@author Dan Martineau
-*@version 1.7
+*@version 1.8
 */
 
 public class FileCMD
@@ -511,14 +512,62 @@ public class FileCMD
 	}
 	
 	/**
-	Returns the size of a file in bytes.
-	@param file path
-	@return long size
+	*Returns the size of a file in bytes.
+	*@param file path
+	*@return long size
 	*/
 	public static long getSize(String fileName)
 	{
 		File file = new File(fileName);
 		
 		return file.length();
+	}
+	
+	/**
+	*Set a file's modification date to given timestamp
+	*@param file path
+	*@param timestamp
+	*/
+	public static void touch(String fileName, long timestamp)
+	{
+		File file = new File(fileName);
+		String errMess = null;
+		
+		try
+		{
+			if (!file.exists())
+				new FileOutputStream(file).close();
+			file.setLastModified(timestamp);
+		}
+		catch (IOException e)
+		{
+			errMess = "IOException in touch method where fileName is: " + fileName + "\n" + Prin.getStackTrace(e);
+		}
+		
+		assert errMess == null : errMess;
+	}
+	
+	/**
+	*OVERLOAD: Set a file's modification date to current timestamp
+	*@param file path
+	*/
+	public static void touch(String fileName)
+	{
+		File file = new File(fileName);
+		String errMess = null;
+		long timestamp = System.currentTimeMillis();
+		
+		try
+		{
+			if (!file.exists())
+				new FileOutputStream(file).close();
+			file.setLastModified(timestamp);
+		}
+		catch (IOException e)
+		{
+			errMess = "IOException in touch method where fileName is: " + fileName + "\n" + Prin.getStackTrace(e);
+		}
+		
+		assert errMess == null : errMess;
 	}
 }
