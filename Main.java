@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 1.4
+*@version 1.5
 */
 
 import java.io.File;
@@ -14,8 +14,8 @@ public class Main
 	private static String log;
 	private static boolean verbose;
 	
-	private static final double VERSION 	= 1.02;
-	private static final String PREAMBLE 	= "Directory Syncher Version " + VERSION + "\nMade and Maintaned by Dan Martineau.\n\n";
+	private static final double VERSION 	= 1.03;
+	private static final String PREAMBLE 	= "Directory Syncher Version " + VERSION + "\nMade and maintaned by Dan Martineau.\n\n";
 	private static final String PROG_NAME 	= "java -jar synch.jar";	//what one would use to call this program via commandline
 	
 	public static void main(String[] args)
@@ -408,15 +408,16 @@ public class Main
 		Prin.t(PROG_NAME + " -[flags] [permissions] [primary directory] [secondary directory]\n\t");
 		Prin.t("Permissions:\n\t\t000 --> [<Read><Modify><Delete>] where 0 = false and 1 = true");
 		Prin.t("\n\tFlags: \n\t\t-u : unidirectional (from primary to secondary)\n\t\t");
-		Prin.t("-l : save log file\n\t\t-v : verbose (prints log to std out)\n\t");
+		Prin.t("-l : save log file\n\t\t-v : verbose (prints log to standard out)\n\t");
 		Prin.t("End Flags:\n\t\t--rcPrim [custom synchrc file for primary directory]\n\t\t");
 		Prin.t("--rcSec [custom synchrc file for secondary directory]\n");
-		Prin.tln("Note: The default permissions are \"100\" unless specified.");
+		Prin.tln("\nNote: The default permissions are \"100.\"");
 	}
 	
 	private static void checkSynchrc(String path)
 	{
-		final String DEFAULT_RC_CONT = "#This is your synchrc file\n\n#This line prevents your synchrc files from overwriting eachother across directories.\n000 " + FileCMD.getName(path) + ",synchrc";
+		final String PARENT_DIR = FileCMD.getName(path);
+		final String DEFAULT_RC_CONT = "#This is your synchrc file\n\n#This line prevents your synchrc files from overwriting eachother across directories.\n000 " + PARENT_DIR + ",synchrc\n\n#The following two lines are essential when running a job on the parent directory of a drive in Windows.\n000 " + PARENT_DIR + ",System Volume Information\n000 " + PARENT_DIR + ",$RECYCLE.BIN";
 		
 		if(path.charAt(path.length()-1) == File.separatorChar)
 			path += SynchModule.DEFAULT_SYNCHRC;
