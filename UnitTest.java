@@ -12,7 +12,7 @@ public class UnitTest
 		//String[] list = {, , "/home/dan/Programming Projects/FileSynch/testDir/b", "/home/dan/Programming Projects/FileSynch/testDir/1.txt"};
 		
 		//Prin.tln("" + compareHashes("/home/dan/Programming Projects/FileSynch/testDir/c", "/home/dan/Programming Projects/FileSynch/n/c"));
-		FileCMD.touch("/home/dan/Programming Projects/FileSynch/LICENSE");
+		FileCMD.writeFile(("#This is your synchrc file\n\n#This line prevents your synchrc files from overwriting eachother across directories.\n000 " + FileCMD.getName("/home/dan/Programming Projects/FileSynch/") + ",synchrc\n\n#The following two lines are essential when running a job on the parent directory of a drive in Windows.\n000 " + FileCMD.getName("/home/dan/Programming Projects/FileSynch/") + ",System Volume Information\n000 " + FileCMD.getName("/home/dan/Programming Projects/FileSynch/") + ",$RECYCLE.BIN"), "/home/dan/Programming Projects/FileSynch/testrc.txt");
 	}
 	
 	/**
