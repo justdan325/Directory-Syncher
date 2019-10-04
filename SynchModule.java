@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 1.3
+*@version 1.4
 */
 
 import java.io.*;
@@ -114,7 +114,7 @@ public class SynchModule
 			filePath = dir1 + File.separatorChar + name;
 		
 		//assert file exisits
-		assert FileCMD.existFile(filePath) : "Synchrc file does not exist! Should be handled outside of SynchModule.";
+		assert FileCMD.existFile(filePath) : "Synchrc file: " + filePath + " does not exist! Should be handled outside of SynchModule.";
 		
 		//instantiate synchrc
 		synchrc = new Synchrc(filePath);
@@ -323,7 +323,7 @@ public class SynchModule
 			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
 			files2[index] = EMPTY_ELEMENT;
 			
-			log += ("Ignored checking \"" +  FileCMD.getName(curr) + "\" in " + origin + " for changes.\n");
+			//log += ("Ignored checking \"" +  FileCMD.getName(curr) + "\" in " + origin + " for changes.\n");
 		}
 		//if the file is in the destination whatsoever, we want to remove it from the list because there's no point in checking if it should be deleted in the deletion process
 		else if(index >= 0)
