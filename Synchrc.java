@@ -2,7 +2,7 @@
 *Class represents a synchrc file
 *
 *@author Dan Martineau
-*@version 1.1
+*@version 1.2
 */
 
 import java.io.File;
