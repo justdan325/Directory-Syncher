@@ -24,8 +24,9 @@ public class Synchrc
 	/**
 	*Constructor
 	*@param path to synchrc file
+	*@param path to parent directory
 	*/
-	public Synchrc(String synchrcPath)
+	public Synchrc(String synchrcPath, String parentDir)
 	{
 		//assert that the file is valid
 		assert FileCMD.existFile(synchrcPath) : "File " + synchrcPath + " is not valid! This should be handeled outside of Synchrc.";
@@ -33,7 +34,7 @@ public class Synchrc
 		this.synchrcPath = synchrcPath;	//add path
 		root = null;
 		
-		determinePathToUpp();
+		determinePathToUpp(parentDir);
 		decodeFile();
 	}
 	
@@ -46,28 +47,31 @@ public class Synchrc
 	{
 		Node node = null;
 		
-		if(nodePath.equals(root.getPath()))
-			node = root;
-		else
-			node = root.getNode(nodePath);
+		if(root != null)
+		{
+			if(nodePath.equals(root.getPath()))
+				node = root;
+			else
+				node = root.getNode(nodePath);
+		}
 		
 		return node;
 	}
 	
 	/**
 	*Sets pathToUpp
+	*@param parent directory path
 	*/
-	private void determinePathToUpp()
+	private void determinePathToUpp(String parentDir)
 	{
 		int count = 0;
 		String hold = "";
 		
-		//set pathToUpp equal to synchrcPath minus the file and its containing directory
-		hold = FileCMD.getName(synchrcPath);
-		pathToUpp = synchrcPath.substring(0, synchrcPath.length()-hold.length());
-		hold = FileCMD.getName(pathToUpp);
-		hold = pathToUpp.substring(0, pathToUpp.length()-(hold.length()+1));
-		pathToUpp = hold;
+		//set pathToUpp equal to parentDir minus the directory itself
+		hold = FileCMD.getName(parentDir);
+		pathToUpp = parentDir.substring(0, parentDir.length()-hold.length());
+		
+		Prin.tln(pathToUpp);
 		
 		//assert that the path exists
 		assert FileCMD.existFile(pathToUpp) : pathToUpp + " does not exist! Prob a formatting error. See determinePathToUpp()";

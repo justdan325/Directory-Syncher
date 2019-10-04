@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 1.4
+*@version 1.5
 */
 
 import java.io.*;
@@ -108,16 +108,16 @@ public class SynchModule
 		String filePath;
 		
 		//parse name to synchrc file
-		if(name.charAt(name.length()-1) == File.separatorChar)
-			filePath = dir1 + name;
-		else
+		if(name.equals(DEFAULT_SYNCHRC))
 			filePath = dir1 + File.separatorChar + name;
+		else
+			filePath = name;
 		
 		//assert file exisits
 		assert FileCMD.existFile(filePath) : "Synchrc file: " + filePath + " does not exist! Should be handled outside of SynchModule.";
 		
 		//instantiate synchrc
-		synchrc = new Synchrc(filePath);
+		synchrc = new Synchrc(filePath, dir1);
 		
 		log += ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
 		
