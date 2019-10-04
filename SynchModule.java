@@ -343,7 +343,7 @@ public class SynchModule
 		//check to see if file exisits in origin
 		inOrigin = findInList(index, curr, files1);
 		
-		//if read is enabled and the file is not in destination (no point in executing if it is there already)
+		//if delete is enabled and the file is not in destination (no point in executing if it is there already)
 		if(localDelete && !inOrigin)
 		{
 			//attempt to delete the file--assert the paths are valid first
@@ -357,7 +357,7 @@ public class SynchModule
 				log += ("Failed to delete \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
 		}
 		//else ignore file
-		else if(!(delete || inOrigin))
+		else if(!(localDelete || inOrigin))
 		{
 			//write to log
 			log += ("Skipped the deletion of \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
