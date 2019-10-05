@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 1.6
+*@version 1.7
 */
 
 import java.util.regex.*;
@@ -29,7 +29,7 @@ public class Main
 	private static String REGEX_FLAG      = "[-]{1}[vul]{1,3}";
 	private static String REGEX_CUSTRC = "[-]{2}[rcPrimSe]{5,6}";
 	
-	private static final double VERSION 	= 1.04;
+	private static final double VERSION 	= 1.1;
 	private static final String PREAMBLE 	= "Directory Syncher Version " + VERSION + "\nMade and maintaned by Dan Martineau.\n\n";
 	private static final String PROG_NAME 	= "java -jar synch.jar";	//what one would use to call this program via commandline
 	
