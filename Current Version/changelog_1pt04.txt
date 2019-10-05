@@ -1,4 +1,4 @@
-Change Log--Directory Syncher version 1.04
+﻿Change Log--Directory Syncher version 1.04
 
 -Fixed critical error that prevented custom synchrc files from being read unless they were within primary or secondary directory.
 -Complete Refactor of Main class.
@@ -6,4 +6,4 @@ Change Log--Directory Syncher version 1.04
 	-Can now read --rcPrim and --rcSec flags at any position.
 	-The commandline argument parsing process is now more maintainable and expandable.
 -Fixed minor bug that would not print the deletion skip message in the log if the delete permission was only set for given file in synchrc file.
--Better exception handeling if synchrc has a bad line or is corrupted.
+-Better exception handling if synchrc has a bad line or is corrupted.
