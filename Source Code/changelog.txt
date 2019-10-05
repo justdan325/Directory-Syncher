@@ -1,0 +1,6 @@
+﻿Change Log--Directory Syncher version 1.04
+
+-BUGFIX: New excpetion handling for bad synchrc files now prints error message to std error.
+
+-Progam will now convert given path names to canonical path names.
+	-Removed warning about the use of relative path names.
