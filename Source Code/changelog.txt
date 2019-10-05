@@ -1,4 +1,4 @@
-﻿Change Log--Directory Syncher version 1.04
+﻿Change Log--Directory Syncher version 1.1
 
 -BUGFIX: New excpetion handling for bad synchrc files now prints error message to std error.
 
