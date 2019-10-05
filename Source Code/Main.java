@@ -196,8 +196,8 @@ public class Main
 		}
 		catch(Exception e)
 		{
-			//Prin.err("\n" + e.toString() + "\n");
-			//error();
+			Prin.err("\n" + e.toString() + "\n");
+			error();
 		}
 		
 		log += "\nFinished synch job!";
@@ -257,8 +257,8 @@ public class Main
 			}
 		}
 		
-		dir1 = path1;
-		dir2 = path2;
+		dir1 = FileCMD.getCanonPath(path1);
+		dir2 = FileCMD.getCanonPath(path2);
 	}
 	
 	private static void decodeFlags(String flags)
@@ -301,10 +301,10 @@ public class Main
 		switch(str1)
 		{
 			case "--rcPrim":
-				rcPrim = str2;
+				rcPrim = FileCMD.getCanonPath(str2);
 				break;
 			case "--rcSec":
-				rcSec = str2;
+				rcSec = FileCMD.getCanonPath(str2);
 				break;
 			default:
 				Prin.err("Invalid flag: " + str1 + "\n");
