@@ -156,15 +156,20 @@ public class Node
 		
 		status = name.compareTo(toAdd.getName());
 		
+		//deal with a duplicate Node
+		if(status == 0 && path.equals(toAdd.getPath()))
+		{
+			assert status != 0: "Duplicate Node inserted: " + toAdd.getPath() + " " + toAdd.getName();
+		}
 		//if toAdd is after this node or equal to it
-		if(status <= 0)
+		else if(status < 0)
 		{
 			if(right == null)
 				right = toAdd;
 			else
 				right.addNode(toAdd);
 		}
-		else
+		else if(status > 0)
 		{
 			if(left == null)
 				left = toAdd;
