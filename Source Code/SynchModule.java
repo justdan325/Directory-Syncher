@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 1.5
+*@version 1.6
 */
 
 import java.io.*;
@@ -291,13 +291,22 @@ public class SynchModule
 			//if one is newer than the other, see if the two files are indeed different using their hashes. 
 			if(comp > 0 && CompareMD5.compareHashes(curr, destFile) == true)
 			{
-				//If they are indeed the same, set comp to 0.
-				comp = 0;
+				assert comp == 1 || comp == 2 : "comp in readAndModHelperFile does not equal 1 or 2.";
+				
+				time = 0;
 				
 				//Set the mod times of the files to the same time to make future runs more effecient.
-				time = System.currentTimeMillis();
+				//specifically the oldest of the two mod times so that they won't constantly be updated when synching to multiple directories
+				if(comp == 1)
+					time = FileCMD.getFileTime(destFile).toMillis();
+				else if(comp == 2)
+					time = FileCMD.getFileTime(curr).toMillis();
+				
+				
 				FileCMD.touch(curr, time);
 				FileCMD.touch(destFile, time);
+				
+				comp = 0;
 			}
 				
 			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient

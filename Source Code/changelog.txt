@@ -4,3 +4,5 @@
 
 -Progam will now convert given path names to canonical path names.
 	-Removed warning about the use of relative path names.
+-Program will now use the older of two mod times when two identical files have diffrent mod stamps.
+
