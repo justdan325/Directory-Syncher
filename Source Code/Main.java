@@ -347,8 +347,7 @@ public class Main
 	
 	private static void displayOptions()
 	{
-		Prin.t("Directory Syncher Version " + VERSION + "\n\n\t");
-		Prin.t("Warning: The use of relative path names may result in undefined behavior.\n\t");
+		Prin.t("Directory Syncher Version " + VERSION + "\n\t");
 		Prin.t("\n\tUsage:\n\t\t" + PROG_NAME + " [primary directory] [secondary directory]\n\t\t");
 		Prin.t(PROG_NAME + " [permissions] [primary directory] [secondary directory]\n\t\t");
 		Prin.t(PROG_NAME + " -[flags] [primary directory] [secondary directory]\n\t\t");
