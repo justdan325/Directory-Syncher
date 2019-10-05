@@ -473,7 +473,7 @@ public class FileCMD
 	}
 	
 	/**
-	*Returnhs the path of a file
+	*Returns the path of a file
 	*@param file name
 	*@return String canonical path of the file/null if exception occurs
 	*/
@@ -492,6 +492,26 @@ public class FileCMD
 		//remove second directory name if directory
 		if(path != null && isDir(path))
 			path = path.substring(0, (path.length() - inputFile.length()));
+		
+		return path;
+	}
+	
+	/**
+	*Returns the canonical path of a given path
+	*@param relative path name
+	*@return canonical path
+	*/
+	public static String getCanonPath(String inputFile)
+	{
+		File file = new File(inputFile);
+		String path = null;
+		String errMess = null;
+		
+		try{path = file.getCanonicalPath();}
+		catch(SecurityException e){errMess = ("There was a security exception when atempting to read the file path of : " + inputFile + "\n" + Prin.getStackTrace(e));}
+		catch(IOException f){errMess = ("There was an IOException when atempting to read the file path of : " + inputFile + "\n" + Prin.getStackTrace(f));}
+
+		assert errMess == null : errMess;
 		
 		return path;
 	}
