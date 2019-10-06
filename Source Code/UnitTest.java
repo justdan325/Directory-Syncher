@@ -5,21 +5,41 @@ public class UnitTest
 {
 	public static void main(String[] args)
 	{
-		Prin.tln("" + match(args[0], args[1]));
-		
+		addWildcardMatches("/home/dan/Programming Projects/FileSynch/**.java", true, true, true);
 	}
 	
 	//WILL HAVE TO BE CALLED EXCLUSIVLEY IN CONSTRUCTOR OF NODE
-	public static void addWildcardMatches(String wild)
+	public static void addWildcardMatches(String wild, boolean read, boolean modify, boolean delete)
 	{
 		String rootPath = wild.substring(0, wild.indexOf("*"));
-		boolean recursive = wild.charAt(wild.indexOf("*")+1) == '*';
+		boolean recursive = false;
+		String[] filesAndDirs = FileCMD.listAll(rootPath);
+		String[] subDirs;
+		
+		if(wild.length() > wild.indexOf("*")+1)
+			recursive = wild.charAt(wild.indexOf("*")+1) == '*';
 		
 		//get all files and subdirs in rootPath
 		//run them through match
 		//if they match, make them new Nodes and add them
+		for(int i = 0; i < filesAndDirs.length; i++)
+		{
+			if(match(wild, filesAndDirs[i]))
+				Prin.tln("Add: " + filesAndDirs[i]); //addNode(new Node(filesAndDirs[i], read, modify, delete);
+		}
+	
 		//if recursive, search through all subdirectories
-		
+		if(recursive)
+		{
+			subDirs = FileCMD.listDirs(rootPath);
+			Prin.tln(subDirs.length + "");
+			
+			for(int i = 0; i < subDirs.length; i++)
+			{
+				//HERE YOU HAVE TO MODIFY WILD 
+				//addWildcardMatches(wild, read, modify, delete);
+			}
+		}
 	}
 	
 	public static boolean match(String wild, String path)
@@ -79,8 +99,6 @@ public class UnitTest
 						match = true;
 					else
 						match = false;
-					
-					Prin.tln("" + match);
 				}
 				else
 				{
