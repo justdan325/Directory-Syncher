@@ -3,7 +3,7 @@
 *Nodes should form a binary search tree
 *
 *@author Dan Martineau
-*@version 2.0
+*@version 2.1
 */
 
 public class Node
