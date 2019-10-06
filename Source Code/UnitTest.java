@@ -81,7 +81,12 @@ public class UnitTest
 		
 		if(wild.contains("*"))
 		{
-			wild.replace("**", "*");
+			while(wild.contains("**"))
+			{
+				index = wild.indexOf("**");
+				wild = wild.substring(0,index+1) + wild.substring(index+2);
+			}
+			index = -1;
 			
 			//find locations of all wild cards
 			while(index < wild.length()-1)
@@ -120,7 +125,7 @@ public class UnitTest
 				curr = prev + pieces.get(i).length();
 				
 				match = false;
-				
+
 				while(curr <= path.length() && !match)
 				{
 					if(curr == path.length() || (i == pieces.size()-1 && wild.charAt(wild.length()-1) != '*'))
