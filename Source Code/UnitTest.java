@@ -5,17 +5,18 @@ public class UnitTest
 {
 	public static void main(String[] args)
 	{
-		addWildcardMatches("/home/dan/Programming Projects/FileSynch/**.java", true, true, true);
+		addWildcardMatches("/home/dan/ProgramingProjects/FileSynch/**", true, true, true);
 	}
 	
 	//WILL HAVE TO BE CALLED EXCLUSIVLEY IN CONSTRUCTOR OF NODE
 	public static void addWildcardMatches(String wild, boolean read, boolean modify, boolean delete)
 	{
 		String rootPath = wild.substring(0, wild.indexOf("*"));
+		String restOfWild = wild.substring(rootPath.length());
 		boolean recursive = false;
 		String[] filesAndDirs = FileCMD.listAll(rootPath);
 		String[] subDirs;
-		
+
 		if(wild.length() > wild.indexOf("*")+1)
 			recursive = wild.charAt(wild.indexOf("*")+1) == '*';
 		
@@ -32,12 +33,12 @@ public class UnitTest
 		if(recursive)
 		{
 			subDirs = FileCMD.listDirs(rootPath);
-			Prin.tln(subDirs.length + "");
 			
 			for(int i = 0; i < subDirs.length; i++)
 			{
 				//HERE YOU HAVE TO MODIFY WILD 
-				//addWildcardMatches(wild, read, modify, delete);
+				wild = subDirs[i] + restOfWild;
+				addWildcardMatches(wild, read, modify, delete);
 			}
 		}
 	}
