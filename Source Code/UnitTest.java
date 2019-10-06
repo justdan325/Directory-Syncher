@@ -9,6 +9,19 @@ public class UnitTest
 		
 	}
 	
+	//WILL HAVE TO BE CALLED EXCLUSIVLEY IN CONSTRUCTOR OF NODE
+	public static void addWildcardMatches(String wild)
+	{
+		String rootPath = wild.substring(0, wild.indexOf("*"));
+		boolean recursive = wild.charAt(wild.indexOf("*")+1) == '*';
+		
+		//get all files and subdirs in rootPath
+		//run them through match
+		//if they match, make them new Nodes and add them
+		//if recursive, search through all subdirectories
+		
+	}
+	
 	public static boolean match(String wild, String path)
 	{
 		assert wild.contains("*") : "\"wild\" passed into match() has no wild cards. This should be handeled prior to calling match().";
@@ -54,7 +67,6 @@ public class UnitTest
 		curr = 0;
 		for(int i = 0; i < pieces.size(); i++)
 		{
-			Prin.tln("Itteration: " + i);
 			prev = curr;
 			curr = prev + pieces.get(i).length();
 			match = false;
@@ -63,9 +75,6 @@ public class UnitTest
 			{
 				if(curr == path.length())
 				{
-					Prin.tln("curr == length");
-					Prin.tln("|" + path.substring(prev) + "|");
-					Prin.tln("|" + pieces.get(i) + "|");
 					if(path.substring(prev).equals(pieces.get(i)))
 						match = true;
 					else
@@ -75,14 +84,10 @@ public class UnitTest
 				}
 				else
 				{
-					Prin.tln("|" + path.substring(prev, curr) + "|");
-					Prin.tln("|" + pieces.get(i) + "|");
 					if(path.substring(prev, curr).equals(pieces.get(i)))
 						match = true;
 					else
 						match = false;
-					
-					Prin.tln("" + match);
 				}
 				
 				prev++;
