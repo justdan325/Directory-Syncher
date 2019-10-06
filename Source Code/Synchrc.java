@@ -2,7 +2,7 @@
 *Class represents a synchrc file
 *
 *@author Dan Martineau
-*@version 1.2
+*@version 1.3
 */
 
 import java.io.File;
@@ -16,7 +16,7 @@ public class Synchrc
 	private Node root;					//the root node in the binary search tree
 	
 	/*CONSTANTS*/
-	private static char rcDelim = ',';	//delimiter that the contextless synchrc file uses to seperate directories and files
+	private final static char RC_DELIM = ',';	//delimiter that the contextless synchrc file uses to seperate directories and files
 	
 	/*REGULAR EXPRESSIONS*/
 	//000 ParentDir,subdir,subdir,file.extension 	//represents how a line should be formatted in the synchrc file
@@ -139,7 +139,7 @@ public class Synchrc
 				throw new RuntimeException("Line format is invalid: " + line);
 			
 			//set canonicalPath
-			canonicalPath = pathToUpp + line.substring(4).replace(rcDelim, File.separatorChar);
+			canonicalPath = pathToUpp + line.substring(4).replace(RC_DELIM, File.separatorChar);
 			
 			//make and add the Node to the tree
 			if(root == null)
