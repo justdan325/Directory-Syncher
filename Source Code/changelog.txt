@@ -4,3 +4,5 @@
 
 -The program now supports the use of wild cards in synchrc files!
 -Errors in the synchrc file are now documented in the log file as well as verbose mode.
+-Added safe mode
+	-If secondary directory does not exist, it will not be created in safe mode.

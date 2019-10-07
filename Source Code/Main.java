@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 2.1
+*@version 2.2
 */
 
 import java.util.regex.*;
@@ -243,7 +243,8 @@ public class Main
 			error();
 		}
 		
-		if(!FileCMD.existFile(path2))
+		//if part2 doesn't exist and not in safe mode
+		if(!(FileCMD.existFile(path2) || safe))
 		{
 			log += "Creating secondary directory: " + path2 + "\n";
 			
@@ -259,6 +260,12 @@ public class Main
 				Prin.err("Could not create secondary directory.\n");
 				error();
 			}
+		}
+		else
+		{
+			Prin.err("Secondary directory does not exist! Ending synch...\n");
+			log += "Secondary directory does not exist! Cannot create in safe mode. Ending synch...\n";
+			error();
 		}
 		
 		dir1 = FileCMD.getCanonPath(path1);
