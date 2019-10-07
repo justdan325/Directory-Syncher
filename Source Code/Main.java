@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 2.2
+*@version 2.3
 */
 
 import java.util.regex.*;
@@ -186,14 +186,14 @@ public class Main
 		//synch from primary to secondary
 		try
 		{
-			SynchModule part1 = new SynchModule(dir1, dir2, rcPrim, read, mod, del, verbose);
+			SynchModule part1 = new SynchModule(dir1, dir2, rcPrim, read, mod, del, verbose, safe);
 		
 			log += part1.getLog();
 			
 			//synch from secondary to primary if not unidirectional
 			if(!unidirectional)
 			{
-				SynchModule part2 = new SynchModule(dir2, dir1, rcSec, read, mod, del, verbose);
+				SynchModule part2 = new SynchModule(dir2, dir1, rcSec, read, mod, del, verbose, safe);
 				
 				log += part2.getLog();
 			}
@@ -244,7 +244,7 @@ public class Main
 		}
 		
 		//if part2 doesn't exist and not in safe mode
-		if(!(FileCMD.existFile(path2) || safe))
+		if(!(FileCMD.isDir(path2) || safe))
 		{
 			log += "Creating secondary directory: " + path2 + "\n";
 			
@@ -261,9 +261,10 @@ public class Main
 				error();
 			}
 		}
-		else
+		else if(!FileCMD.isDir(path2))
 		{
 			Prin.err("Secondary directory does not exist! Ending synch...\n");
+			Prin.tln(path2);
 			log += "Secondary directory does not exist! Cannot create in safe mode. Ending synch...\n";
 			error();
 		}
