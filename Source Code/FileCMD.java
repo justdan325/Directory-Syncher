@@ -9,7 +9,7 @@ import java.sql.Time;
 *This is a class that abstracts file io to suit my needs
 *
 *@author Dan Martineau
-*@version 1.8
+*@version 1.9
 */
 
 public class FileCMD
@@ -168,8 +168,17 @@ public class FileCMD
 		boolean completed = false;
 		String errMess = null;
 		
+		//if the desiredLocation is just a directory, add append the original file name
+		if(isDir(path2))
+		{
+			if(path2.charAt(path2.length()-1) == File.separatorChar)
+				desiredLocation = strToPath(path2 + getName(path1));
+			else
+				desiredLocation = strToPath(path2 + File.separatorChar + getName(path1));
+		}
+		
 		try{newLocation = Files.move(strToPath(path1), desiredLocation);}
-		catch(FileAlreadyExistsException e){completed = move(path1, (path2 + "(1)"));}
+		catch(FileAlreadyExistsException e){completed = move(path1, (desiredLocation.toString() + "_1"));}
 		catch(IOException i){errMess = "There was an IOException when attempting to move " + path1 + " to " + path2 + "\n" + Prin.getStackTrace(i);}
 		
 		assert errMess == null : errMess;

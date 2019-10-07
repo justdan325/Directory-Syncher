@@ -5,8 +5,7 @@ public class UnitTest
 {
 	public static void main(String[] args)
 	{
-		Node test = new Node("/home/dan/Programming*Projects/FileSynch/**.java", true, false, false);
-		Prin.tln(test.toString());
+		Prin.tln("" + FileCMD.move("/home/dan/Programming Projects/testbed/dir1/file(1)", "/home/dan/Programming Projects/testbed"));
 	}
 	
 	public static void addWildcardMatches(String wild, boolean read, boolean modify, boolean delete)
