@@ -25,10 +25,12 @@ public class Main
 	private static String rcPrim;
 	private static String rcSec;
 	
-	private static String REGEX_PERM     = "[0-1]{3}";
-	private static String REGEX_FLAG      = "[-]{1}[vul]{1,3}";
-	private static String REGEX_CUSTRC = "[-]{2}[rcPrimSe]{5,6}";
+	/*REGEXES*/
+	private static final String REGEX_PERM     = "[0-1]{3}";
+	private static final String REGEX_FLAG      = "[-]{1}[vul]{1,3}";
+	private static final String REGEX_CUSTRC = "[-]{2}[rcPrimSe]{5,6}";
 	
+	/*CONSTANTS*/
 	private static final double VERSION 	= 1.1;
 	private static final String PREAMBLE 	= "Directory Syncher Version " + VERSION + "\nMade and maintaned by Dan Martineau.\n\n";
 	private static final String PROG_NAME 	= "java -jar synch.jar";	//what one would use to call this program via commandline
