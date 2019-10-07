@@ -3,19 +3,22 @@
 *Nodes should form a binary search tree
 *
 *@author Dan Martineau
-*@version 2.1
+*@version 2.2
 */
+
+import java.io.*;
+import java.util.ArrayList;
 
 public class Node
 {
 	/*FIELDS*/
-	String path;			//String for canonical path of Node
-	String name;			//Name of file from path
-	Node left;				//Node to the left in the bin search tree
-	Node right;			//Node to the right in the bin search tree
-	boolean read;		//read permission
-	boolean modify;		//modify permission
-	boolean delete;		//delete permission
+	private String path;			//String for canonical path of Node
+	private String name;			//Name of file from path
+	private Node left;				//Node to the left in the bin search tree
+	private Node right;				//Node to the right in the bin search tree
+	private boolean read;			//read permission
+	private boolean modify;		//modify permission
+	private boolean delete;		//delete permission
 	
 	/**
 	*Constructor
@@ -31,10 +34,14 @@ public class Node
 		this.modify = modify;
 		this.delete = delete;
 		
-		name = FileCMD.getName(path);
-		
 		left = null;
 		right = null;
+		
+		//if path contains wildcards, it must be passed to addWildcardMatches to find matches to add
+		if(path.contains("*"))
+			addWildcardMatches(path, read, modify, delete);
+		else
+			name = FileCMD.getName(path);
 	}
 	
 	/*ACCESSORS*/
@@ -154,28 +161,206 @@ public class Node
 	{
 		int status;		//holder for value of comapreTo comparison
 		
-		status = name.compareTo(toAdd.getName());
+		//if path contains wildcards, then toAdd must be the first match found. 
+		//It will therefore be set as this Node
+		if(path.contains("*"))
+		{
+			path    = toAdd.getPath();			
+			name  = toAdd.getName();			
+			left      = toAdd.getLeft();				
+			right     = toAdd.getRight();			
+			read    = toAdd.getRead();		
+			modify = toAdd.getModify();		
+			delete  = toAdd.getDelete();
+		}
+		else
+		{
+			status = name.compareTo(toAdd.getName());
+			
+			//deal with a duplicate Node
+			if(status == 0 && path.equals(toAdd.getPath()))
+			{
+				assert status != 0: "Duplicate Node inserted: " + toAdd.getPath() + " " + toAdd.getName();
+			}
+			//if toAdd is after this node or equal to it
+			else if(status < 0)
+			{
+				if(right == null)
+				{
+					right = toAdd;
+				}
+				else
+					right.addNode(toAdd);
+			}
+			else if(status > 0)
+			{
+				if(left == null)
+					left = toAdd;
+				else
+					left.addNode(toAdd);
+			}
+		}
+	}
+	
+	/***************************/
+	
+	private void addWildcardMatches(String wild, boolean read, boolean modify, boolean delete)
+	{
+		addWildcardMatchesHelper(wild, wild, read, modify, delete);
+	}
+	
+	private void addWildcardMatchesHelper(String wild, String orig, boolean read, boolean modify, boolean delete) 
+	{
+		String rootPath;
+		String restOfWild;
+		boolean recursive = false;
+		String[] filesAndDirs;
+		String[] subDirs;
 		
-		//deal with a duplicate Node
-		if(status == 0 && path.equals(toAdd.getPath()))
+		if(wild.contains("*"))
 		{
-			assert status != 0: "Duplicate Node inserted: " + toAdd.getPath() + " " + toAdd.getName();
+			rootPath = wild.substring(0, wild.indexOf("*"));
+			if(!FileCMD.existFile(rootPath) && rootPath.contains(File.separatorChar + ""))
+				rootPath = rootPath.substring(0, rootPath.lastIndexOf(File.separatorChar + "")+1);
 		}
-		//if toAdd is after this node or equal to it
-		else if(status < 0)
+		else
 		{
-			if(right == null)
-				right = toAdd;
+			rootPath = wild;
+			addNode(new Node(rootPath, read, modify, delete));
+		}
+		
+		//Do not continue if the rootPath does not exist
+		if(FileCMD.isDir(rootPath))
+		{
+			if(wild.charAt(rootPath.length()) == '*')
+				restOfWild = wild.substring(rootPath.length());
 			else
-				right.addNode(toAdd);
+				restOfWild = wild.substring(wild.indexOf("*"));
+			
+			filesAndDirs = null;
+			
+			//NullPointerException here means that user does not have access to a subdirectory. The error will be given in Synchmodule, so ignore here.
+			try{filesAndDirs = FileCMD.listAll(rootPath);}
+			catch(NullPointerException e){return;}
+			
+			if(wild.length() > wild.indexOf("*")+1)
+				recursive = wild.charAt(wild.indexOf("*")+1) == '*';
+			
+			//get all files and subdirs in rootPath
+			//run them through match
+			//if they match, make them new Nodes and add them
+			for(int i = 0; i < filesAndDirs.length; i++)
+			{
+				if(match(orig, filesAndDirs[i]))
+				{
+					addNode(new Node(filesAndDirs[i], read, modify, delete));
+				}
+			}
+			
+			//if recursive, search through all subdirectories
+			if(recursive || restOfWild.contains(File.separatorChar + ""))
+			{
+				subDirs = FileCMD.listDirs(rootPath);
+				
+				for(int i = 0; i < subDirs.length; i++)
+				{
+					wild = subDirs[i] + restOfWild;
+					addWildcardMatchesHelper(wild, orig, read, modify, delete);
+				}
+			}
 		}
-		else if(status > 0)
+	}
+	
+	private boolean match(String wild, String path)
+	{
+		ArrayList<Integer> locations = new ArrayList<Integer>();
+		ArrayList<String> pieces = new ArrayList<String>();
+		String subStr = wild;
+		int index = -1;
+		int prev = 0;
+		int curr = -1;
+		boolean match = false;
+		
+		if(wild.contains("*"))
 		{
-			if(left == null)
-				left = toAdd;
-			else
-				left.addNode(toAdd);
+			while(wild.contains("**"))
+			{
+				index = wild.indexOf("**");
+				wild = wild.substring(0,index+1) + wild.substring(index+2);
+			}
+			index = -1;
+			
+			//find locations of all wild cards
+			while(index < wild.length()-1)
+			{
+				subStr = wild.substring(index+1);
+				index = subStr.indexOf("*");
+				
+				if(index == -1)
+					break;
+				
+				index = (wild.length() - subStr.length()) + index;
+				
+				locations.add(index);
+			}
+			
+			//chop wild into pieces
+			for(int i = 0; i < locations.size(); i++)
+			{
+				prev = curr+1;
+				curr = locations.get(i);
+				
+				if(!wild.substring(prev, curr).equals(""))
+					pieces.add(wild.substring(prev, curr));
+			}
+			//add last piece
+			if(curr < wild.length()-1)
+			{
+				pieces.add(wild.substring(curr+1));
+			}
+			
+			//see if all of the pieces are contained within the path in the correct order
+			curr = 0;
+			for(int i = 0; i < pieces.size(); i++)
+			{
+				prev = curr;
+				curr = prev + pieces.get(i).length();
+				
+				match = false;
+
+				while(curr <= path.length() && !match)
+				{
+					if(curr == path.length() || (i == pieces.size()-1 && wild.charAt(wild.length()-1) != '*'))
+					{
+						if(path.substring(prev).equals(pieces.get(i)))
+							match = true;
+						else
+							match = false;
+					}
+					else
+					{
+						if(path.substring(prev, curr).equals(pieces.get(i)))
+							match = true;
+						else
+							match = false;
+					}
+					
+					prev++;
+					curr++;
+				}
+				
+				curr--;
+				
+				if(!match)
+					break;
+			}
 		}
+		else
+		{
+			match = wild.equals(path);
+		}
+		
+		return match;
 	}
 	
 	/**************************/
