@@ -3,3 +3,4 @@
 -BUGFIX: Prevent duplicate nodes from being added to a tree in Node class.
 
 -The program now supports the use of wild cards in synchrc files!
+-Errors in the synchrc file are now documented in the log file as well as verbose mode.
