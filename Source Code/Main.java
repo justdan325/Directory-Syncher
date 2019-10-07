@@ -264,7 +264,6 @@ public class Main
 		else if(!FileCMD.isDir(path2))
 		{
 			Prin.err("Secondary directory does not exist! Ending synch...\n");
-			Prin.tln(path2);
 			log += "Secondary directory does not exist! Cannot create in safe mode. Ending synch...\n";
 			error();
 		}
