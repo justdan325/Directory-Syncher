@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 1.8
+*@version 1.9
 */
 
 import java.io.*;
@@ -16,6 +16,7 @@ public class SynchModule
 	private boolean modify;		//modify files in dir2 not in dir1 by default
 	private boolean delete;		//delete files in dir2 not in dir1 by default
 	private boolean verbose;	//true if program running in verbose mode
+	private boolean safe;			//true if program running in safe mode
 	private Synchrc synchrc;	//synchrc file object
 	private String log;		//log of synch
 	private String dir1;		//canonical path of dir1
@@ -44,6 +45,7 @@ public class SynchModule
 		modify = false;
 		delete = false;
 		verbose = false;
+		safe = false;
 		
 		log = "";
 		
@@ -62,8 +64,10 @@ public class SynchModule
 	*@param read
 	*@param modify
 	*@param delete
+	*@param verbose
+	*@param safe
 	*/
-	public SynchModule(String path1, String path2, String rcname, boolean read, boolean modify, boolean delete, boolean verbose)
+	public SynchModule(String path1, String path2, String rcname, boolean read, boolean modify, boolean delete, boolean verbose, boolean safe)
 	{
 		//assign parameters to their instance varibales and assert paths are valid
 		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
@@ -76,6 +80,7 @@ public class SynchModule
 		this.modify = modify;
 		this.delete = delete;
 		this.verbose = verbose;
+		this.safe = safe;
 		
 		log = "";
 		
@@ -291,8 +296,10 @@ public class SynchModule
 			
 			//compare the mod times to see if one is newer
 			comp = FileCMD.compModTime(curr, (destination + File.separatorChar +  FileCMD.getName(curr)));
+			
 			//if one is newer than the other, see if the two files are indeed different using their hashes. 
-			if(comp > 0 && CompareMD5.compareHashes(curr, destFile) == true)
+			//do not do this in safe mode
+			if(!safe && comp > 0 && CompareMD5.compareHashes(curr, destFile) == true)
 			{
 				assert comp == 1 || comp == 2 : "comp in readAndModHelperFile does not equal 1 or 2.";
 				

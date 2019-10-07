@@ -6,3 +6,4 @@
 -Errors in the synchrc file are now documented in the log file as well as verbose mode.
 -Added safe mode
 	-If secondary directory does not exist, it will not be created in safe mode.
+	-Program will not modify the "time modified" field of compared files on purpose.
