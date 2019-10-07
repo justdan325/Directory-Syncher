@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 1.7
+*@version 2.0
 */
 
 import java.util.regex.*;

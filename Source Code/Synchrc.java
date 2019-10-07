@@ -2,7 +2,7 @@
 *Class represents a synchrc file
 *
 *@author Dan Martineau
-*@version 1.3
+*@version 1.4
 */
 
 import java.io.File;
@@ -14,9 +14,12 @@ public class Synchrc
 	private String synchrcPath;	//path of synchrc file: IT IS ASSUMED THAT IT LIES IN UPPERMOST PARENT DIR
 	private String pathToUpp;		//path to uppermost parent directory: DETERMINED BY synchrcPath!
 	private Node root;					//the root node in the binary search tree
+	private String log;					//log file for the synch job
+	private boolean verbose;		//wether or not the program is running in verbose mode
 	
 	/*CONSTANTS*/
-	private final static char RC_DELIM = ',';	//delimiter that the contextless synchrc file uses to seperate directories and files
+	private final static char RC_DELIM = ',';															//delimiter that the contextless synchrc file uses to seperate directories and files
+	private final static String RC_ERROR_MESSAGE = "Line format is invalid:";		//display when there is an invalid line in a synchrc file
 	
 	/*REGULAR EXPRESSIONS*/
 	//000 ParentDir,subdir,subdir,file.extension 	//represents how a line should be formatted in the synchrc file
@@ -26,8 +29,11 @@ public class Synchrc
 	*@param path to synchrc file
 	*@param path to parent directory
 	*/
-	public Synchrc(String synchrcPath, String parentDir)
+	public Synchrc(String synchrcPath, String parentDir, String log, boolean verbose)
 	{
+		this.log = log;
+		this.verbose = verbose;
+		
 		//assert that the file is valid
 		assert FileCMD.existFile(synchrcPath) : "File " + synchrcPath + " is not valid! This should be handeled outside of Synchrc.";
 		
@@ -59,6 +65,15 @@ public class Synchrc
 	}
 	
 	/**
+	*Returns the log for this job
+	*@return log
+	*/
+	public String getLog()
+	{
+		return log;
+	}
+	
+	/**
 	*Sets pathToUpp
 	*@param parent directory path
 	*/
@@ -87,8 +102,23 @@ public class Synchrc
 		
 		fileScan.useDelimiter("\n");
 		
+	
 		while(fileScan.hasNext())
-			decodeLine(fileScan.next());
+		{
+			try
+			{
+				decodeLine(fileScan.next());
+			}
+			catch(RuntimeException r)
+			{
+				if(r.getMessage().contains(RC_ERROR_MESSAGE))
+				{
+					if(verbose)
+						Prin.err("\nERROR in " + FileCMD.getName(synchrcPath) + ": " + r.getMessage() + "\n|");
+					log += "\nERROR in " + synchrcPath + ": " + r.getMessage() + "\n|";
+				}
+			}
+		}
 	}
 	
 	/**
@@ -120,7 +150,7 @@ public class Synchrc
 			else if(line.charAt(0) == '#' || line.charAt(0) == ' ')
 				return;
 			else
-				throw new RuntimeException("Line format is invalid: " + line);
+				throw new RuntimeException(RC_ERROR_MESSAGE + " " + line);
 			
 			//read second bit
 			if(line.charAt(1) == '0')
@@ -128,7 +158,7 @@ public class Synchrc
 			else if(line.charAt(1) == '1')
 				modify = true;
 			else
-				throw new RuntimeException("Line format is invalid: " + line);
+				throw new RuntimeException(RC_ERROR_MESSAGE + " " + line);
 			
 			//read third bit
 			if(line.charAt(2) == '0')
@@ -136,7 +166,7 @@ public class Synchrc
 			else if(line.charAt(2) == '1')
 				delete = true;
 			else
-				throw new RuntimeException("Line format is invalid: " + line);
+				throw new RuntimeException(RC_ERROR_MESSAGE + " " + line);
 			
 			//set canonicalPath
 			canonicalPath = pathToUpp + line.substring(4).replace(RC_DELIM, File.separatorChar);
