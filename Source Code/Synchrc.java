@@ -88,8 +88,6 @@ public class Synchrc
 		hold = FileCMD.getName(parentDir);
 		pathToUpp = parentDir.substring(0, parentDir.length()-hold.length());
 		
-		Prin.tln(pathToUpp);
-		
 		//assert that the path exists
 		assert FileCMD.existFile(pathToUpp) : pathToUpp + " does not exist! Prob a formatting error. See determinePathToUpp()";
 	}
