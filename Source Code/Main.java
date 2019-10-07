@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 2.0
+*@version 2.1
 */
 
 import java.util.regex.*;
@@ -18,6 +18,7 @@ public class Main
 	private static boolean verbose;
 	private static boolean unidirectional;
 	private static boolean saveLog;
+	private static boolean safe;
 	private static int initialLogLen;
 	private static String dir1;
 	private static String dir2;
@@ -27,7 +28,7 @@ public class Main
 	
 	/*REGEXES*/
 	private static final String REGEX_PERM     = "[0-1]{3}";
-	private static final String REGEX_FLAG      = "[-]{1}[vul]{1,3}";
+	private static final String REGEX_FLAG      = "[-]{1}[vuls]{1,4}";
 	private static final String REGEX_CUSTRC = "[-]{2}[rcPrimSe]{5,6}";
 	
 	/*CONSTANTS*/
@@ -43,6 +44,7 @@ public class Main
 		verbose = false;
 		unidirectional = false;
 		saveLog = false;
+		safe = false;
 		rcPrim = SynchModule.DEFAULT_SYNCHRC;
 		rcSec = SynchModule.DEFAULT_SYNCHRC;
 		
@@ -279,6 +281,9 @@ public class Main
 						break;
 					case 'v':
 						verbose = true;
+						break;
+					case 's':
+						safe = true;
 						break;
 					default:
 						Prin.err("Invalid flag series: " + flags + "\nRun with --help for list of flags.\n");
