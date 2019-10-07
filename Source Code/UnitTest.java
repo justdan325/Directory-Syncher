@@ -9,8 +9,13 @@ public class UnitTest
 		//Prin.tln("" + match(args[0], args[1]));
 	}
 	
+	public static void addWildcardMatches(String wild, boolean read, boolean modify, boolean delete)
+	{
+		addWildcardMatchesHelper(wild, wild, read, modify, delete);
+	}
+	
 	//WILL HAVE TO BE CALLED EXCLUSIVLEY IN CONSTRUCTOR OF NODE
-	public static void addWildcardMatches(String wild, boolean read, boolean modify, boolean delete) 
+	public static void addWildcardMatchesHelper(String wild, String orig, boolean read, boolean modify, boolean delete) 
 	{
 		String rootPath;
 		String restOfWild;
@@ -19,7 +24,11 @@ public class UnitTest
 		String[] subDirs;
 		
 		if(wild.contains("*"))
+		{
 			rootPath = wild.substring(0, wild.indexOf("*"));
+			if(!FileCMD.existFile(rootPath) && rootPath.contains(File.separatorChar + ""))
+				rootPath = rootPath.substring(0, rootPath.lastIndexOf(File.separatorChar + "")+1);
+		}
 		else
 		{
 			rootPath = wild;
@@ -29,7 +38,10 @@ public class UnitTest
 		//Do not continue if the rootPath does not exist
 		if(FileCMD.isDir(rootPath))
 		{
-			restOfWild = wild.substring(rootPath.length());
+			if(wild.charAt(rootPath.length()) == '*')
+				restOfWild = wild.substring(rootPath.length());
+			else
+				restOfWild = wild.substring(wild.indexOf("*"));
 			
 			filesAndDirs = null;
 			
@@ -45,9 +57,9 @@ public class UnitTest
 			//if they match, make them new Nodes and add them
 			for(int i = 0; i < filesAndDirs.length; i++)
 			{
-				//Prin.tln(wild + " == " + filesAndDirs[i] + "?");
-				//Prin.tln(match(wild, filesAndDirs[i]) + "");
-				if(match(wild, filesAndDirs[i]))
+				//Prin.tln(orig + " == " + filesAndDirs[i] + "?");
+				//Prin.tln(match(orig, filesAndDirs[i]) + "");
+				if(match(orig, filesAndDirs[i]))
 					Prin.tln("Add: " + filesAndDirs[i]); //addNode(new Node(filesAndDirs[i], read, modify, delete);
 			}
 			
@@ -63,7 +75,7 @@ public class UnitTest
 						wild = subDirs[i] + "*";*/
 					//Prin.tln("wild: " + wild);
 					//IF restOfWild HAS NO WILD CARDS, DO STUFF AND ADD RESULT
-					addWildcardMatches(wild, read, modify, delete);
+					addWildcardMatchesHelper(wild, orig, read, modify, delete);
 				}
 			}
 		}
