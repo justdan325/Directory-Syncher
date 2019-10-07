@@ -156,6 +156,32 @@ public class FileCMD
 	}
 	
 	/**
+	*Move a file from one location to another
+	*@param file path of file to move
+	*@param desired location WITH file name
+	*@return true if completed
+	*/
+	public static boolean move(String path1, String path2)
+	{
+		Path newLocation = null;
+		Path desiredLocation = strToPath(path2);
+		boolean completed = false;
+		String errMess = null;
+		
+		try{newLocation = Files.move(strToPath(path1), desiredLocation);}
+		catch(FileAlreadyExistsException e){completed = move(path1, (path2 + "(1)"));}
+		catch(IOException i){errMess = "There was an IOException when attempting to move " + path1 + " to " + path2 + "\n" + Prin.getStackTrace(i);}
+		
+		assert errMess == null : errMess;
+		
+		if(!completed && desiredLocation.equals(newLocation))
+			completed = true;
+		
+		return completed;
+	}
+	
+	
+	/**
 	*Find out if a file exists--does not follow symbolic links
 	*@param path to file
 	*@return true if exists
