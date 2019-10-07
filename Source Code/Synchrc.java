@@ -28,6 +28,8 @@ public class Synchrc
 	*Constructor
 	*@param path to synchrc file
 	*@param path to parent directory
+	*@param String containing program log
+	*@param flag for verbose mode
 	*/
 	public Synchrc(String synchrcPath, String parentDir, String log, boolean verbose)
 	{
