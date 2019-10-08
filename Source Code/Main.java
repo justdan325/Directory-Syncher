@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 2.3
+*@version 2.4
 */
 
 import java.util.regex.*;
@@ -204,6 +204,10 @@ public class Main
 			error();
 		}
 		
+		//if del enabled, check for files in trashes to delete
+		if(del)
+			checkForDelFiles();
+		
 		log += "\nFinished synch job!";
 		
 		if(verbose)
@@ -379,6 +383,44 @@ public class Main
 		Prin.t("End Flags:\n\t\t--rcPrim [custom synchrc file for primary directory]\n\t\t");
 		Prin.t("--rcSec [custom synchrc file for secondary directory]\n");
 		Prin.tln("\nNote: The default permissions are \"100.\"");
+	}
+	
+	private static void checkForDelFiles()
+	{
+		String trash1 = dir1 + File.separatorChar + SynchModule.DEFAULT_TRASH;
+		String trash2 = dir2 + File.separatorChar + SynchModule.DEFAULT_TRASH;
+		String[] list;
+		boolean deleteTrash = false;
+		
+		Prin.clearAll();
+		
+		if(FileCMD.isDir(trash1))
+		{
+			list = FileCMD.listAll(trash1);
+			for(int i = 0; i < list.length; i++)
+				Prin.tln(FileCMD.getName(list[i]));
+			
+			deleteTrash = Prin.yesOrNo("\nPermanently delete the above " + list.length + " file(s) from " + trash1 + "?");
+			
+			if(deleteTrash)
+				FileCMD.deleteDir(trash1);
+		}
+		
+		Prin.clearAll();
+		
+		if(FileCMD.isDir(trash2))
+		{
+			list = FileCMD.listAll(trash2);
+			for(int i = 0; i < list.length; i++)
+				Prin.tln(FileCMD.getName(list[i]));
+			
+			deleteTrash = Prin.yesOrNo("\nPermanently delete the above " + list.length + " file(s) from " + trash2 + "?");
+			
+			if(deleteTrash)
+				FileCMD.deleteDir(trash2);
+		}
+		
+		Prin.clearAll();
 	}
 	
 	private static void saveLogFile(String path)
