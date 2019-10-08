@@ -347,7 +347,14 @@ public class Main
 	private static void checkSynchrc(String path)
 	{
 		final String PARENT_DIR = FileCMD.getName(path);
-		final String DEFAULT_RC_CONT = "#This is your synchrc file\n\n#This line prevents your synchrc files from overwriting eachother across directories.\n000 " + PARENT_DIR + ",synchrc\n\n#The following two lines are essential when running a job on the parent directory of a drive in Windows.\n000 " + PARENT_DIR + ",System Volume Information\n000 " + PARENT_DIR + ",$RECYCLE.BIN";
+		final String DEFAULT_RC_CONT = "#This is your synchrc file\n\n#This line prevents your synchrc files from overwriting eachother across directories.\n000 " 
+			+ PARENT_DIR + ",synchrc\n\n#The following two lines are essential when running a job on the parent directory of a drive in Windows.\n000 " 
+			+ PARENT_DIR 
+			+ ",System Volume Information\n000 " 
+			+ PARENT_DIR 
+			+ ",$RECYCLE.BIN\n\n#This line prevents deleted files from copying across directories.\n000 "
+			+ PARENT_DIR + ","
+			+ SynchModule.DEFAULT_TRASH;
 		
 		if(path.charAt(path.length()-1) == File.separatorChar)
 			path += SynchModule.DEFAULT_SYNCHRC;
