@@ -312,22 +312,25 @@ public class SynchModule
 			
 			//if one is newer than the other, see if the two files are indeed different using their hashes. 
 			//do not do this in safe mode
-			if(!safe && comp > 0 && CompareMD5.compareHashes(curr, destFile) == true)
+			if(comp > 0 && CompareMD5.compareHashes(curr, destFile) == true)
 			{
 				assert comp == 1 || comp == 2 : "comp in readAndModHelperFile does not equal 1 or 2.";
 				
-				time = 0;
-				
-				//Set the mod times of the files to the same time to make future runs more effecient.
-				//specifically the oldest of the two mod times so that they won't constantly be updated when synching to multiple directories
-				if(comp == 1)
-					time = FileCMD.getFileTime(destFile).toMillis();
-				else if(comp == 2)
-					time = FileCMD.getFileTime(curr).toMillis();
-				
-				
-				FileCMD.touch(curr, time);
-				FileCMD.touch(destFile, time);
+				if(!safe)
+				{
+					time = 0;
+					
+					//Set the mod times of the files to the same time to make future runs more effecient.
+					//specifically the oldest of the two mod times so that they won't constantly be updated when synching to multiple directories
+					if(comp == 1)
+						time = FileCMD.getFileTime(destFile).toMillis();
+					else if(comp == 2)
+						time = FileCMD.getFileTime(curr).toMillis();
+					
+					
+					FileCMD.touch(curr, time);
+					FileCMD.touch(destFile, time);
+				}
 				
 				comp = 0;
 			}
@@ -369,7 +372,7 @@ public class SynchModule
 	{
 		Node node;			//holder for the current Node
 		boolean inOrigin = false;	//whether or not a file exisits in origin
-		boolean success;		//whether or not an operation was successful
+		boolean success = false;		//whether or not an operation was successful
 		int comp;			//holder for compareTo methods
 		
 		//check to see if file exisits in origin
@@ -382,15 +385,24 @@ public class SynchModule
 			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
 			
 			if(safe)
+			{
 				success = moveToTrash(curr);
+				
+				if(success)
+					log += ("Moved \"" + curr + "\" to " + trash + "\n");
+				else
+					log += ("Failed to move \"" + curr + "\" to " + trash + "\n");
+			}
 			else
+			{
 				success = FileCMD.deleteFile(curr);
-			
-			//write to log whether or not operation was successful
-			if(success)
-				log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
-			else
-				log += ("Failed to delete \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
+				
+				//write to log whether or not operation was successful
+				if(success)
+					log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
+				else
+					log += ("Failed to delete \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
+			}
 		}
 		//else ignore file
 		else if(!(localDelete || inOrigin))
@@ -404,7 +416,7 @@ public class SynchModule
 	{
 		Node node;			//holder for the current Node
 		boolean inDest = false;		//whether or not a file exisits in destination
-		boolean success;		//whether or not an operation was successful
+		boolean success = false;		//whether or not an operation was successful
 		int comp;			//holder for compareTo methods
 		
 		//check to see if file exisits in destination
@@ -438,7 +450,7 @@ public class SynchModule
 	{
 		Node node;			//holder for the current Node
 		boolean inOrigin = false;	//whether or not a file exisits in origin
-		boolean success;		//whether or not an operation was successful
+		boolean success = false;		//whether or not an operation was successful
 		int comp;			//holder for compareTo methods
 		
 		//check to see if dir exisits in origin
@@ -449,10 +461,29 @@ public class SynchModule
 		{
 			//attempt to delete the dir--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
-			FileCMD.deleteDir(curr);
 			
-			//write to log whether or not operation was successful
-			log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
+			if(safe)
+			{
+				//do not move trash into itself
+				if(!curr.equals(trash))
+				{
+					success = moveToTrash(curr);
+					
+					if(success)
+						log += ("Moved \"" + curr + "\" to " + trash + "\n");
+					else
+						log += ("Failed to move \"" + curr + "\" to " + trash + "\n");
+				}
+			}
+			else
+			{
+				success = FileCMD.deleteDir(curr);
+				
+				if(success)
+					log += ("Deleted \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
+				else
+					log += ("Failed to delete \"" + FileCMD.getName(curr) + "\" in " + destination + "\n");
+			}
 		}
 		//else ignore file
 		else if(!(localDelete || inOrigin))
@@ -559,21 +590,26 @@ public class SynchModule
 		return -1;
 	}
 	
+	/**
+	*Move a file or directory to the DEFAULT_TRASH directory
+	*@param name of file/directory
+	*@return true if moved
+	*/
 	private boolean moveToTrash(String file)
 	{
 		boolean moved = false;
 		
 		//make trash directory if it does not exisit
-		try
-		{
-			if(existTrash)
-				FileCMD.mkdirs(trash);
-			
-			//move file to trash directory
+		if(existTrash)
+			FileCMD.mkdirs(trash);
+		
+		assert !file.equals(trash) : "Attempted to put \"trash\" into itself...";
+		
+		//move "file" to trash directory
+		if(FileCMD.isDir(file))
+			moved = FileCMD.moveDir(file, trash);
+		else
 			moved = FileCMD.moveFile(file, trash);
-		}
-		catch(Exception e)
-		{}
 		
 		return moved;
 	}

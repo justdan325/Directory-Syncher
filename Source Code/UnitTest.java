@@ -5,7 +5,7 @@ public class UnitTest
 {
 	public static void main(String[] args)
 	{
-		Prin.tln("Returns: " + FileCMD.moveDir("/home/dan/Programming Projects/testbed/dir3", "/home/dan/Programming Projects/testbed/dir1"));
+		Prin.tln("Returns: " + FileCMD.deleteDir("/home/dan/Programming Projects/testbed/dir1/dir3"));
 	}
 	
 	public static void addWildcardMatches(String wild, boolean read, boolean modify, boolean delete)
