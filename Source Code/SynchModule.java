@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 1.9
+*@version 2.1
 */
 
 import java.io.*;
@@ -17,13 +17,16 @@ public class SynchModule
 	private boolean delete;		//delete files in dir2 not in dir1 by default
 	private boolean verbose;	//true if program running in verbose mode
 	private boolean safe;			//true if program running in safe mode
+	private boolean existTrash;	//true if there is a DEFAULT_TRASH directory in dir2
 	private Synchrc synchrc;	//synchrc file object
 	private String log;		//log of synch
 	private String dir1;		//canonical path of dir1
 	private String dir2;		//canonical path of dir2
+	private String trash;	//DEFAULT_TRASH directory located in dir2
 	
 	/*CONSTANTS*/
 	public static String DEFAULT_SYNCHRC = "synchrc";	//Name of default synchrc file
+	public static String DEFAULT_TRASH = "DELETEME_DirectorySyncher";
 	private static String EMPTY_ELEMENT = "?<>";		//Signifies an empty array element
 	
 	/**
@@ -46,6 +49,11 @@ public class SynchModule
 		delete = false;
 		verbose = false;
 		safe = false;
+		existTrash = false;
+		
+		trash = dir2 + File.separatorChar + DEFAULT_TRASH;
+		if(FileCMD.isDir(trash))
+			existTrash = true;
 		
 		log = "";
 		
@@ -81,6 +89,11 @@ public class SynchModule
 		this.delete = delete;
 		this.verbose = verbose;
 		this.safe = safe;
+		existTrash = false;
+		
+		trash = dir2 + File.separatorChar + DEFAULT_TRASH;
+		if(FileCMD.isDir(trash))
+			existTrash = true;
 		
 		log = "";
 		
@@ -367,7 +380,11 @@ public class SynchModule
 		{
 			//attempt to delete the file--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
-			success = FileCMD.deleteFile(curr);
+			
+			if(safe)
+				success = moveToTrash(curr);
+			else
+				success = FileCMD.deleteFile(curr);
 			
 			//write to log whether or not operation was successful
 			if(success)
@@ -540,6 +557,25 @@ public class SynchModule
 		}
 		
 		return -1;
+	}
+	
+	private boolean moveToTrash(String file)
+	{
+		boolean moved = false;
+		
+		//make trash directory if it does not exisit
+		try
+		{
+			if(existTrash)
+				FileCMD.mkdirs(trash);
+			
+			//move file to trash directory
+			moved = FileCMD.moveFile(file, trash);
+		}
+		catch(Exception e)
+		{}
+		
+		return moved;
 	}
 }
 

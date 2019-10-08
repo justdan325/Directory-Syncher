@@ -161,7 +161,7 @@ public class FileCMD
 	*@param desired location WITH file name
 	*@return true if completed
 	*/
-	public static boolean move(String path1, String path2)
+	public static boolean moveFile(String path1, String path2)
 	{
 		Path newLocation = null;
 		Path desiredLocation = strToPath(path2);
@@ -178,7 +178,7 @@ public class FileCMD
 		}
 		
 		try{newLocation = Files.move(strToPath(path1), desiredLocation);}
-		catch(FileAlreadyExistsException e){completed = move(path1, (desiredLocation.toString() + "_1"));}
+		catch(FileAlreadyExistsException e){completed = moveFile(path1, (desiredLocation.toString() + "_1"));}
 		catch(IOException i){errMess = "There was an IOException when attempting to move " + path1 + " to " + path2 + "\n" + Prin.getStackTrace(i);}
 		
 		assert errMess == null : errMess;
@@ -189,7 +189,43 @@ public class FileCMD
 		return completed;
 	}
 	
-	
+	/**
+	*/
+	public static boolean moveDir(String path1, String path2)
+	{
+		String errMess = null;
+		boolean moved = true;
+		
+		//make sure path2 ends with file separator char
+		if(path2.charAt(path2.length()-1) != File.separatorChar)
+			path2 += File.separatorChar;
+		
+		if (isDir(path1))
+		{
+			if(!isDir(path2 + getName(path1)))
+					mkdirs(path2 + getName(path1));
+				
+			for (String file : listAll(path1))
+			{
+				moved = moveDir(file, (path2 + getName(path1)));
+				
+				if(!moved)
+					break;
+			}
+			
+			//once done copying everything, delete directory
+			deleteDir(path1);
+		}
+		else
+		{
+				moved = moveFile(path1, path2);
+		}
+		
+		assert errMess == null: errMess;
+		
+		return moved;
+	}
+
 	/**
 	*Find out if a file exists--does not follow symbolic links
 	*@param path to file
