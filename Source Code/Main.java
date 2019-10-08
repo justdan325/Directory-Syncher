@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 2.4
+*@version 2.5
 */
 
 import java.util.regex.*;
@@ -32,7 +32,7 @@ public class Main
 	private static final String REGEX_CUSTRC = "[-]{2}[rcPrimSe]{5,6}";
 	
 	/*CONSTANTS*/
-	private static final double VERSION 	= 1.1;
+	private static final double VERSION 	= 2.0;
 	private static final String PREAMBLE 	= "Directory Syncher Version " + VERSION + "\nMade and maintaned by Dan Martineau.\n\n";
 	private static final String PROG_NAME 	= "java -jar synch.jar";	//what one would use to call this program via commandline
 	
@@ -379,7 +379,7 @@ public class Main
 		Prin.t(PROG_NAME + " -[flags] [permissions] [primary directory] [secondary directory]\n\t");
 		Prin.t("Permissions:\n\t\t000 --> [<Read><Modify><Delete>] where 0 = false and 1 = true");
 		Prin.t("\n\tFlags: \n\t\t-u : unidirectional (from primary to secondary)\n\t\t");
-		Prin.t("-l : save log file\n\t\t-v : verbose (prints log to standard out)\n\t");
+		Prin.t("-l : save log file\n\t\t-v : verbose (prints log to standard out)\n\t\t-s : safe mode\n\t");
 		Prin.t("End Flags:\n\t\t--rcPrim [custom synchrc file for primary directory]\n\t\t");
 		Prin.t("--rcSec [custom synchrc file for secondary directory]\n");
 		Prin.tln("\nNote: The default permissions are \"100.\"");
