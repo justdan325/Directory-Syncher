@@ -392,10 +392,10 @@ public class Main
 		String[] list;
 		boolean deleteTrash = false;
 		
-		Prin.clearAll();
-		
 		if(FileCMD.isDir(trash1))
 		{
+			Prin.clearAll();
+			
 			list = FileCMD.listAll(trash1);
 			for(int i = 0; i < list.length; i++)
 				Prin.tln(FileCMD.getName(list[i]));
@@ -404,12 +404,14 @@ public class Main
 			
 			if(deleteTrash)
 				FileCMD.deleteDir(trash1);
+			
+			Prin.clearAll();
 		}
-		
-		Prin.clearAll();
 		
 		if(FileCMD.isDir(trash2))
 		{
+			Prin.clearAll();
+			
 			list = FileCMD.listAll(trash2);
 			for(int i = 0; i < list.length; i++)
 				Prin.tln(FileCMD.getName(list[i]));
@@ -418,9 +420,9 @@ public class Main
 			
 			if(deleteTrash)
 				FileCMD.deleteDir(trash2);
+			
+			Prin.clearAll();
 		}
-		
-		Prin.clearAll();
 	}
 	
 	private static void saveLogFile(String path)

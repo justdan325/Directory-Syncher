@@ -2,7 +2,7 @@
 *Class represents a synchrc file
 *
 *@author Dan Martineau
-*@version 1.4
+*@version 1.5
 */
 
 import java.io.File;
@@ -16,6 +16,7 @@ public class Synchrc
 	private Node root;					//the root node in the binary search tree
 	private String log;					//log file for the synch job
 	private boolean verbose;		//wether or not the program is running in verbose mode
+	private boolean error;				//true if there is an error in the synchrc file
 	
 	/*CONSTANTS*/
 	private final static char RC_DELIM = ',';															//delimiter that the contextless synchrc file uses to seperate directories and files
@@ -76,6 +77,15 @@ public class Synchrc
 	}
 	
 	/**
+	*Returns true if there are errors in synchrc file
+	*@return error
+	*/
+	public boolean getError()
+	{
+		return error;
+	}
+	
+	/**
 	*Sets pathToUpp
 	*@param parent directory path
 	*/
@@ -116,6 +126,7 @@ public class Synchrc
 					if(verbose)
 						Prin.err("\nERROR in " + FileCMD.getName(synchrcPath) + ": " + r.getMessage() + "\n|");
 					log += "\nERROR in " + synchrcPath + ": " + r.getMessage() + "\n|";
+					error = true;
 				}
 			}
 		}

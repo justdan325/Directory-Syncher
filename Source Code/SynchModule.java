@@ -23,6 +23,7 @@ public class SynchModule
 	private String dir1;		//canonical path of dir1
 	private String dir2;		//canonical path of dir2
 	private String trash;	//DEFAULT_TRASH directory located in dir2
+	private boolean error;	//true if there are errors in the synchrc file
 	
 	/*CONSTANTS*/
 	public static String DEFAULT_SYNCHRC = "synchrc";	//Name of default synchrc file
@@ -60,8 +61,9 @@ public class SynchModule
 		//create synchrc object
 		createSynch(rcname);
 		
-		//start synch job
-		synchJob(dir1, dir2);
+		//do not synch if there are errors in the synchrc file
+		if(!error)
+			synchJob(dir1, dir2);
 	}
 	
 	/**
@@ -100,8 +102,15 @@ public class SynchModule
 		//create synchrc object
 		createSynch(rcname);
 		
-		//start synch job
-		synchJob(dir1, dir2);
+		//do not synch if there are errors in the synchrc file
+		if(!error)
+			synchJob(dir1, dir2);
+		else
+		{
+			if(verbose)
+				Prin.err("\nAborting synch job due to error(s) in synchrc file.\n");
+			log += "\nAborted synch job from " + dir1 + " to " + dir2 + " due to error(s) in synchrc file.\n\n";
+		}
 	}
 	
 	/*ACCESSORS*/
@@ -139,6 +148,9 @@ public class SynchModule
 		
 		//get log from new Synchrc 
 		log = synchrc.getLog();
+		
+		//get error from new Synchrc
+		error = synchrc.getError();
 		
 		log += ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
 		
