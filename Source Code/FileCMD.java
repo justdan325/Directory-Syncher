@@ -9,7 +9,7 @@ import java.sql.Time;
 *This is a class that abstracts file io to suit my needs
 *
 *@author Dan Martineau
-*@version 1.9
+*@version 2.0
 */
 
 public class FileCMD
@@ -126,33 +126,44 @@ public class FileCMD
 	/**
 	*Delete a directory that might have files and/or subdirectoies--Recursive function
 	*@param path of dir
+	*@return true if completed
 	*/
-	public static void deleteDir(String path)
+	public static boolean deleteDir(String path)
 	{
 		//get dir contents
 		String[] dirs = listDirs(path);
 		String[] files = listFiles(path);
+		boolean completed = true;
 		
 		//delete rest of files if there are any
 		if(files.length > 0)
 		{
 			for(int i = 0; i < files.length; i++)
-				deleteFile(files[i]);
+			{
+				completed = deleteFile(files[i]);
+				
+				if(!completed)
+					break;
+			}
 		}
 		
 		//if there are subdirs, call this function recursivly on them
-		if(dirs.length > 0)
+		if(dirs.length > 0 && completed)
 		{
 			for(int i = 0; i < dirs.length; i++)
-				deleteDir(dirs[i]);
-			
-			deleteFile(path);
-			return;
+			{
+				completed = deleteDir(dirs[i]);
+				
+				if(!completed)
+					break;
+			}
 		}
 		
 		//delete dir itself--base case
-		deleteFile(path);
-		
+		if(completed)
+				completed = deleteFile(path);
+			
+			return completed;
 	}
 	
 	/**
@@ -190,6 +201,10 @@ public class FileCMD
 	}
 	
 	/**
+	*Move a directory from one location to another
+	*@param path of directory to move
+	*@param desired location
+	*@return true if completed
 	*/
 	public static boolean moveDir(String path1, String path2)
 	{
