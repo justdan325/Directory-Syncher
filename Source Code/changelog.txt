@@ -1,11 +1,5 @@
 ﻿Change Log--Directory Syncher version 
 
--BUGFIX: Prevent duplicate nodes from being added to a tree in Node class.
+-BUGFIX: 
 
--The program now supports the use of wild cards in synchrc files!
--Errors in the synchrc file are now documented in the log file as well as verbose mode.
--Added safe mode.
-	-If secondary directory does not exist, it will not be created in safe mode.
-	-Program will not modify the "time modified" field of compared files on purpose.
-	-Program will move deleted files to a trash folder.
-	-Program will not synch if there are errors in synchrc file.
+-Program will now notify the user of termination due to synchrc file errors reguarless of verbose mode being enabled or not.
