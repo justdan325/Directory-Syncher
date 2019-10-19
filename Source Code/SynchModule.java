@@ -64,6 +64,8 @@ public class SynchModule
 		//do not synch if there are errors in the synchrc file
 		if(!error)
 			synchJob(dir1, dir2);
+		else
+			Prin.err("\nSynchrc file contains errors. Ending job...\n");
 	}
 	
 	/**
@@ -107,8 +109,7 @@ public class SynchModule
 			synchJob(dir1, dir2);
 		else
 		{
-			if(verbose)
-				Prin.err("\nAborting synch job due to error(s) in synchrc file.\n");
+			Prin.err("\nSynchrc file contains errors. Ending job...\n");
 			log += "\nAborted synch job from " + dir1 + " to " + dir2 + " due to error(s) in synchrc file.\n\n";
 		}
 	}
