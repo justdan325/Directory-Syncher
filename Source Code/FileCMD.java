@@ -654,6 +654,31 @@ public class FileCMD
 	}
 	
 	/**
+	*Get the total number of files and subdirectories (recursively) in a directory--does not include parent directory
+	*@return number of files and subdirs
+	*/
+	public static int getTotalNum(String dirPath) 
+	{
+	    	File f = new File(dirPath);
+	    	File[] files = f.listFiles();
+		int count = 0;
+
+	    	if (files != null)
+		{
+			for (int i = 0; i < files.length; i++) 
+			{
+				count++;
+				File file = files[i];
+
+				if (file.isDirectory())  
+					count += getTotalNum(file.getAbsolutePath()); 
+			}
+		}
+		
+		return count;
+	}
+	
+	/**
 	*OVERLOAD: Set a file's modification date to current timestamp
 	*@param file path
 	*/
