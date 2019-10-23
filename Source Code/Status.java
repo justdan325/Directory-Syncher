@@ -2,7 +2,7 @@
 *Class is a singleton that manages the status of the state of SynchModule when running a job.
 *
 *@author Dan Martineau
-*@version 1.0
+*@version 1.1
 *@since 2.0
 */
 
@@ -68,7 +68,6 @@ public class Status
 	{
 		this.dir = dir;
 		this.totalLocal = totalLocal;
-		curr++;
 		currLocal = 0;
 		progress();
 		
@@ -86,7 +85,6 @@ public class Status
 	public void setFile(String file)
 	{
 		this.file = file;
-		curr++;
 		currLocal++;
 		progress();
 		
@@ -95,6 +93,14 @@ public class Status
 			Prin.clearAll();
 			Prin.tln(toString());
 		}
+	}
+	
+	/**
+	*Incriment curr
+	*/
+	public void setCurr()
+	{
+		curr++;
 	}
 	
 	/**
