@@ -3,3 +3,4 @@
 -BUGFIX: 
 
 -Program will now notify the user of termination due to synchrc file errors reguarless of verbose mode being enabled or not.
+-Verbose mode is now much cleaner and gives an overall progress bar.

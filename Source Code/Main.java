@@ -296,13 +296,20 @@ public class Main
 		}
 		else if(!FileCMD.isDir(path2))
 		{
-			Prin.err("Secondary directory does not exist! Ending synch...\n");
+			Prin.err("Secondary directory does not exist!\n");
 			log += "Secondary directory does not exist! Cannot create in safe mode. Ending synch...\n";
 			error();
 		}
 		
 		dir1 = FileCMD.getCanonPath(path1);
 		dir2 = FileCMD.getCanonPath(path2);
+		
+		if(dir1.equals(dir2))
+		{
+			Prin.err("Primary and secondary directories are identical!\n");
+			log += "Primary and secondary directories are identical! Ending synch...\n";
+			error();
+		}
 	}
 	
 	private static void decodeFlags(String flags)
