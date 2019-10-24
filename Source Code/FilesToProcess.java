@@ -33,11 +33,6 @@ public class FilesToProcess
 		this.dir2 = dir2;
 		num = 0;
 		
-		if(read || modify)
-			num = 1;
-		if(delete)
-			num = 2;
-		
 		createSynch(rcName);
 		
 		calc(dir1, dir2);
@@ -92,15 +87,9 @@ public class FilesToProcess
 		for(int i = 0; i < files2.length; i++)
 		{
 			curr = files2[i];
-			node = synchrc.getNode(curr);
 			
 			if(!curr.equals(EMPTY_ELEMENT))
-			{	
-				if(node != null)
-					deleteHelperFile(origin, destination, curr, node.getRead(), node.getModify(), node.getDelete(), i, files1, files2);
-				else
-					deleteHelperFile(origin, destination, curr, read, modify, delete, i, files1, files2);
-			}
+				num++;
 		}
 		
 		for(int i = 0; i < dirs1.length; i++)
@@ -115,35 +104,21 @@ public class FilesToProcess
 		}
 		
 		for(int i = 0; i < dirs2.length; i++)
-		{
-			curr = dirs2[i];
-			node = synchrc.getNode(curr);
-			
-			if(node != null)
-				deleteHelperDir(origin, destination, curr, node.getRead(), node.getModify(), node.getDelete(), i, dirs1, dirs2);
-			else
-				deleteHelperDir(origin, destination, curr, read, modify, delete, i, dirs1, dirs2);
+		{	
+			num++;
 		}	
 	}
 	
 	private void readAndModHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] files1, String[] files2)
-	{		
-		String destFile = (destination + File.separatorChar +  FileCMD.getName(curr));	
-		
+	{			
 		index = findIndexInList(index, curr, files2);
 		
-		if(localRead && index == -1)
-		{	
-			assert FileCMD.existFile(curr) : ("It seems that " + origin + File.separatorChar + curr + " does not exist.");
-			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-			num++;
-		}
-		else if(localModify && index >= 0)
+		num++;
+		
+		if(localModify && index >= 0)
 		{	
 			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-			
-			num++;
 				
 			files2[index] = EMPTY_ELEMENT;
 		}
@@ -152,8 +127,6 @@ public class FilesToProcess
 		{
 			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-			
-			num++;
 				
 			files2[index] = EMPTY_ELEMENT;
 		}
@@ -161,58 +134,29 @@ public class FilesToProcess
 		else if(index >= 0)
 		{
 			files2[index] = EMPTY_ELEMENT;
-			
-			num++;
 		}
 	}
 	
 	private void deleteHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] files1, String[] files2)
 	{		
-		boolean inOrigin = findInList(index, curr, files1);
-		
-		if(localDelete && !inOrigin)
-		{	
-			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
-			
-			num++;
-		}
-		else if(!(localDelete || inOrigin))
-		{
-			num++;
-		}
+		num++;
 	}
 	
 	private void readAndModHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
 	{			
 		boolean inDest = findInList(index, curr, dirs2);
 		
+		num++;
+		
 		if(localRead && !inDest)
-		{
 			calc(curr, destination + File.separatorChar + FileCMD.getName(curr));
-			num++;
-			
-		}
 		else if(localRead && inDest)
-		{
 			calc(curr, destination + File.separatorChar + FileCMD.getName(curr));
-			num++;
-		}
 	}
 	
 	private void deleteHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
 	{			
-		boolean inOrigin = findInList(index, curr, dirs1);
-		
-		if(localDelete && !inOrigin)
-		{
-			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
-			
-			num++;
-		}
-		else if(!(localDelete || inOrigin))
-		{
-			num++;
-		}
+		num++;
 	}
 	
 	private static boolean findInList(int index, String fileName, String[] list)
