@@ -3,7 +3,7 @@ import java.util.ArrayList;
 
 public class UnitTest
 {
-	public static void main(String[] args)
+	/*public static void main(String[] args)
 	{
 		Status status = Status.getStatus();
 		String[] files = FileCMD.listAll(args[0]);
@@ -19,5 +19,9 @@ public class UnitTest
 			status.setMode(Status.MODE_READ);
 			Prin.pause(20);
 		}
+	}*/
+	public static void main(String[] args)
+	{
+		Prin.tln("" + NumberItems.getNum(args[0]));
 	}
 }

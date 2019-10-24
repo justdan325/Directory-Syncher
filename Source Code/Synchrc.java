@@ -124,8 +124,8 @@ public class Synchrc
 				if(r.getMessage().contains(RC_ERROR_MESSAGE))
 				{
 					if(verbose)
-						Prin.err("\nERROR in " + FileCMD.getName(synchrcPath) + ": " + r.getMessage() + "\n|");
-					log += "\nERROR in " + synchrcPath + ": " + r.getMessage() + "\n|";
+						Prin.err("\nERROR in " + FileCMD.getName(synchrcPath) + ": " + r.getMessage() + "\n");
+					log += "\nERROR in " + synchrcPath + ": " + r.getMessage() + "\n";
 					error = true;
 				}
 			}

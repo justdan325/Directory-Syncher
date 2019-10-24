@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 2.1
+*@version 2.2
 */
 
 import java.io.*;
@@ -24,11 +24,12 @@ public class SynchModule
 	private String dir2;		//canonical path of dir2
 	private String trash;	//DEFAULT_TRASH directory located in dir2
 	private boolean error;	//true if there are errors in the synchrc file
+	private Status status;	//instance of Status
 	
 	/*CONSTANTS*/
 	public static String DEFAULT_SYNCHRC = "synchrc";	//Name of default synchrc file
 	public static String DEFAULT_TRASH = "DELETEME_DirectorySyncher";
-	private static String EMPTY_ELEMENT = "?<>";		//Signifies an empty array element
+	public static String EMPTY_ELEMENT = "?<>";		//Signifies an empty array element
 	
 	/**
 	*Constructor for a default synch job
@@ -51,6 +52,7 @@ public class SynchModule
 		verbose = false;
 		safe = false;
 		existTrash = false;
+		status = Status.getStatus();
 		
 		trash = dir2 + File.separatorChar + DEFAULT_TRASH;
 		if(FileCMD.isDir(trash))
@@ -94,6 +96,7 @@ public class SynchModule
 		this.verbose = verbose;
 		this.safe = safe;
 		existTrash = false;
+		status = Status.getStatus();
 		
 		trash = dir2 + File.separatorChar + DEFAULT_TRASH;
 		if(FileCMD.isDir(trash))
@@ -154,9 +157,6 @@ public class SynchModule
 		error = synchrc.getError();
 		
 		log += ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
-		
-		if(verbose)
-			Prin.t("\nSynching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
 	}
 	
 	/**
@@ -186,29 +186,21 @@ public class SynchModule
 		String[] files1 = FileCMD.listFiles(origin);		//files in origin
 		String[] files2 = FileCMD.listFiles(destination);	//files in destination
 		String[] dirs1 = FileCMD.listDirs(origin);		//directories in origin
-		String[] dirs2 = FileCMD.listDirs(destination);		//directories in destination
+		String[] dirs2 = FileCMD.listDirs(destination);	//directories in destination
 		
 		String curr = "";					//current file in question
 		Node node;						//holder for the current Node
 		boolean success;					//whether or not an operation was successful
-		int comp;						//holder for compareTo methods
-		
-		if(verbose)
-			Prin.tln("\nCurrently synching: " + origin + " --> " + destination);
+		int comp;							//holder for compareTo methods
 		
 		//compare and manage local files (reading and modifying)
-		if(verbose)
-			Prin.tln("\tRead/mod cycle...");
 		for(int i = 0; i < files1.length; i++)
 		{
-			if(verbose)
-			{
-				Prin.clearCurrLine();
-				Prin.t("\tFile: " + (i+1) + " out of " + files1.length);
-			}
-
 			curr = files1[i];
 			node = synchrc.getNode(curr);
+			
+			status.setDir(origin);
+			status.setFile(FileCMD.getName(curr));
 			
 			//if the current file is in synchrc, deal with it according to that
 			if(node != null)
@@ -217,20 +209,16 @@ public class SynchModule
 			else
 				readAndModHelperFile(origin, destination, curr, read, modify, delete, i, files1, files2);
 		}
+		
 		//compare and manage local files (deletion)
-		if(verbose)
-			Prin.tln("\n\tDelete cycle...");
 		for(int i = 0; i < files2.length; i++)
 		{
-			if(verbose)
-			{
-				Prin.clearCurrLine();
-				Prin.t("\tFile: " + (i+1) + " out of " + files2.length);
-			}
-			
 			curr = files2[i];
+			
 			if(!curr.equals(EMPTY_ELEMENT))
 			{
+				status.setDir(destination);
+				status.setFile(FileCMD.getName(curr));
 				node = synchrc.getNode(curr);
 				
 				//if the current file is in synchrc, deal with it according to that
@@ -243,18 +231,13 @@ public class SynchModule
 		}
 		
 		//compare and recursivley manage directories
-		if(verbose)
-			Prin.tln("\n\tManaging primary subdirectories...");
 		for(int i = 0; i < dirs1.length; i++)
-		{
-			if(verbose)
-			{
-				Prin.clearCurrLine();
-				Prin.t("\tDir: " + (i+1) + " out of " + dirs1.length);
-			}
-			
+		{	
 			curr = dirs1[i];
 			node = synchrc.getNode(curr);
+			
+			status.setDir(origin);
+			status.setFile(FileCMD.getName(curr));
 			
 			//if the current file is in synchrc, deal with it according to that
 			if(node != null)
@@ -263,18 +246,14 @@ public class SynchModule
 			else
 				readAndModHelperDir(origin, destination, curr, read, modify, delete, i, dirs1, dirs2);
 		}
-		if(verbose)
-			Prin.tln("\n\tManaging secondary subdirectories...");
+		
 		for(int i = 0; i < dirs2.length; i++)
 		{
-			if(verbose)
-			{
-				Prin.clearCurrLine();
-				Prin.t("\tDir: " + (i+1) + " out of " + dirs2.length);
-			}
-			
 			curr = dirs2[i];
 			node = synchrc.getNode(curr);
+			
+			status.setDir(destination);
+			status.setFile(FileCMD.getName(curr));
 			
 			//if the current dir is in synchrc, deal with it according to that
 			if(node != null)
@@ -290,7 +269,7 @@ public class SynchModule
 		Node node;		//holder for the current Node
 		String destFile;	//holder for destination file canonicalPath with name
 		boolean success;	//whether or not an operation was successful
-		int comp;		//holder for compareTo methods
+		int comp;			//holder for compareTo methods
 		long time;		//holder for current timestamp
 		
 		//check to see if file exisits in destination
@@ -302,6 +281,8 @@ public class SynchModule
 		//if read is enabled and the file is not in destination (no point in executing if it is there already)
 		if(localRead && index == -1)
 		{
+			status.setMode(Status.MODE_READ);
+			
 			//copy the file to where it belongs--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + origin + File.separatorChar + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
@@ -316,6 +297,8 @@ public class SynchModule
 		//if modify is enabled and the file is already in destination
 		else if(localModify && index >= 0)
 		{
+			status.setMode(Status.MODE_MOD);
+			
 			//compare the mod times to see if file should be copied--assert parths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
@@ -361,18 +344,16 @@ public class SynchModule
 			else if(comp == -1)
 				log += ("There was an error comparing the mod times of " + curr + " and " + destFile + "\n");
 		}
-		//here we're simply letting the log know that files are being ignored
+		
 		else if(!localModify && index >= 0)
 		{
-			//compare the mod times to see if file should be copied--assert parths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
 				
 			//replace element in files2 with EMPTY_ELEMENT to make deletion process more efficient
 			files2[index] = EMPTY_ELEMENT;
-			
-			//log += ("Ignored checking \"" +  FileCMD.getName(curr) + "\" in " + origin + " for changes.\n");
 		}
+		
 		//if the file is in the destination whatsoever, we want to remove it from the list because there's no point in checking if it should be deleted in the deletion process
 		else if(index >= 0)
 		{
@@ -394,6 +375,8 @@ public class SynchModule
 		//if delete is enabled and the file is not in destination (no point in executing if it is there already)
 		if(localDelete && !inOrigin)
 		{
+			status.setMode(Status.MODE_DEL);
+			
 			//attempt to delete the file--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
 			
@@ -438,6 +421,8 @@ public class SynchModule
 		//if read enabled and directory is not in destination
 		if(localRead && !inDest)
 		{
+			status.setMode(Status.MODE_READ);
+			
 			//attempt to make directory
 			success = FileCMD.mkdirs(destination + File.separatorChar + FileCMD.getName(curr));
 			
@@ -472,6 +457,8 @@ public class SynchModule
 		//if read is enabled and the dir is not in destination (no point in executing if it is there already)
 		if(localDelete && !inOrigin)
 		{
+			status.setMode(Status.MODE_DEL);
+			
 			//attempt to delete the dir--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
 			

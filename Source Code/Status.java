@@ -2,7 +2,7 @@
 *Class is a singleton that manages the status of the state of SynchModule when running a job.
 *
 *@author Dan Martineau
-*@version 1.1
+*@version 1.2
 *@since 2.0
 */
 
@@ -13,10 +13,8 @@ public class Status
 	private static String file;			//current file being processed
 	private static String dir;			//current directory
 	private static String progress;		//ASCII progress meter
-	private static int totalLocal;		//total number of files in the subdir
 	private static int total;			//total number of files in all subdirs beneath parent dir
 	private static int curr;				//number of current file being processed
-	private static int currLocal;			//number of local current file being processed
 	private static boolean printOnUpdate; 	//true if status should print itself every time certain mutators are called
 	private static boolean initialized;	//true if there is an instance of Status
 	private static Status status;			//instance of this class
@@ -64,17 +62,14 @@ public class Status
 	*@param directory
 	*@param total files inside
 	*/
-	public void setDir(String dir, int totalLocal)
+	public void setDir(String dir)
 	{
-		this.dir = dir;
-		this.totalLocal = totalLocal;
-		currLocal = 0;
-		progress();
-		
-		if(printOnUpdate)
+		if(!this.dir.equals(dir))
 		{
-			Prin.clearAll();
-			Prin.tln(toString());
+			this.dir = dir;
+
+			if(printOnUpdate)
+				print();
 		}
 	}
 	
@@ -85,14 +80,7 @@ public class Status
 	public void setFile(String file)
 	{
 		this.file = file;
-		currLocal++;
-		progress();
-		
-		if(printOnUpdate)
-		{
-			Prin.clearAll();
-			Prin.tln(toString());
-		}
+		setCurr();
 	}
 	
 	/**
@@ -101,6 +89,10 @@ public class Status
 	public void setCurr()
 	{
 		curr++;
+		progress();
+		
+		if(printOnUpdate)
+			print();
 	}
 	
 	/**
@@ -140,10 +132,7 @@ public class Status
 		}
 		
 		if(printOnUpdate)
-		{
-			Prin.clearAll();
-			Prin.tln(toString());
-		}
+			print();
 	}
 	
 	/**
@@ -155,8 +144,6 @@ public class Status
 		mode = MODE_IDLE;
 		file = "--";
 		dir = "--";
-		totalLocal = 0;
-		currLocal = 0;
 		curr = 0;
 	}
 	
@@ -185,7 +172,7 @@ public class Status
 			for(int i = 0; i < PROG_LEN-fillNo; i++)
 				progress += PROG_BLANK;
 			
-			progress += "]";
+			progress += "] " + curr + " out of " + total;
 		}
 		else
 		{
@@ -194,8 +181,14 @@ public class Status
 			for(int i = 0; i < PROG_LEN; i++)
 				progress += PROG_BLANK;
 			
-			progress += "]";
+			progress += "] " + curr + " out of " + total;
 		}
+	}
+	
+	private void print()
+	{
+		Prin.clearAll();
+		Prin.tln(toString());
 	}
 	
 	@Override
@@ -207,7 +200,6 @@ public class Status
 		{
 			str += "Job: " + job + "\n";
 			str += "Directory: " + dir + "\n";
-			str += "Processing " + currLocal + " out of " + totalLocal + "\n";
 			str += "File: " + file + "\n";
 			str += "Mode: " + mode + "\n\n";
 			str += "Progress: " + progress + "\n";

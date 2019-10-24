@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 2.5
+*@version 2.6
 */
 
 import java.util.regex.*;
@@ -25,6 +25,7 @@ public class Main
 	private static String log;
 	private static String rcPrim;
 	private static String rcSec;
+	private static Status status;
 	
 	/*REGEXES*/
 	private static final String REGEX_PERM     = "[0-1]{3}";
@@ -47,6 +48,7 @@ public class Main
 		safe = false;
 		rcPrim = SynchModule.DEFAULT_SYNCHRC;
 		rcSec = SynchModule.DEFAULT_SYNCHRC;
+		status = Status.getStatus();
 		
 		
 		log = PREAMBLE + PROG_NAME + " ";
@@ -183,6 +185,24 @@ public class Main
 		
 		//begin synch job
 		
+		//set basic status values
+		status.setPrintOnUpdate(verbose);
+		status.setJob(dir1 + " --> " + dir2);
+		
+		//If there are no read permissions, total will be less than curr, so make sure read is true.
+		if(read || mod || del)
+		{
+			FilesToProcess noHoldA = new FilesToProcess(dir1, dir2, rcPrim, read, mod, del);
+			FilesToProcess noHoldB = new FilesToProcess(dir2, dir1, rcSec, read, mod, del);
+			
+			if(unidirectional)
+				status.setTotal(noHoldA.getNum());
+			else
+				status.setTotal(noHoldA.getNum() + noHoldB.getNum());
+		}
+		else
+			status.setTotal((FileCMD.listAll(dir1).length + FileCMD.listAll(dir2).length) * 2);
+		
 		//synch from primary to secondary
 		try
 		{
@@ -193,16 +213,25 @@ public class Main
 			//synch from secondary to primary if not unidirectional
 			if(!unidirectional)
 			{
+				//reset some status values
+				status.setJob(dir2 + " --> " + dir1);
+				
 				SynchModule part2 = new SynchModule(dir2, dir1, rcSec, read, mod, del, verbose, safe);
 				
 				log += part2.getLog();
 			}
+			
+			status.setIdle();
 		}
 		catch(Exception e)
 		{
 			Prin.err("\n" + e.toString() + "\n");
 			error();
 		}
+		
+		//clear verbose output
+		if(verbose)
+			Prin.clearAll();
 		
 		//if del enabled, check for files in trashes to delete
 		if(del)
@@ -211,7 +240,7 @@ public class Main
 		log += "\nFinished synch job!";
 		
 		if(verbose)
-			Prin.tln("\n\n" + log);
+			Prin.tln(log);
 		
 		saveLogFile(dir1);
 		saveLogFile(dir2);
