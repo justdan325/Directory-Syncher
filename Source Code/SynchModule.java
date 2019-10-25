@@ -605,6 +605,9 @@ public class SynchModule
 			success = FileCMD.mkdirs(trash);
 		
 		if(success)
+			existTrash = true;
+		
+		if(existTrash)
 		{
 			assert !file.equals(trash) : "Attempted to put \"trash\" into itself...";
 			
