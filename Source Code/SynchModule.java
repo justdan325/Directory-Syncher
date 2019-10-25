@@ -15,21 +15,21 @@ public class SynchModule
 	private boolean read;		//read (copy)  files in dir1 not in dir2 by default
 	private boolean modify;		//modify files in dir2 not in dir1 by default
 	private boolean delete;		//delete files in dir2 not in dir1 by default
-	private boolean verbose;	//true if program running in verbose mode
-	private boolean safe;			//true if program running in safe mode
+	private boolean verbose;		//true if program running in verbose mode
+	private boolean safe;		//true if program running in safe mode
 	private boolean existTrash;	//true if there is a DEFAULT_TRASH directory in dir2
-	private Synchrc synchrc;	//synchrc file object
-	private String log;		//log of synch
+	private Synchrc synchrc;		//synchrc file object
+	private String log;			//log of synch
 	private String dir1;		//canonical path of dir1
 	private String dir2;		//canonical path of dir2
-	private String trash;	//DEFAULT_TRASH directory located in dir2
-	private boolean error;	//true if there are errors in the synchrc file
-	private Status status;	//instance of Status
+	private String trash;		//DEFAULT_TRASH directory located in dir2
+	private boolean error;		//true if there are errors in the synchrc file
+	private Status status;		//instance of Status
 	
 	/*CONSTANTS*/
-	public static String DEFAULT_SYNCHRC = "synchrc";	//Name of default synchrc file
-	public static String DEFAULT_TRASH = "DELETEME_DirectorySyncher";
-	public static String EMPTY_ELEMENT = "?<>";		//Signifies an empty array element
+	public static String DEFAULT_SYNCHRC = "synchrc";					//Name of default synchrc file
+	public static String DEFAULT_TRASH = "DELETEME_DirectorySyncher";	//Name of default trash directory
+	public static String EMPTY_ELEMENT = "?<>";						//Signifies an empty array element
 	
 	/**
 	*Constructor for a default synch job
