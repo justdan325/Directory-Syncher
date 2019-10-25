@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 2.2
+*@version 2.3
 */
 
 import java.io.*;
@@ -619,10 +619,6 @@ public class SynchModule
 				moved = FileCMD.moveDir(file, trash);
 			else
 				moved = FileCMD.moveFile(file, trash);
-		}
-		else
-		{
-			log += "ERROR: failed to move " + file + " to the trash.\n";
 		}
 		
 		return moved;
