@@ -598,18 +598,29 @@ public class SynchModule
 	private boolean moveToTrash(String file)
 	{
 		boolean moved = false;
+		boolean success = false;
 		
 		//make trash directory if it does not exisit
-		if(existTrash)
-			FileCMD.mkdirs(trash);
+		if(!existTrash)
+			success = FileCMD.mkdirs(trash);
 		
-		assert !file.equals(trash) : "Attempted to put \"trash\" into itself...";
-		
-		//move "file" to trash directory
-		if(FileCMD.isDir(file))
-			moved = FileCMD.moveDir(file, trash);
+		if(success)
+		{
+			assert !file.equals(trash) : "Attempted to put \"trash\" into itself...";
+			
+			//incriment total in status becuase new directory has just been made
+			status.addToTotal(1);
+
+			//move "file" to trash directory
+			if(FileCMD.isDir(file))
+				moved = FileCMD.moveDir(file, trash);
+			else
+				moved = FileCMD.moveFile(file, trash);
+		}
 		else
-			moved = FileCMD.moveFile(file, trash);
+		{
+			log += "ERROR: failed to move " + file + " to the trash.\n";
+		}
 		
 		return moved;
 	}

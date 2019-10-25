@@ -1,6 +1,7 @@
 ﻿Change Log--Directory Syncher version 
 
 -BUGFIX: Can no longer run the program with the same directory as primary and secondary. 
+-BUGFIX: Trash directory was not being created when it should have been.
 
 -Program will now notify the user of termination due to synchrc file errors reguarless of verbose mode being enabled or not.
 -Verbose mode is now much cleaner and gives an overall progress bar.

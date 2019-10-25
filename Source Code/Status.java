@@ -2,7 +2,7 @@
 *Class is a singleton that manages the status of the state of SynchModule when running a job.
 *
 *@author Dan Martineau
-*@version 1.2
+*@version 1.3
 *@since 2.0
 */
 
@@ -97,11 +97,20 @@ public class Status
 	
 	/**
 	*Set the total number of files and subdirectories to be processed (include parent dir)
-	*@total files and subdirs
+	*@param total files and subdirs
 	*/
 	public void setTotal(int total)
 	{
 		this.total = total;
+	}
+	
+	/**
+	*Increase/decrease total
+	*@param amount to add/subtract from total
+	*/
+	public static void addToTotal(int amnt)
+	{
+		total += amnt;
 	}
 	
 	/**
@@ -185,7 +194,7 @@ public class Status
 		}
 	}
 	
-	private void print()
+	public void print()
 	{
 		Prin.clearAll();
 		Prin.tln(toString());

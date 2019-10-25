@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 2.6
+*@version 2.7
 */
 
 import java.util.regex.*;
@@ -304,6 +304,7 @@ public class Main
 		dir1 = FileCMD.getCanonPath(path1);
 		dir2 = FileCMD.getCanonPath(path2);
 		
+		//Do not run if the dirs are the same.
 		if(dir1.equals(dir2))
 		{
 			Prin.err("Primary and secondary directories are identical!\n");
