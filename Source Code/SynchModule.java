@@ -428,6 +428,8 @@ public class SynchModule
 			
 			if(success)
 			{
+				status.addToTotal(1);
+				
 				log += ("Added directory \"" + FileCMD.getName(curr) + "\" to " + destination + "\n");
 				
 				//preform synchJob on new subdir

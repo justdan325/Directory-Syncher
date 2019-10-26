@@ -146,12 +146,18 @@ public class FilesToProcess
 	{			
 		boolean inDest = findInList(index, curr, dirs2);
 		
+		assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
+		assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
+		
+		if(FileCMD.existFile(destination + File.separatorChar + FileCMD.getName(curr)))
+			destination += File.separatorChar + FileCMD.getName(curr);
+		
 		num++;
 		
 		if(localRead && !inDest)
-			calc(curr, destination + File.separatorChar + FileCMD.getName(curr));
+			calc(curr, destination);
 		else if(localRead && inDest)
-			calc(curr, destination + File.separatorChar + FileCMD.getName(curr));
+			calc(curr, destination);
 	}
 	
 	private void deleteHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
