@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 2.4
+*@version 2.5
 */
 
 import java.io.*;
@@ -109,12 +109,19 @@ public class SynchModule
 		
 		//do not synch if there are errors in the synchrc file
 		if(!error)
+		{
+			if(verbose)
+				status.setPrint(true);
+			
 			synchJob(dir1, dir2);
+		}
 		else
 		{
 			Prin.err("\nSynchrc file contains errors. Ending job...\n");
 			log += "\nAborted synch job from " + dir1 + " to " + dir2 + " due to error(s) in synchrc file.\n\n";
 		}
+		
+		status.setPrint(false);
 	}
 	
 	/*ACCESSORS*/

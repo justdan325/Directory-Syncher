@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 2.8
+*@version 2.9
 */
 
 import java.util.regex.*;
@@ -185,8 +185,6 @@ public class Main
 		
 		//begin synch job
 		
-		//set basic status values
-		status.setPrintOnUpdate(verbose);
 		status.setJob(dir1 + " --> " + dir2);
 		
 		FilesToProcess noHoldA = null;
@@ -195,8 +193,14 @@ public class Main
 		//If there are no read permissions, total will be less than curr, so make sure read is true.
 		if(read || mod || del)
 		{
+			if(verbose)
+				Prin.t("\nPreparing to run job . . .");
+			
 			noHoldA = new FilesToProcess(dir1, dir2, rcPrim, read, mod, del);
 			noHoldB = new FilesToProcess(dir2, dir1, rcSec, read, mod, del);
+			
+				if(verbose)
+					Prin.clearCurrLine();
 			
 			if(unidirectional)
 				status.setTotal(noHoldA.getNum());
@@ -230,7 +234,8 @@ public class Main
 				log += part2.getLog();
 			}
 			
-			status.print();
+			//kill status so that the program can eventually terminate
+			status.kill();
 		}
 		catch(Exception e)
 		{

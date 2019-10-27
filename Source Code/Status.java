@@ -2,21 +2,23 @@
 *Class is a singleton that manages the status of the state of SynchModule when running a job.
 *
 *@author Dan Martineau
-*@version 1.3
+*@version 1.4
 *@since 2.0
 */
 
 public class Status
 {
-	private static String job;			//Running job from dir a to dir b
-	private static String mode;			//Read/Mod/Delete 
-	private static String file;			//current file being processed
-	private static String dir;			//current directory
-	private static String progress;		//ASCII progress meter
-	private static int total;			//total number of files in all subdirs beneath parent dir
+	private static String job;				//Running job from dir a to dir b
+	private static String mode;				//Read/Mod/Delete 
+	private static String file;				//current file being processed
+	private static String dir;				//current directory
+	private static String progress;			//ASCII progress meter
+	private static int total;				//total number of files in all subdirs beneath parent dir
 	private static int curr;				//number of current file being processed
 	private static boolean printOnUpdate; 	//true if status should print itself every time certain mutators are called
-	private static boolean initialized;	//true if there is an instance of Status
+	private static boolean initialized;		//true if there is an instance of Status
+	private static boolean print;			//true if program should be printing the status to std out continuously
+	private static boolean alive;			//true if this instance should remain alive
 	private static Status status;			//instance of this class
 		
 	/*PUBLIC CONSTANTS*/
@@ -26,6 +28,7 @@ public class Status
 	public static final String MODE_IDLE = "Idle";
 	
 	/*PRIVATE CONSTANTS*/
+	private static final int DELAY = 15;
 	private static final int PROG_LEN = 30;
 	private static final String PROG_BLANK = "-";
 	private static final String PROG_FILL = "=";
@@ -35,10 +38,14 @@ public class Status
 		total = 0;
 		printOnUpdate = false;
 		initialized = true;
+		print = false;
+		alive = true;
 		
 		setIdle();
 		
 		progress();
+		
+		printMode();
 	}
 	
 	/*ACCESSORS*/
@@ -85,9 +92,6 @@ public class Status
 	{
 		curr++;
 		progress();
-		
-		if(printOnUpdate)
-			print();
 	}
 	
 	/**
@@ -134,9 +138,6 @@ public class Status
 			default:
 				throw new RuntimeException("Invalid mode passed into setMode(): " + newMode);
 		}
-		
-		if(printOnUpdate)
-			print();
 	}
 	
 	/**
@@ -149,15 +150,6 @@ public class Status
 		file = "--";
 		dir = "--";
 		curr = 0;
-	}
-	
-	/**
-	*Set true to automatically print each time certain fields are updated.
-	*@param true or false
-	*/
-	public void setPrintOnUpdate(boolean printOnUpdate)
-	{
-		this.printOnUpdate = printOnUpdate;
 	}
 	
 	private void progress()
@@ -189,10 +181,51 @@ public class Status
 		}
 	}
 	
+	/**
+	*Call to print the status to std out
+	*@param true or false
+	*/
 	public void print()
 	{
 		Prin.clearAll();
 		Prin.tln(toString());
+	}
+	
+	/**
+	*Set true to continously print the status to std out.
+	*@param true or false
+	*/
+	public void setPrint(boolean print)
+	{
+		this.print = print;
+	}
+	
+	/**
+	*Call to kill the print thread and release the instance of status
+	*/
+	public void kill()
+	{
+		alive = false;
+		status = null;
+		System.gc();
+	}
+	
+	private void printMode()
+	{
+		new Thread()
+		{
+			public void run() {
+				while(alive)
+				{
+					while(print)
+					{
+						print();
+						Prin.pause(DELAY);
+					}
+					Prin.pause(50);
+				}
+			}
+		}.start();
 	}
 	
 	@Override
