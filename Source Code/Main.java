@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 2.9
+*@version 3.0
 */
 
 import java.util.regex.*;
@@ -48,7 +48,6 @@ public class Main
 		safe = false;
 		rcPrim = SynchModule.DEFAULT_SYNCHRC;
 		rcSec = SynchModule.DEFAULT_SYNCHRC;
-		status = Status.getStatus();
 		
 		
 		log = PREAMBLE + PROG_NAME + " ";
@@ -185,6 +184,7 @@ public class Main
 		
 		//begin synch job
 		
+		status = Status.getStatus();
 		status.setJob(dir1 + " --> " + dir2);
 		
 		FilesToProcess noHoldA = null;
@@ -233,15 +233,15 @@ public class Main
 				
 				log += part2.getLog();
 			}
-			
-			//kill status so that the program can eventually terminate
-			status.kill();
 		}
 		catch(Exception e)
 		{
 			Prin.err("\n" + e.toString() + "\n");
 			error();
 		}
+		
+		//kill status so that the program can eventually terminate
+		status.kill();
 		
 		//clear verbose output
 		if(verbose)
