@@ -2,7 +2,7 @@
 *Class is a singleton that manages the status of the state of SynchModule when running a job.
 *
 *@author Dan Martineau
-*@version 1.4
+*@version 1.5
 *@since 2.0
 */
 
@@ -28,7 +28,7 @@ public class Status
 	public static final String MODE_IDLE = "Idle";
 	
 	/*PRIVATE CONSTANTS*/
-	private static final int DELAY = 15;
+	private static final int DELAY = 20;
 	private static final int PROG_LEN = 30;
 	private static final String PROG_BLANK = "-";
 	private static final String PROG_FILL = "=";
