@@ -482,34 +482,38 @@ public class FileCMD
 		//temp holder
 		ArrayList<String> temp = new ArrayList<String>();
 		//Just File names
-		String[] fileNames;
+		String[] fileNames = new String[0];
 		//holder for a name
 		String hold = "";
 		
-		//put file names into array list
-		for(int i = 0; i < files.length; i++)
+		try
 		{
-			if(files[i] != null)
-				temp.add(files[i].toString());
-		}
-		
-		//weed out directories
-		for(int i = 0; i < temp.size(); i++)
-		{
-			hold = temp.get(i);
-			if(isDir(hold))
+			//put file names into array list
+			for(int i = 0; i < files.length; i++)
+					temp.add(files[i].toString());
+
+			//weed out directories
+			for(int i = 0; i < temp.size(); i++)
 			{
-				temp.remove(i);
-				temp.trimToSize();
-				i--;
+				hold = temp.get(i);
+				if(isDir(hold))
+				{
+					temp.remove(i);
+					temp.trimToSize();
+					i--;
+				}
 			}
+		
+		
+			//place names into final list
+			fileNames = new String[temp.size()];
+			for(int i = 0; i < temp.size(); i++)
+				fileNames[i] = temp.get(i);
 		}
-		
-		//place names into final list
-		fileNames = new String[temp.size()];
-		for(int i = 0; i < temp.size(); i++)
-			fileNames[i] = temp.get(i);
-		
+		catch(NullPointerException e)
+		{
+			assert e == null : "Could not list files for " + path + ".\n" + e.getStackTrace();
+		}
 		//release temp
 		temp = null;
 		
