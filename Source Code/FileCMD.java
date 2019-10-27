@@ -488,7 +488,10 @@ public class FileCMD
 		
 		//put file names into array list
 		for(int i = 0; i < files.length; i++)
-			temp.add(i,  files[i].toString());
+		{
+			if(files[i] != null)
+				temp.add(files[i].toString());
+		}
 		
 		//weed out directories
 		for(int i = 0; i < temp.size(); i++)
