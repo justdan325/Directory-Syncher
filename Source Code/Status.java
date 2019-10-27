@@ -65,12 +65,7 @@ public class Status
 	public void setDir(String dir)
 	{
 		if(!this.dir.equals(dir))
-		{
 			this.dir = dir;
-
-			if(printOnUpdate)
-				print();
-		}
 	}
 	
 	/**

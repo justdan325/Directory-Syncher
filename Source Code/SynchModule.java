@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 2.3
+*@version 2.4
 */
 
 import java.io.*;
@@ -211,6 +211,7 @@ public class SynchModule
 		}
 		
 		//compare and manage local files (deletion)
+		status.setMode(Status.MODE_DEL);
 		for(int i = 0; i < files2.length; i++)
 		{
 			curr = files2[i];
@@ -247,6 +248,7 @@ public class SynchModule
 				readAndModHelperDir(origin, destination, curr, read, modify, delete, i, dirs1, dirs2);
 		}
 		
+		status.setMode(Status.MODE_DEL);
 		for(int i = 0; i < dirs2.length; i++)
 		{
 			curr = dirs2[i];
@@ -374,9 +376,7 @@ public class SynchModule
 		
 		//if delete is enabled and the file is not in destination (no point in executing if it is there already)
 		if(localDelete && !inOrigin)
-		{
-			status.setMode(Status.MODE_DEL);
-			
+		{	
 			//attempt to delete the file--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
 			
@@ -418,11 +418,11 @@ public class SynchModule
 		//check to see if file exisits in destination
 		inDest = findInList(index, curr, dirs2);
 		
+		status.setMode(Status.MODE_READ);
+		
 		//if read enabled and directory is not in destination
 		if(localRead && !inDest)
 		{
-			status.setMode(Status.MODE_READ);
-			
 			//attempt to make directory
 			success = FileCMD.mkdirs(destination + File.separatorChar + FileCMD.getName(curr));
 			
@@ -459,8 +459,6 @@ public class SynchModule
 		//if read is enabled and the dir is not in destination (no point in executing if it is there already)
 		if(localDelete && !inOrigin)
 		{
-			status.setMode(Status.MODE_DEL);
-			
 			//attempt to delete the dir--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
 			
