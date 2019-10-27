@@ -142,7 +142,7 @@ public class Synchrc
 		boolean read;
 		boolean modify;
 		boolean delete;
-		String canonicalPath;
+		String canonicalPath = "";
 		
 		//Reading short lines causes exceptions, and a short line should be ignored anyhow.
 		if(line.length() > 1)
@@ -180,7 +180,8 @@ public class Synchrc
 				throw new RuntimeException(RC_ERROR_MESSAGE + " " + line);
 			
 			//set canonicalPath
-			canonicalPath = pathToUpp + line.substring(4).replace(RC_DELIM, File.separatorChar);
+			line = line.substring(4);
+			canonicalPath = pathToUpp + line.replace(RC_DELIM, File.separatorChar);
 			
 			//make and add the Node to the tree
 			if(root == null)

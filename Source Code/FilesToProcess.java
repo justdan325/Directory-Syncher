@@ -29,8 +29,8 @@ public class FilesToProcess
 		this.read = read;
 		this.modify = modify;
 		this.delete = delete;
-		this.dir1 = dir1;
-		this.dir2 = dir2;
+		this.dir1 = standardizePath(dir1);
+		this.dir2 = standardizePath(dir2);
 		num = 0;
 		
 		createSynch(rcName);
@@ -128,25 +128,37 @@ public class FilesToProcess
 	
 	private void readAndModHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
 	{			
-		boolean inDest = findInList(index, curr, dirs2);
+		//boolean inDest = findInList(index, curr, dirs2);
 		
 		assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
 		assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
 		
-		if(FileCMD.existFile(destination + File.separatorChar + FileCMD.getName(curr)))
-			destination += File.separatorChar + FileCMD.getName(curr);
-		
 		num++;
 		
-		if(localRead && !inDest)
+		if(localRead)
+		{
+			if(FileCMD.existFile(destination + File.separatorChar + FileCMD.getName(curr)))
+				destination += File.separatorChar + FileCMD.getName(curr);
+				   
 			calc(curr, destination);
-		else if(localRead && inDest)
-			calc(curr, destination);
+		}
 	}
 	
 	private void deleteHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
 	{			
 		num++;
+	}
+	
+	private String standardizePath(String raw)
+	{
+		String fixed;
+		
+		if(raw.charAt(raw.length()-1) == File.separatorChar)
+			fixed = raw.substring(0,raw.length()-1);
+		else 
+			fixed = raw;
+		
+		return fixed;
 	}
 	
 	private static boolean findInList(int index, String fileName, String[] list)

@@ -244,6 +244,13 @@ public class SynchModule
 			curr = dirs1[i];
 			node = synchrc.getNode(curr);
 			
+			if(curr.contains("RECYCLE.BIN") && node == null)
+			{
+				Prin.tln("|" + curr + "|\n");
+				Prin.pause(20000);
+				System.exit(-1);
+			}
+			
 			status.setDir(origin);
 			status.setFile(FileCMD.getName(curr));
 			
