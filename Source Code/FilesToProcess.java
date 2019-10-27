@@ -115,23 +115,7 @@ public class FilesToProcess
 		
 		num++;
 		
-		if(localModify && index >= 0)
-		{	
-			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
-			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-				
-			files2[index] = EMPTY_ELEMENT;
-		}
-		
-		else if(!localModify && index >= 0)
-		{
-			assert FileCMD.existFile(curr) : ("It seems that " + curr + " does not exist.");
-			assert FileCMD.existFile(destination) : ("It seems that " + destination + " does not exist.");
-				
-			files2[index] = EMPTY_ELEMENT;
-		}
-		
-		else if(index >= 0)
+		if(index >= 0)
 		{
 			files2[index] = EMPTY_ELEMENT;
 		}

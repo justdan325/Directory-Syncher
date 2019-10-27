@@ -189,11 +189,14 @@ public class Main
 		status.setPrintOnUpdate(verbose);
 		status.setJob(dir1 + " --> " + dir2);
 		
+		FilesToProcess noHoldA = null;
+		FilesToProcess noHoldB = null;;
+		
 		//If there are no read permissions, total will be less than curr, so make sure read is true.
 		if(read || mod || del)
 		{
-			FilesToProcess noHoldA = new FilesToProcess(dir1, dir2, rcPrim, read, mod, del);
-			FilesToProcess noHoldB = new FilesToProcess(dir2, dir1, rcSec, read, mod, del);
+			noHoldA = new FilesToProcess(dir1, dir2, rcPrim, read, mod, del);
+			noHoldB = new FilesToProcess(dir2, dir1, rcSec, read, mod, del);
 			
 			if(unidirectional)
 				status.setTotal(noHoldA.getNum());
@@ -213,6 +216,12 @@ public class Main
 			//synch from secondary to primary if not unidirectional
 			if(!unidirectional)
 			{
+				if(read || mod || del)
+				{	//noHoldA = new FilesToProcess(dir1, dir2, rcPrim, read, mod, del);
+					noHoldB = new FilesToProcess(dir2, dir1, rcSec, read, mod, del);
+					status.setTotal(noHoldA.getNum() + noHoldB.getNum());
+				}
+				
 				//reset some status values
 				status.setJob(dir2 + " --> " + dir1);
 				
@@ -221,7 +230,7 @@ public class Main
 				log += part2.getLog();
 			}
 			
-			status.setIdle();
+			status.print();
 		}
 		catch(Exception e)
 		{

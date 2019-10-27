@@ -428,7 +428,7 @@ public class SynchModule
 			
 			if(success)
 			{
-				status.addToTotal(1);
+				status.setFile(FileCMD.getName(curr));
 				
 				log += ("Added directory \"" + FileCMD.getName(curr) + "\" to " + destination + "\n");
 				
