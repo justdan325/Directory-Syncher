@@ -2,7 +2,7 @@
 *Class represents a synchrc file
 *
 *@author Dan Martineau
-*@version 1.5
+*@version 1.6
 */
 
 import java.io.File;
@@ -12,15 +12,16 @@ public class Synchrc
 {
 	/*FIELDS*/
 	private String synchrcPath;	//path of synchrc file: IT IS ASSUMED THAT IT LIES IN UPPERMOST PARENT DIR
-	private String pathToUpp;		//path to uppermost parent directory: DETERMINED BY synchrcPath!
-	private Node root;					//the root node in the binary search tree
-	private String log;					//log file for the synch job
+	private String pathToUpp;	//path to uppermost parent directory: DETERMINED BY synchrcPath!
+	private Node root;			//the root node in the binary search tree
+	private String log;			//log file for the synch job
 	private boolean verbose;		//wether or not the program is running in verbose mode
-	private boolean error;				//true if there is an error in the synchrc file
+	private boolean error;		//true if there is an error in the synchrc file
 	
 	/*CONSTANTS*/
-	private final static char RC_DELIM = ',';															//delimiter that the contextless synchrc file uses to seperate directories and files
-	private final static String RC_ERROR_MESSAGE = "Line format is invalid:";		//display when there is an invalid line in a synchrc file
+	public static String DEFAULT_SYNCHRC = "synchrc";						//Name of default synchrc file
+	private final static char RC_DELIM = ',';							//delimiter that the contextless synchrc file uses to seperate directories and files
+	private final static String RC_ERROR_MESSAGE = "Line format is invalid:";	//display when there is an invalid line in a synchrc file
 	
 	/*REGULAR EXPRESSIONS*/
 	//000 ParentDir,subdir,subdir,file.extension 	//represents how a line should be formatted in the synchrc file
@@ -83,6 +84,15 @@ public class Synchrc
 	public boolean getError()
 	{
 		return error;
+	}
+	
+	/**
+	*Returns the name of the actual file
+	*@return synchrc name
+	*/
+	public String getName()
+	{
+		return FileCMD.getName(synchrcPath);
 	}
 	
 	/**

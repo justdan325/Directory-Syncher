@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 2.5
+*@version 2.6
 */
 
 import java.io.*;
@@ -23,11 +23,9 @@ public class SynchModule
 	private String dir1;		//canonical path of dir1
 	private String dir2;		//canonical path of dir2
 	private String trash;		//DEFAULT_TRASH directory located in dir2
-	private boolean error;		//true if there are errors in the synchrc file
 	private Status status;		//instance of Status
 	
 	/*CONSTANTS*/
-	public static String DEFAULT_SYNCHRC = "synchrc";					//Name of default synchrc file
 	public static String DEFAULT_TRASH = "DELETEME_DirectorySyncher";	//Name of default trash directory
 	public static String EMPTY_ELEMENT = "?<>";						//Signifies an empty array element
 	
@@ -35,9 +33,9 @@ public class SynchModule
 	*Constructor for a default synch job
 	*@param dir1 path
 	*@param dir2 path
-	*@param synchrc file name
+	*@param synchrc object
 	*/
-	public SynchModule(String path1, String path2, String rcname)
+	public SynchModule(String path1, String path2, Synchrc synchrc)
 	{
 		//assign parameters to their instance varibales and assert paths are valid
 		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
@@ -53,35 +51,29 @@ public class SynchModule
 		safe = false;
 		existTrash = false;
 		status = Status.getStatus();
+		this.synchrc = synchrc;
 		
 		trash = dir2 + File.separatorChar + DEFAULT_TRASH;
 		if(FileCMD.isDir(trash))
 			existTrash = true;
 		
-		log = "";
+		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc.getName() + "\"\n");
 		
-		//create synchrc object
-		createSynch(rcname);
-		
-		//do not synch if there are errors in the synchrc file
-		if(!error)
-			synchJob(dir1, dir2);
-		else
-			Prin.err("\nSynchrc file contains errors. Ending job...\n");
+		synchJob(dir1, dir2);
 	}
 	
 	/**
 	*Constructor for custom synch job
 	*@param dir1 path
 	*@param dir2 path
-	*@param synchrc file path
+	*@param synchrc object
 	*@param read
 	*@param modify
 	*@param delete
 	*@param verbose
 	*@param safe
 	*/
-	public SynchModule(String path1, String path2, String rcname, boolean read, boolean modify, boolean delete, boolean verbose, boolean safe)
+	public SynchModule(String path1, String path2, Synchrc synchrc, boolean read, boolean modify, boolean delete, boolean verbose, boolean safe)
 	{
 		//assign parameters to their instance varibales and assert paths are valid
 		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
@@ -97,29 +89,18 @@ public class SynchModule
 		this.safe = safe;
 		existTrash = false;
 		status = Status.getStatus();
+		this.synchrc = synchrc;
 		
 		trash = dir2 + File.separatorChar + DEFAULT_TRASH;
 		if(FileCMD.isDir(trash))
 			existTrash = true;
 		
-		log = "";
+		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc.getName() + "\"\n");
 		
-		//create synchrc object
-		createSynch(rcname);
-		
-		//do not synch if there are errors in the synchrc file
-		if(!error)
-		{
-			if(verbose)
-				status.setPrint(true);
+		if(verbose)
+			status.setPrint(true);
 			
-			synchJob(dir1, dir2);
-		}
-		else
-		{
-			Prin.err("\nSynchrc file contains errors. Ending job...\n");
-			log += "\nAborted synch job from " + dir1 + " to " + dir2 + " due to error(s) in synchrc file.\n\n";
-		}
+		synchJob(dir1, dir2);
 		
 		status.setPrint(false);
 	}
@@ -136,35 +117,6 @@ public class SynchModule
 	}
 	
 	/*******************/
-	
-	/**
-	*Creates synch object
-	*@param Synch file name
-	*/
-	private void createSynch(String name)
-	{
-		String filePath;
-		
-		//parse name to synchrc file
-		if(name.equals(DEFAULT_SYNCHRC))
-			filePath = dir1 + File.separatorChar + name;
-		else
-			filePath = name;
-		
-		//assert file exisits
-		assert FileCMD.existFile(filePath) : "Synchrc file: " + filePath + " does not exist! Should be handled outside of SynchModule.";
-		
-		//instantiate synchrc
-		synchrc = new Synchrc(filePath, dir1, log, verbose);
-		
-		//get log from new Synchrc 
-		log = synchrc.getLog();
-		
-		//get error from new Synchrc
-		error = synchrc.getError();
-		
-		log += ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + name + "\"\n");
-	}
 	
 	/**
 	*Removes the separatorChar from the end of a path if it is there

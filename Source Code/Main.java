@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 3.0
+*@version 3.1
 */
 
 import java.util.regex.*;
@@ -26,6 +26,8 @@ public class Main
 	private static String rcPrim;
 	private static String rcSec;
 	private static Status status;
+	private static Synchrc synchrc1;
+	private static Synchrc synchrc2;
 	
 	/*REGEXES*/
 	private static final String REGEX_PERM     = "[0-1]{3}";
@@ -46,8 +48,8 @@ public class Main
 		unidirectional = false;
 		saveLog = false;
 		safe = false;
-		rcPrim = SynchModule.DEFAULT_SYNCHRC;
-		rcSec = SynchModule.DEFAULT_SYNCHRC;
+		rcPrim = Synchrc.DEFAULT_SYNCHRC;
+		rcSec = Synchrc.DEFAULT_SYNCHRC;
 		
 		
 		log = PREAMBLE + PROG_NAME + " ";
@@ -182,6 +184,10 @@ public class Main
 		checkSynchrc(dir1);
 		checkSynchrc(dir2);
 		
+		//parse synchrc files
+		synchrc1 = createSynchrc(rcPrim, dir1, synchrc1);
+		synchrc2 = createSynchrc(rcSec, dir2, synchrc2);
+		
 		//begin synch job
 		
 		status = Status.getStatus();
@@ -196,8 +202,8 @@ public class Main
 			if(verbose)
 				Prin.t("\nPreparing to run job . . .");
 			
-			noHoldA = new FilesToProcess(dir1, dir2, rcPrim, read, mod, del);
-			noHoldB = new FilesToProcess(dir2, dir1, rcSec, read, mod, del);
+			noHoldA = new FilesToProcess(dir1, dir2, synchrc1, read, mod, del);
+			noHoldB = new FilesToProcess(dir2, dir1, synchrc2, read, mod, del);
 			
 				if(verbose)
 					Prin.clearCurrLine();
@@ -213,7 +219,7 @@ public class Main
 		//synch from primary to secondary
 		try
 		{
-			SynchModule part1 = new SynchModule(dir1, dir2, rcPrim, read, mod, del, verbose, safe);
+			SynchModule part1 = new SynchModule(dir1, dir2, synchrc1, read, mod, del, verbose, safe);
 		
 			log += part1.getLog();
 			
@@ -222,20 +228,21 @@ public class Main
 			{
 				if(read || mod || del)
 				{	//noHoldA = new FilesToProcess(dir1, dir2, rcPrim, read, mod, del);
-					noHoldB = new FilesToProcess(dir2, dir1, rcSec, read, mod, del);
+					noHoldB = new FilesToProcess(dir2, dir1, synchrc2, read, mod, del);
 					status.setTotal(noHoldA.getNum() + noHoldB.getNum());
 				}
 				
 				//reset some status values
 				status.setJob(dir2 + " --> " + dir1);
 				
-				SynchModule part2 = new SynchModule(dir2, dir1, rcSec, read, mod, del, verbose, safe);
+				SynchModule part2 = new SynchModule(dir2, dir1, synchrc2, read, mod, del, verbose, safe);
 				
 				log += part2.getLog();
 			}
 		}
 		catch(Exception e)
 		{
+			assert e == null : Prin.getStackTrace(e);
 			Prin.err("\n" + e.toString() + "\n");
 			error();
 		}
@@ -412,13 +419,45 @@ public class Main
 			+ SynchModule.DEFAULT_TRASH;
 		
 		if(path.charAt(path.length()-1) == File.separatorChar)
-			path += SynchModule.DEFAULT_SYNCHRC;
+			path += Synchrc.DEFAULT_SYNCHRC;
 		else
-			path += File.separatorChar + SynchModule.DEFAULT_SYNCHRC;
+			path += File.separatorChar + Synchrc.DEFAULT_SYNCHRC;
 		
 		//cehck to see if synchrc exisits
 		if(!FileCMD.existFile(path))
 			FileCMD.writeFile(DEFAULT_RC_CONT, path);
+	}
+	
+	/**
+	*Creates synchrc object
+	*@param Synchrc file name
+	*/
+	private static Synchrc createSynchrc(String name, String rcDir, Synchrc synchrc)
+	{
+		String filePath;
+		
+		//parse name to synchrc file
+		if(name.equals(Synchrc.DEFAULT_SYNCHRC))
+			filePath = rcDir + File.separatorChar + name;
+		else
+			filePath = name;
+		
+		//assert file exisits
+		assert FileCMD.existFile(filePath) : "Synchrc file: " + filePath + " does not exist! Should be handled outside of SynchModule.";
+		
+		//instantiate synchrc
+		synchrc = new Synchrc(filePath, rcDir, log, verbose);
+		
+		//get log from new Synchrc 
+		log = synchrc.getLog();
+		
+		if(synchrc.getError())
+		{
+			Prin.err("\nSynchrc file contains errors. Ending job...\n");
+			log += "\nAborted synch job due to error(s) in synchrc file: " + name + "\n\n";
+		}
+		
+		return synchrc;
 	}
 	
 	private static void displayOptions()
