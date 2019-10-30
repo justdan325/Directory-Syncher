@@ -459,7 +459,7 @@ public class Main
 		synchrc = new Synchrc(filePath, rcDir, log, verbose);
 		
 		//get log from new Synchrc 
-		log = synchrc.getLog();
+		log += synchrc.getLog();
 		
 		if(synchrc.getError())
 		{
