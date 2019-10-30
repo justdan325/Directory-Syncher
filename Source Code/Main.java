@@ -185,8 +185,18 @@ public class Main
 		checkSynchrc(dir2);
 		
 		//parse synchrc files
+		Prin.ln();
+		if(verbose)
+			Prin.t("\nParsing " + rcPrim + ". . .");
 		synchrc1 = createSynchrc(rcPrim, dir1, synchrc1);
+		
+		Prin.clearCurrLine();
+		if(verbose)
+			Prin.t("Parsing " + rcSec + ". . .");
+		
 		synchrc2 = createSynchrc(rcSec, dir2, synchrc2);
+		
+		Prin.clearCurrLine();
 		
 		//begin synch job
 		
