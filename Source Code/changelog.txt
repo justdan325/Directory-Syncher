@@ -2,6 +2,7 @@
 
 -BUGFIX: Fixed bug where program would crash while matching wild cards for a directory containing no matches.
 -BUGFIX: Fixed bug where files with same names in diffrent directories weren't being added as synchrc nodes.
+-BUGFIX: Fixed bug where getNode() in Node was not getting nodes that were in the tree.
 
 -Optimized Status for better overall program performance and less glitching.
 
