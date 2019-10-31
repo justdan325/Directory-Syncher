@@ -75,21 +75,22 @@ public class FileCMD
 	@param string to be written
 	@param destination file
 	*/
-	public static void writeFile(String fileStr, String destination)
+	public static boolean writeFile(String fileStr, String destination)
 	{
 		final long LENGTH = fileStr.length();
 		File file = new File(destination);
 		PrintWriter outputFile;
+		boolean written = false;
 
 		try
 		{
 			outputFile = new PrintWriter(file);
+			written = true;
 		}
-
 		catch(FileNotFoundException e)
 		{
 			System.out.println("File " + destination + " could not be found...\n" + Prin.getStackTrace(e));
-			return;
+			return false;
 		}
 
 		for(int i = 0; i < LENGTH; i++)
@@ -101,7 +102,10 @@ public class FileCMD
 			else
 				outputFile.append(fileStr.charAt(i));
 		}
+		
 		outputFile.close();
+		
+		return written;
 	}
 
 	/**

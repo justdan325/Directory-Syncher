@@ -418,6 +418,7 @@ public class Main
 	
 	private static void checkSynchrc(String path)
 	{
+		boolean written = false;
 		final String PARENT_DIR = FileCMD.getName(path);
 		final String DEFAULT_RC_CONT = "#This is your synchrc file\n\n#This line prevents your synchrc files from overwriting eachother across directories.\n000 " 
 			+ PARENT_DIR + ",synchrc\n\n#The following two lines are essential when running a job on the parent directory of a drive in Windows.\n000 " 
@@ -435,7 +436,16 @@ public class Main
 		
 		//cehck to see if synchrc exisits
 		if(!FileCMD.existFile(path))
-			FileCMD.writeFile(DEFAULT_RC_CONT, path);
+			written = FileCMD.writeFile(DEFAULT_RC_CONT, path);
+		else
+			written = true;
+		
+		//terminate program if synchrc could not be created
+		if(!written)
+		{
+			Prin.err("Could not create new synchrc file! Check write permissions and try again.\n");
+			error();
+		}
 	}
 	
 	/**
