@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 3.1
+*@version 3.2
 */
 
 import java.util.regex.*;
@@ -30,8 +30,8 @@ public class Main
 	private static Synchrc synchrc2;
 	
 	/*REGEXES*/
-	private static final String REGEX_PERM     = "[0-1]{3}";
-	private static final String REGEX_FLAG      = "[-]{1}[vuls]{1,4}";
+	private static final String REGEX_PERM   = "[0-1]{3}";
+	private static final String REGEX_FLAG   = "[-]{1}[vuls]{1,4}";
 	private static final String REGEX_CUSTRC = "[-]{2}[rcPrimSe]{5,6}";
 	
 	/*CONSTANTS*/
@@ -445,6 +445,7 @@ public class Main
 	private static Synchrc createSynchrc(String name, String rcDir, Synchrc synchrc)
 	{
 		String filePath;
+		String err;
 		
 		//parse name to synchrc file
 		if(name.equals(Synchrc.DEFAULT_SYNCHRC))
@@ -459,12 +460,15 @@ public class Main
 		synchrc = new Synchrc(filePath, rcDir, log, verbose);
 		
 		//get log from new Synchrc 
-		log += synchrc.getLog();
+		log = synchrc.getLog();
 		
-		if(synchrc.getError())
+		//get error
+		err = synchrc.getError();
+		
+		if(err != null)
 		{
-			Prin.err("\nSynchrc file contains errors. Ending job...\n");
-			log += "\nAborted synch job due to error(s) in synchrc file: " + name + "\n\n";
+			Prin.err("\n" + err + "\n");
+			log += "\n" + err + "\n\n";
 		}
 		
 		return synchrc;

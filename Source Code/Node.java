@@ -17,8 +17,8 @@ public class Node
 	private Node left;				//Node to the left in the bin search tree
 	private Node right;				//Node to the right in the bin search tree
 	private boolean read;			//read permission
-	private boolean modify;		//modify permission
-	private boolean delete;		//delete permission
+	private boolean modify;			//modify permission
+	private boolean delete;			//delete permission
 	
 	/**
 	*Constructor

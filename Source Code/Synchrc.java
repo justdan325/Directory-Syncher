@@ -2,7 +2,7 @@
 *Class represents a synchrc file
 *
 *@author Dan Martineau
-*@version 1.6
+*@version 1.7
 */
 
 import java.io.File;
@@ -16,7 +16,7 @@ public class Synchrc
 	private Node root;			//the root node in the binary search tree
 	private String log;			//log file for the synch job
 	private boolean verbose;		//wether or not the program is running in verbose mode
-	private boolean error;		//true if there is an error in the synchrc file
+	private String error;		//holds an error if one occurs while parsing the synchrc file
 	
 	/*CONSTANTS*/
 	public static String DEFAULT_SYNCHRC = "synchrc";						//Name of default synchrc file
@@ -78,10 +78,10 @@ public class Synchrc
 	}
 	
 	/**
-	*Returns true if there are errors in synchrc file
+	*Returns the error String
 	*@return error
 	*/
-	public boolean getError()
+	public String getError()
 	{
 		return error;
 	}
@@ -117,8 +117,20 @@ public class Synchrc
 	*/
 	private void decodeFile()
 	{
-		String contents = FileCMD.readFile(synchrcPath);
-		Scanner fileScan = new Scanner(contents);
+		String contents;
+		Scanner fileScan;
+		
+		contents = FileCMD.readFile(synchrcPath);
+		
+		//see if synchrc could be read
+		if(contents.equals(""))
+	   	{
+			error = "Synchrc file \"" + FileCMD.getName(synchrcPath) + "\" could not be read. Check read permissions and try again.";
+			return;
+		}
+		
+		
+		fileScan = new Scanner(contents);
 		
 		fileScan.useDelimiter("\n");
 		
@@ -136,7 +148,7 @@ public class Synchrc
 					if(verbose)
 						Prin.err("\nERROR in " + FileCMD.getName(synchrcPath) + ": " + r.getMessage() + "\n");
 					log += "\nERROR in " + synchrcPath + ": " + r.getMessage() + "\n";
-					error = true;
+					error = "Aborted synch job due to error(s) in synchrc file: " + FileCMD.getName(synchrcPath);
 				}
 			}
 		}
