@@ -117,9 +117,9 @@ public class Node
 	protected Node getNode(String nodePath)
 	{
 		Node desired = null;	//holder for desired node to return
-		Node curr;					//current node being examined
+		Node curr;			//current node being examined
 		String nodeName;		//name of file at given path
-		int status;					//holder for value of comapreTo comparison
+		int status;			//holder for value of comapreTo comparison
 		
 		nodeName = FileCMD.getName(nodePath);
 		
@@ -131,6 +131,8 @@ public class Node
 		}
 		else
 		{
+			status = path.compareTo(nodePath);
+			
 			if(status <= 0 && right != null)
 			{
 				if(right.getPath().equals(nodePath))
