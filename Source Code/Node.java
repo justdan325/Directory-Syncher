@@ -179,7 +179,7 @@ public class Node
 		}
 		else
 		{
-			status = name.compareTo(toAdd.getName());
+			status = path.compareTo(toAdd.getPath());
 			
 			//deal with a duplicate Node
 			if(status == 0 && path.equals(toAdd.getPath()))
