@@ -129,11 +129,9 @@ public class Synchrc
 			return;
 		}
 		
-		
 		fileScan = new Scanner(contents);
 		
 		fileScan.useDelimiter("\n");
-		
 	
 		while(fileScan.hasNext())
 		{
@@ -143,6 +141,11 @@ public class Synchrc
 			}
 			catch(RuntimeException r)
 			{
+				if(r.getMessage() == null)
+				{
+					r.printStackTrace();
+					System.exit(-1);
+				}
 				if(r.getMessage().contains(RC_ERROR_MESSAGE))
 				{
 					if(verbose)

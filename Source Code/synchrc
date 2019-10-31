@@ -1,0 +1,11 @@
+#This is your synchrc file
+
+#This line prevents your synchrc files from overwriting eachother across directories.
+000 Source Code,synchrc
+
+#The following two lines are essential when running a job on the parent directory of a drive in Windows.
+000 Source Code,System Volume Information
+000 Source Code,$RECYCLE.BIN
+
+#This line prevents deleted files from copying across directories.
+000 Source Code,DELETEME_DirectorySyncher

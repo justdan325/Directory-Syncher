@@ -1,6 +1,6 @@
 ﻿Change Log--Directory Syncher version 
 
--BUGFIX: 
+-BUGFIX: Fixed bug where program would crash while matching wild cards for a directory containing no matches.
 
 -Optimized Status for better overall program performance and less glitching.
 

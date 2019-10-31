@@ -3,7 +3,7 @@
 *Nodes should form a binary search tree
 *
 *@author Dan Martineau
-*@version 2.2
+*@version 2.3
 */
 
 import java.io.*;
@@ -161,6 +161,10 @@ public class Node
 	{
 		int status;		//holder for value of comapreTo comparison
 		
+		//don't add the node if the name is null
+		if(toAdd.getName() == null)
+			return;
+		
 		//if path contains wildcards, then toAdd must be the first match found. 
 		//It will therefore be set as this Node
 		if(path.contains("*"))
@@ -245,6 +249,12 @@ public class Node
 			
 			if(wild.length() > wild.indexOf("*")+1)
 				recursive = wild.charAt(wild.indexOf("*")+1) == '*';
+			
+			if(filesAndDirs.length == 0)
+			{
+				addNode(new Node(rootPath, read, modify, delete));
+				return;
+			}
 			
 			//get all files and subdirs in rootPath
 			//run them through match
