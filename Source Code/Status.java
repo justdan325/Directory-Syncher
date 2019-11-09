@@ -91,7 +91,6 @@ public class Status
 	public void setCurr()
 	{
 		curr++;
-		//progress();
 	}
 	
 	/**
