@@ -1,4 +1,4 @@
-﻿Change Log--Directory Syncher version 
+﻿Change Log--Directory Syncher version 2.1
 
 -BUGFIX: Fixed bug where program would crash while matching wild cards for a directory containing no matches.
 -BUGFIX: Fixed bug where files with same names in different directories weren't being added as synchrc nodes.
