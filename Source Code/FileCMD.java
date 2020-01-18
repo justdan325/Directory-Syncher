@@ -9,7 +9,7 @@ import java.sql.Time;
 *This is a class that abstracts file io to suit my needs
 *
 *@author Dan Martineau
-*@version 2.0
+*@version 2.1
 */
 
 public class FileCMD
