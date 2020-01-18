@@ -5,4 +5,4 @@
 -BUGFIX: Fixed bug where getNode() in Node was not getting nodes that were in the tree.
 
 -Optimized Status for better overall program performance and less glitching.
-
+-Calculating files to process is now done in parallel for faster run times.
