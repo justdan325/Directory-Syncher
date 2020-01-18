@@ -315,6 +315,44 @@ public class FileCMD
 	}
 	
 	/**
+	*Copy a directory and its contents from one location to another
+	*@param path of directory to copy
+	*@param desired location NOT including the name of the dir
+	*@return true if completed
+	*/
+	public static boolean copyDir(String path1, String path2)
+	{
+		String errMess = null;
+		boolean copied = true;
+		
+		//make sure path2 ends with file separator char
+		if(path2.charAt(path2.length()-1) != File.separatorChar)
+			path2 += File.separatorChar;
+		
+		if (isDir(path1))
+		{
+			if(!isDir(path2 + getName(path1)))
+					mkdirs(path2 + getName(path1));
+				
+			for (String file : listAll(path1))
+			{
+				copied = copyDir(file, (path2 + getName(path1)));
+				
+				if(!copied)
+					break;
+			}
+		}
+		else
+		{
+				copied = copyFile(path1, (path2 + getName(path1)), false);
+		}
+		
+		assert errMess == null: errMess;
+		
+		return copied;
+	}
+	
+	/**
 	*Find out when file was last modified via time stamp
 	*@param file path
 	*@return String containing datestamp or null if file does not exist/is not accessible.

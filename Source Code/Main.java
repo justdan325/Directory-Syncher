@@ -39,6 +39,12 @@ public class Main
 	private static final String PREAMBLE 	= "Directory Syncher Version " + VERSION + "\nMade and maintaned by Dan Martineau.\n\n";
 	private static final String PROG_NAME 	= "java -jar synch.jar";	//what one would use to call this program via commandline
 	
+	/*CANNOT BE LOCAL--ALTERED WITHIN SEPERATE THREADS*/
+	private static boolean aFin = false;
+	private static boolean bFin = false;
+	private static FilesToProcess noHoldA = null;
+	private static FilesToProcess noHoldB = null;
+	
 	public static void main(String[] args) throws Exception
 	{
 		read = true;
@@ -203,20 +209,20 @@ public class Main
 		status = Status.getStatus();
 		status.setJob(dir1 + " --> " + dir2);
 		
-		FilesToProcess noHoldA = null;
-		FilesToProcess noHoldB = null;;
-		
-		//If there are no read permissions, total will be less than curr, so make sure read is true.
 		if(read || mod || del)
 		{
 			if(verbose)
-				Prin.t("\nPreparing to run job . . .");
+				Prin.t("Preparing to run job . . .");
 			
-			noHoldA = new FilesToProcess(dir1, dir2, synchrc1, read, mod, del);
-			noHoldB = new FilesToProcess(dir2, dir1, synchrc2, read, mod, del);
+			//count files to process in parallel
+			new Thread(){ public void run() { noHoldA = new FilesToProcess(dir1, dir2, synchrc1, read, mod, del); aFin = true; } }.start();
+			new Thread(){ public void run() { noHoldB = new FilesToProcess(dir2, dir1, synchrc2, read, mod, del); bFin = true; } }.start();
 			
-				if(verbose)
-					Prin.clearCurrLine();
+			while(!(aFin && bFin))
+				Prin.spinner();
+			
+			if(verbose)
+				Prin.clearCurrLine();
 			
 			if(unidirectional)
 				status.setTotal(noHoldA.getNum());

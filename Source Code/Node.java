@@ -192,9 +192,7 @@ public class Node
 			else if(status < 0)
 			{
 				if(right == null)
-				{
 					right = toAdd;
-				}
 				else
 					right.addNode(toAdd);
 			}
