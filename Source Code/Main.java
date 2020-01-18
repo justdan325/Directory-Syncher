@@ -8,6 +8,7 @@
 
 import java.util.regex.*;
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 public class Main
@@ -66,10 +67,10 @@ public class Main
 		log += "\n\nBeginning synch...\n";
 		
 		initialLogLen = log.length();
-
+		
 		//extract custom rc files if they are there
 		args = findCustRc(args);
-		
+
 		decodeArgs(args);
 	}
 	
@@ -215,8 +216,26 @@ public class Main
 				Prin.t("Preparing to run job . . .");
 			
 			//count files to process in parallel
-			new Thread(){ public void run() { noHoldA = new FilesToProcess(dir1, dir2, synchrc1, read, mod, del); aFin = true; } }.start();
-			new Thread(){ public void run() { noHoldB = new FilesToProcess(dir2, dir1, synchrc2, read, mod, del); bFin = true; } }.start();
+			new Thread(){ public void run() { try {
+				noHoldA = new FilesToProcess(dir1, dir2, synchrc1, read, mod, del);}
+				catch(SecurityException e)
+				{
+					Prin.err("\n\nAccess was denied to one or more files. Full read/write access is required. Run as root.\n");
+					error();
+				}
+
+				aFin = true; 
+			} }.start();
+			new Thread(){ public void run() { try {
+				noHoldB = new FilesToProcess(dir2, dir1, synchrc2, read, mod, del);}
+				catch(SecurityException e)
+				{
+					Prin.err("\n\nAccess was denied to one or more files. Full read/write access is required. Run as root.\n");
+					error();
+				}
+
+				bFin = true;
+			} }.start();
 			
 			while(!(aFin && bFin))
 				Prin.spinner();
@@ -307,6 +326,18 @@ public class Main
 	
 	private static void decodeDirs(String path1, String path2)
 	{
+		if(!FileCMD.canAccess(path1))
+		{
+			Prin.err("Access was denied to " + FileCMD.getCanonPath(path1) + "\n"); 
+			error();
+		}
+		
+		if(!FileCMD.canAccess(path2))
+		{
+			Prin.err("Access was denied to " + FileCMD.getCanonPath(path2) + "\n"); 
+			error();
+		}
+		
 		if(!FileCMD.isDir(path1))
 		{
 			Prin.err("Invalid primary directory: " + path1 + "\n");

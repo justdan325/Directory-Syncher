@@ -137,31 +137,42 @@ public class FileCMD
 		//get dir contents
 		String[] dirs = listDirs(path);
 		String[] files = listFiles(path);
+		String errMess = null;
 		boolean completed = true;
 		
-		//delete rest of files if there are any
-		if(files.length > 0)
+		try
 		{
-			for(int i = 0; i < files.length; i++)
+			//delete rest of files if there are any
+			if(files.length > 0)
 			{
-				completed = deleteFile(files[i]);
-				
-				if(!completed)
-					break;
+				for(int i = 0; i < files.length; i++)
+				{
+					completed = deleteFile(files[i]);
+
+					if(!completed)
+						break;
+				}
 			}
+
+			//if there are subdirs, call this function recursivly on them
+			if(dirs.length > 0 && completed)
+			{
+				for(int i = 0; i < dirs.length; i++)
+				{
+					completed = deleteDir(dirs[i]);
+
+					if(!completed)
+						break;
+				}
+			}
+		}
+		catch(SecurityException f)
+		{
+			errMess = ("Security exception was thrown when attempting to delete directory.\n" + Prin.getStackTrace(f));
+			completed = false;
 		}
 		
-		//if there are subdirs, call this function recursivly on them
-		if(dirs.length > 0 && completed)
-		{
-			for(int i = 0; i < dirs.length; i++)
-			{
-				completed = deleteDir(dirs[i]);
-				
-				if(!completed)
-					break;
-			}
-		}
+		assert errMess == null : errMess;
 		
 		//delete dir itself--base case
 		if(completed)
@@ -195,6 +206,7 @@ public class FileCMD
 		try{newLocation = Files.move(strToPath(path1), desiredLocation);}
 		catch(FileAlreadyExistsException e){completed = moveFile(path1, (desiredLocation.toString() + "_1"));}
 		catch(IOException i){errMess = "There was an IOException when attempting to move " + path1 + " to " + path2 + "\n" + Prin.getStackTrace(i);}
+		catch(SecurityException f){errMess = ("Security exception was thrown when attempting to move file.\n" + Prin.getStackTrace(f));}
 		
 		assert errMess == null : errMess;
 		
@@ -215,32 +227,40 @@ public class FileCMD
 		String errMess = null;
 		boolean moved = true;
 		
-		//make sure path2 ends with file separator char
-		if(path2.charAt(path2.length()-1) != File.separatorChar)
-			path2 += File.separatorChar;
-		
-		if (isDir(path1))
+		try
 		{
-			if(!isDir(path2 + getName(path1)))
-					mkdirs(path2 + getName(path1));
-				
-			for (String file : listAll(path1))
+			//make sure path2 ends with file separator char
+			if(path2.charAt(path2.length()-1) != File.separatorChar)
+				path2 += File.separatorChar;
+
+			if (isDir(path1))
 			{
-				moved = moveDir(file, (path2 + getName(path1)));
-				
-				if(!moved)
-					break;
+				if(!isDir(path2 + getName(path1)))
+						mkdirs(path2 + getName(path1));
+
+				for (String file : listAll(path1))
+				{
+					moved = moveDir(file, (path2 + getName(path1)));
+
+					if(!moved)
+						break;
+				}
+
+				//once done copying everything, delete directory
+				deleteDir(path1);
 			}
-			
-			//once done copying everything, delete directory
-			deleteDir(path1);
+			else
+			{
+					moved = moveFile(path1, path2);
+			}
 		}
-		else
+		catch(SecurityException f)
 		{
-				moved = moveFile(path1, path2);
+			errMess = ("Security exception was thrown when attempting to move directory.\n" + Prin.getStackTrace(f));
+			moved = false;
 		}
 		
-		assert errMess == null: errMess;
+		assert errMess == null : errMess;
 		
 		return moved;
 	}
@@ -252,7 +272,13 @@ public class FileCMD
 	*/
 	public static boolean existFile(String path)
 	{
-		boolean exists = Files.exists(strToPath(path), LinkOption.NOFOLLOW_LINKS);
+		boolean exists = false;
+		String errMess = null;
+		
+		try{exists = Files.exists(strToPath(path), LinkOption.NOFOLLOW_LINKS);}
+		catch(SecurityException f){errMess = ("Security exception was thrown when attempting to verify the existance of file.\n" + Prin.getStackTrace(f));}
+		
+		assert errMess == null : errMess;
 		
 		return exists;
 	}
@@ -303,7 +329,7 @@ public class FileCMD
 		Path newPath = null;
 		
 		try{newPath = Files.copy(strToPath(source), strToPath(target), StandardCopyOption.REPLACE_EXISTING);}
-		catch(Exception e){errMess = ("There's been an exception: \n" + Prin.getStackTrace(e));}
+		catch(Exception e){errMess = ("There's been an exception when attempting to copy and replace file: \n" + Prin.getStackTrace(e));}
 
 		assert errMess == null : errMess;
 		
@@ -322,7 +348,6 @@ public class FileCMD
 	*/
 	public static boolean copyDir(String path1, String path2)
 	{
-		String errMess = null;
 		boolean copied = true;
 		
 		//make sure path2 ends with file separator char
@@ -346,8 +371,6 @@ public class FileCMD
 		{
 				copied = copyFile(path1, (path2 + getName(path1)), false);
 		}
-		
-		assert errMess == null: errMess;
 		
 		return copied;
 	}
@@ -495,6 +518,9 @@ public class FileCMD
 	*/
 	public static String[] listAll(String path)
 	{
+		if(!canAccess(path))
+			throw new SecurityException("Do not have full read/write access to " + path);
+		
 		//get File object for directory
 		File dir = new File(path);
 		//list of files
@@ -569,6 +595,9 @@ public class FileCMD
 	*/
 	public static String[] listDirs(String path)
 	{
+		if(!canAccess(path))
+			throw new SecurityException("Do not have full read/write access to " + path);
+		
 		//get File object for directory
 		File dir = new File(path);
 		//list of directories
@@ -698,6 +727,10 @@ public class FileCMD
 		{
 			errMess = "IOException in touch method where fileName is: " + fileName + "\n" + Prin.getStackTrace(e);
 		}
+		catch(SecurityException e)
+		{
+			errMess = ("There was a security exception when atempting to touch file.\n" + Prin.getStackTrace(e));
+		}
 		
 		assert errMess == null : errMess;
 	}
@@ -747,7 +780,33 @@ public class FileCMD
 		{
 			errMess = "IOException in touch method where fileName is: " + fileName + "\n" + Prin.getStackTrace(e);
 		}
+		catch(SecurityException e)
+		{
+			errMess = ("There was a security exception when atempting to touch file.\n" + Prin.getStackTrace(e));
+		}
 		
 		assert errMess == null : errMess;
+	}
+	
+	/**
+	*Returns true if running user has read and write access to a file
+	*@param file path
+	*@return true if can read and write
+	*/
+	public static boolean canAccess(String path)
+	{
+		boolean canAccess = false;
+		
+		File file = new File(path);
+		
+		try
+		{
+			if(file.canRead() && file.canWrite())
+				canAccess = true;
+		}
+		catch(SecurityException e)
+		{}
+		
+		return canAccess;
 	}
 }

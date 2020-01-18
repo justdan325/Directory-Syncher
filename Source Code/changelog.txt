@@ -6,3 +6,4 @@
 
 -Optimized Status for better overall program performance and less glitching.
 -Calculating files to process is now done in parallel for faster run times.
+-Program will now terminate nicely if read/write access is denied.
