@@ -2,7 +2,7 @@
 *Class is a singleton that manages the status of the state of SynchModule when running a job.
 *
 *@author Dan Martineau
-*@version 1.6
+*@version 1.7
 *@since 2.0
 */
 
@@ -23,8 +23,11 @@ public class Status
 		
 	/*PUBLIC CONSTANTS*/
 	public static final String MODE_READ = "Searching for match";
+	public static final String MODE_COPY = "Copying file";
 	public static final String MODE_MOD = "Checking for modifications";
-	public static final String MODE_DEL = "Assesing deletion";
+	public static final String MODE_UPDATE = "Copying newer version of file";
+	public static final String MODE_DELASS = "Assesing deletion";
+	public static final String MODE_DEL = "Removing file";
 	public static final String MODE_IDLE = "Idle";
 	
 	/*PRIVATE CONSTANTS*/
@@ -132,6 +135,9 @@ public class Status
 			case MODE_MOD:
 			case MODE_DEL:
 			case MODE_IDLE:
+			case MODE_UPDATE:
+			case MODE_DELASS:
+			case MODE_COPY:
 				this.mode = newMode;
 				break;
 			default:

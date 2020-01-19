@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 2.6
+*@version 2.7
 */
 
 import java.io.*;
@@ -155,6 +155,8 @@ public class SynchModule
 		//compare and manage local files (reading and modifying)
 		for(int i = 0; i < files1.length; i++)
 		{
+			status.setMode(Status.MODE_READ);
+			
 			curr = files1[i];
 			node = synchrc.getNode(curr);
 			
@@ -170,9 +172,10 @@ public class SynchModule
 		}
 		
 		//compare and manage local files (deletion)
-		status.setMode(Status.MODE_DEL);
 		for(int i = 0; i < files2.length; i++)
 		{
+			status.setMode(Status.MODE_DELASS);
+			
 			curr = files2[i];
 			
 			if(!curr.equals(EMPTY_ELEMENT))
@@ -193,6 +196,8 @@ public class SynchModule
 		//compare and recursivley manage directories
 		for(int i = 0; i < dirs1.length; i++)
 		{	
+			status.setMode(Status.MODE_READ);
+			
 			curr = dirs1[i];
 			node = synchrc.getNode(curr);
 			
@@ -207,9 +212,10 @@ public class SynchModule
 				readAndModHelperDir(origin, destination, curr, read, modify, delete, i, dirs1, dirs2);
 		}
 		
-		status.setMode(Status.MODE_DEL);
 		for(int i = 0; i < dirs2.length; i++)
 		{
+			status.setMode(Status.MODE_DELASS);
+			
 			curr = dirs2[i];
 			node = synchrc.getNode(curr);
 			
@@ -242,7 +248,7 @@ public class SynchModule
 		//if read is enabled and the file is not in destination (no point in executing if it is there already)
 		if(localRead && index == -1)
 		{
-			status.setMode(Status.MODE_READ);
+			status.setMode(Status.MODE_COPY);
 			
 			//copy the file to where it belongs--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + origin + File.separatorChar + curr + " does not exist.");
@@ -298,6 +304,8 @@ public class SynchModule
 			//if curr is newer, overwrite the file in destination
 			if(comp == 1)
 			{
+				status.setMode(Status.MODE_UPDATE);
+				
 				FileCMD.copyFile(curr, destFile, true);
 				log += ("Replaced \"" + FileCMD.getName(curr) + "\" in " +  destination + " with \"" + FileCMD.getName(curr) + "\" in " + origin + "\n");
 			}
@@ -339,6 +347,8 @@ public class SynchModule
 			//attempt to delete the file--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
 			
+			status.setMode(Status.MODE_DEL);
+			
 			if(safe)
 			{
 				success = moveToTrash(curr);
@@ -377,7 +387,7 @@ public class SynchModule
 		//check to see if file exisits in destination
 		inDest = findInList(index, curr, dirs2);
 		
-		status.setMode(Status.MODE_READ);
+		status.setMode(Status.MODE_COPY);
 		
 		//if read enabled and directory is not in destination
 		if(localRead && !inDest)
@@ -420,6 +430,8 @@ public class SynchModule
 		{
 			//attempt to delete the dir--assert the paths are valid first
 			assert FileCMD.existFile(curr) : ("It seems that " + destination + " does not exist.");
+			
+			status.setMode(Status.MODE_DEL);
 			
 			if(safe)
 			{
