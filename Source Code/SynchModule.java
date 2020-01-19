@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 2.7
+*@version 2.8
 */
 
 import java.io.*;
@@ -18,7 +18,8 @@ public class SynchModule
 	private boolean verbose;		//true if program running in verbose mode
 	private boolean safe;		//true if program running in safe mode
 	private boolean existTrash;	//true if there is a DEFAULT_TRASH directory in dir2
-	private Synchrc synchrc;		//synchrc file object
+	private Synchrc synchrc1;	//synchrc file object for dir1
+	private Synchrc synchrc2;	//synchrc file object for dir2
 	private String log;			//log of synch
 	private String dir1;		//canonical path of dir1
 	private String dir2;		//canonical path of dir2
@@ -33,9 +34,10 @@ public class SynchModule
 	*Constructor for a default synch job
 	*@param dir1 path
 	*@param dir2 path
-	*@param synchrc object
+	*@param synchrc1 object for dir1
+	*@param synchrc2 object for dir2
 	*/
-	public SynchModule(String path1, String path2, Synchrc synchrc)
+	public SynchModule(String path1, String path2, Synchrc synchrc1, Synchrc synchrc2)
 	{
 		//assign parameters to their instance varibales and assert paths are valid
 		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
@@ -51,13 +53,14 @@ public class SynchModule
 		safe = false;
 		existTrash = false;
 		status = Status.getStatus();
-		this.synchrc = synchrc;
+		this.synchrc1 = synchrc1;
+		this.synchrc2 = synchrc2;
 		
 		trash = dir2 + File.separatorChar + DEFAULT_TRASH;
 		if(FileCMD.isDir(trash))
 			existTrash = true;
 		
-		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc.getName() + "\"\n");
+		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc1.getName() + "\" and " + synchrc2.getName() + "\"\n");
 		
 		synchJob(dir1, dir2);
 	}
@@ -66,14 +69,15 @@ public class SynchModule
 	*Constructor for custom synch job
 	*@param dir1 path
 	*@param dir2 path
-	*@param synchrc object
+	*@param synchrc1 object for dir1
+	*@param synchrc2 object for dir2
 	*@param read
 	*@param modify
 	*@param delete
 	*@param verbose
 	*@param safe
 	*/
-	public SynchModule(String path1, String path2, Synchrc synchrc, boolean read, boolean modify, boolean delete, boolean verbose, boolean safe)
+	public SynchModule(String path1, String path2, Synchrc synchrc1, Synchrc synchrc2, boolean read, boolean modify, boolean delete, boolean verbose, boolean safe)
 	{
 		//assign parameters to their instance varibales and assert paths are valid
 		assert FileCMD.existFile(path1) : "Path 1 is not a directory! This should be handled before SynchModule is called.";
@@ -89,13 +93,14 @@ public class SynchModule
 		this.safe = safe;
 		existTrash = false;
 		status = Status.getStatus();
-		this.synchrc = synchrc;
+		this.synchrc1 = synchrc1;
+		this.synchrc2 = synchrc2;
 		
 		trash = dir2 + File.separatorChar + DEFAULT_TRASH;
 		if(FileCMD.isDir(trash))
 			existTrash = true;
 		
-		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc.getName() + "\"\n");
+		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc1.getName() + "\" and " + synchrc2.getName() + "\"\n");
 		
 		if(verbose)
 			status.setPrint(true);
@@ -158,7 +163,7 @@ public class SynchModule
 			status.setMode(Status.MODE_READ);
 			
 			curr = files1[i];
-			node = synchrc.getNode(curr);
+			node = synchrc1.getNode(curr);
 			
 			status.setDir(origin);
 			status.setFile(FileCMD.getName(curr));
@@ -182,7 +187,7 @@ public class SynchModule
 			{
 				status.setDir(destination);
 				status.setFile(FileCMD.getName(curr));
-				node = synchrc.getNode(curr);
+				node = synchrc2.getNode(curr);
 				
 				//if the current file is in synchrc, deal with it according to that
 				if(node != null)
@@ -199,7 +204,7 @@ public class SynchModule
 			status.setMode(Status.MODE_READ);
 			
 			curr = dirs1[i];
-			node = synchrc.getNode(curr);
+			node = synchrc1.getNode(curr);
 			
 			status.setDir(origin);
 			status.setFile(FileCMD.getName(curr));
@@ -217,7 +222,7 @@ public class SynchModule
 			status.setMode(Status.MODE_DELASS);
 			
 			curr = dirs2[i];
-			node = synchrc.getNode(curr);
+			node = synchrc2.getNode(curr);
 			
 			status.setDir(destination);
 			status.setFile(FileCMD.getName(curr));
@@ -333,7 +338,6 @@ public class SynchModule
 	
 	private void deleteHelperFile(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] files1, String[] files2)
 	{
-		Node node;			//holder for the current Node
 		boolean inOrigin = false;	//whether or not a file exisits in origin
 		boolean success = false;		//whether or not an operation was successful
 		int comp;			//holder for compareTo methods
@@ -374,12 +378,12 @@ public class SynchModule
 		{
 			//write to log
 			log += ("Skipped the deletion of \"" +  FileCMD.getName(curr) + "\" in " + destination + "\n");
+			
 		}
 	}
 	
 	private void readAndModHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
 	{
-		Node node;			//holder for the current Node
 		boolean inDest = false;		//whether or not a file exisits in destination
 		boolean success = false;		//whether or not an operation was successful
 		int comp;			//holder for compareTo methods
@@ -417,7 +421,6 @@ public class SynchModule
 	
 	private void deleteHelperDir(String origin, String destination, String curr, boolean localRead, boolean localModify, boolean localDelete, int index, String[] dirs1, String[] dirs2)
 	{
-		Node node;			//holder for the current Node
 		boolean inOrigin = false;	//whether or not a file exisits in origin
 		boolean success = false;		//whether or not an operation was successful
 		int comp;			//holder for compareTo methods

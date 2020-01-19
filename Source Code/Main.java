@@ -3,7 +3,7 @@
 *Program is intended to be run exclusivley from commandline arguments
 *
 *@author Dan Martineau
-*@version 3.3
+*@version 3.4
 */
 
 import java.util.regex.*;
@@ -254,7 +254,7 @@ public class Main
 		//synch from primary to secondary
 		try
 		{
-			SynchModule part1 = new SynchModule(dir1, dir2, synchrc1, read, mod, del, verbose, safe);
+			SynchModule part1 = new SynchModule(dir1, dir2, synchrc1, synchrc2, read, mod, del, verbose, safe);
 		
 			log += part1.getLog();
 			
@@ -270,7 +270,7 @@ public class Main
 				//reset some status values
 				status.setJob(dir2 + " --> " + dir1);
 				
-				SynchModule part2 = new SynchModule(dir2, dir1, synchrc2, read, mod, del, verbose, safe);
+				SynchModule part2 = new SynchModule(dir2, dir1, synchrc2, synchrc1, read, mod, del, verbose, safe);
 				
 				log += part2.getLog();
 			}

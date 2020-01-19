@@ -136,7 +136,9 @@ public class Node
 			if(status <= 0 && right != null)
 			{
 				if(right.getPath().equals(nodePath))
+				{
 					desired = right;
+				}
 				else
 					desired = right.getNode(nodePath);
 			}
@@ -171,13 +173,13 @@ public class Node
 		//It will therefore be set as this Node
 		if(path.contains("*"))
 		{
-			path    = toAdd.getPath();			
-			name  = toAdd.getName();			
+			path    	= toAdd.getPath();			
+			name  	= toAdd.getName();			
 			left      = toAdd.getLeft();				
 			right     = toAdd.getRight();			
-			read    = toAdd.getRead();		
-			modify = toAdd.getModify();		
-			delete  = toAdd.getDelete();
+			read    	= toAdd.getRead();		
+			modify 	= toAdd.getModify();		
+			delete  	= toAdd.getDelete();
 		}
 		else
 		{
