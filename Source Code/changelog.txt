@@ -1,6 +1,6 @@
 ﻿Change Log--Directory Syncher version 
 
--BUGFIX: Was looking in primary directory synchrc file for file deletion when should have been looking in secondary synchrc file.
+-BUGFIX: 
 
--Added new modes to status to be more clear about what the program is doing at any given time.
+-
 
