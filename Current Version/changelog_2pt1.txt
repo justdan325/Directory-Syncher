@@ -3,7 +3,9 @@
 -BUGFIX: Fixed bug where program would crash while matching wild cards for a directory containing no matches.
 -BUGFIX: Fixed bug where files with same names in different directories weren't being added as synchrc nodes.
 -BUGFIX: Fixed bug where getNode() in Node was not getting nodes that were in the tree.
+-BUGFIX: Was looking in primary directory synchrc file for file deletion when should have been looking in secondary synchrc file.
 
 -Optimized Status for better overall program performance and less glitching.
 -Calculating files to process is now done in parallel for faster run times.
 -Program will now terminate nicely if read/write access is denied.
+-Added new modes to status to be more clear about what the program is doing at any given time.
