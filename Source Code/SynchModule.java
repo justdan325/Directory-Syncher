@@ -60,7 +60,7 @@ public class SynchModule
 		if(FileCMD.isDir(trash))
 			existTrash = true;
 		
-		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc1.getName() + "\" and " + synchrc2.getName() + "\"\n");
+		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc1.getName() + "\" and \"" + synchrc2.getName() + "\"\n");
 		
 		synchJob(dir1, dir2);
 	}
