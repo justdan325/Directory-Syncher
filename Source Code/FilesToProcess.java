@@ -17,7 +17,7 @@ public class FilesToProcess
 	private Synchrc synchrc;	
 	private String dir1;		
 	private String dir2;		
-	private int num;
+	private long num;
 	
 	/*CONSTANTS*/
 	public static String EMPTY_ELEMENT = "?<>";		
@@ -34,7 +34,7 @@ public class FilesToProcess
 		calc(dir1, dir2);
 	}
 	
-	public int getNum()
+	public long getNum()
 	{
 		return num;
 	}
