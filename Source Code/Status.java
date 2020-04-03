@@ -13,8 +13,8 @@ public class Status
 	private static String file;			//current file being processed
 	private static String dir;			//current directory
 	private static String progress;		//ASCII progress meter
-	private static int total;			//total number of files in all subdirs beneath parent dir
-	private static int curr;				//number of current file being processed
+	private static long total;			//total number of files in all subdirs beneath parent dir
+	private static long curr;				//number of current file being processed
 	private static boolean printOnUpdate; 	//true if status should print itself every time certain mutators are called
 	private static boolean initialized;	//true if there is an instance of Status
 	private static boolean print;			//true if program should be printing the status to std out continuously
@@ -100,7 +100,7 @@ public class Status
 	*Set the total number of files and subdirectories to be processed (include parent dir)
 	*@param total files and subdirs
 	*/
-	public void setTotal(int total)
+	public void setTotal(long total)
 	{
 		this.total = total;
 	}

@@ -524,15 +524,15 @@ public class Main
 	private static void displayOptions()
 	{
 		Prin.t("Directory Syncher Version " + VERSION + "\n\t");
-		Prin.t("\n\tUsage:\n\t\t" + PROG_NAME + " [primary directory] [secondary directory]\n\t\t");
-		Prin.t(PROG_NAME + " [permissions] [primary directory] [secondary directory]\n\t\t");
-		Prin.t(PROG_NAME + " -[flags] [primary directory] [secondary directory]\n\t\t");
-		Prin.t(PROG_NAME + " -[flags] [permissions] [primary directory] [secondary directory]\n\t");
+		Prin.t("\n\tUsage:\n\t\t" + PROG_NAME + " [primary dir] [secondary dir]\n\t\t");
+		Prin.t(PROG_NAME + " [permissions] [primary dir] [secondary dir]\n\t\t");
+		Prin.t(PROG_NAME + " -[flags] [primary dir] [secondary dir]\n\t\t");
+		Prin.t(PROG_NAME + " -[flags] [permissions] [primary dir] [secondary dir]\n\t");
 		Prin.t("Permissions:\n\t\t000 --> [<Read><Modify><Delete>] where 0 = false and 1 = true");
 		Prin.t("\n\tFlags: \n\t\t-u : unidirectional (from primary to secondary)\n\t\t");
 		Prin.t("-l : save log file\n\t\t-v : verbose (prints log to standard out)\n\t\t-s : safe mode\n\t");
-		Prin.t("End Flags:\n\t\t--rcPrim [custom synchrc file for primary directory]\n\t\t");
-		Prin.t("--rcSec [custom synchrc file for secondary directory]\n");
+		Prin.t("End Flags:\n\t\t--rcPrim [custom synchrc file for primary dir]\n\t\t");
+		Prin.t("--rcSec [custom synchrc file for secondary dir]\n");
 		Prin.tln("\nNote: The default permissions are \"100.\"");
 	}
 	

@@ -22,6 +22,6 @@ public class UnitTest
 	}*/
 	public static void main(String[] args)
 	{
-		Prin.tln("" + NumberItems.getNum(args[0]));
+//		Prin.tln("" + NumberItems.getNum(args[0]));
 	}
 }

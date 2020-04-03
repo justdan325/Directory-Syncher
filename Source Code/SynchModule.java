@@ -4,7 +4,7 @@
 *It must be run twice to synch both ways
 *
 *@author Dan Martineau
-*@version 2.8
+*@version 2.9
 */
 
 import java.io.*;
@@ -27,8 +27,8 @@ public class SynchModule
 	private Status status;		//instance of Status
 	
 	/*CONSTANTS*/
-	public static String DEFAULT_TRASH = "DELETEME_DirectorySyncher";	//Name of default trash directory
-	public static String EMPTY_ELEMENT = "?<>";						//Signifies an empty array element
+	public static final String DEFAULT_TRASH = "DELETEME_DirectorySyncher";	//Name of default trash directory
+	public static final String EMPTY_ELEMENT = "?<>";						//Signifies an empty array element
 	
 	/**
 	*Constructor for a default synch job
@@ -60,7 +60,7 @@ public class SynchModule
 		if(FileCMD.isDir(trash))
 			existTrash = true;
 		
-		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc1.getName() + "\" and " + synchrc2.getName() + "\"\n");
+		log = ("\nSynching " + dir1 + " --> " + dir2 + " using \"" + synchrc1.getName() + "\" and \"" + synchrc2.getName() + "\"\n");
 		
 		synchJob(dir1, dir2);
 	}
