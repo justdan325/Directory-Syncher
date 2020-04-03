@@ -118,7 +118,7 @@ public class FileCMD
 		boolean deleted = false;
 		String errMess = null;
 		
-		try{deleted = Files.deleteIfExists(Paths.get(path));}
+		try{deleted = Files.deleteIfExists(strToPath(path));}
 		catch(SecurityException e){errMess = ("Security exception was thrown when attempting to delete: " + path + "\n" + Prin.getStackTrace(e));}
 		catch(IOException f){errMess = ("There was an IOException when attempting to delete: " + path + "\n" + Prin.getStackTrace(f));}
 
@@ -190,7 +190,7 @@ public class FileCMD
 	public static boolean moveFile(String path1, String path2)
 	{
 		Path newLocation = null;
-		Path desiredLocation = Paths.get(path2);
+		Path desiredLocation = strToPath(path2);
 		boolean completed = false;
 		String errMess = null;
 		
@@ -198,12 +198,12 @@ public class FileCMD
 		if(isDir(path2))
 		{
 			if(path2.charAt(path2.length()-1) == File.separatorChar)
-				desiredLocation = Paths.get(path2 + getName(path1));
+				desiredLocation = strToPath(path2 + getName(path1));
 			else
-				desiredLocation = Paths.get(path2 + File.separatorChar + getName(path1));
+				desiredLocation = strToPath(path2 + File.separatorChar + getName(path1));
 		}
 		
-		try{newLocation = Files.move(Paths.get(path1), desiredLocation);}
+		try{newLocation = Files.move(strToPath(path1), desiredLocation);}
 		catch(FileAlreadyExistsException e){completed = moveFile(path1, (desiredLocation.toString() + "_1"));}
 		catch(IOException i){errMess = "There was an IOException when attempting to move " + path1 + " to " + path2 + "\n" + Prin.getStackTrace(i);}
 		catch(SecurityException f){errMess = ("Security exception was thrown when attempting to move file.\n" + Prin.getStackTrace(f));}
@@ -275,7 +275,7 @@ public class FileCMD
 		boolean exists = false;
 		String errMess = null;
 		
-		try{exists = Files.exists(Paths.get(path), LinkOption.NOFOLLOW_LINKS);}
+		try{exists = Files.exists(strToPath(path), LinkOption.NOFOLLOW_LINKS);}
 		catch(SecurityException f){errMess = ("Security exception was thrown when attempting to verify the existance of file.\n" + Prin.getStackTrace(f));}
 		
 		assert errMess == null : errMess;
@@ -299,7 +299,7 @@ public class FileCMD
 		Path newPath = null;
 		
 		//attempt to copy with attributes
-		try{newPath = Files.copy(Paths.get(source), Paths.get(target), StandardCopyOption.COPY_ATTRIBUTES);}
+		try{newPath = Files.copy(strToPath(source), strToPath(target), StandardCopyOption.COPY_ATTRIBUTES);}
 		catch(FileAlreadyExistsException e){if(overwrite) copied = copyReplace(source, target); /*overwrite file if the user desires it.*/}
 		catch(SecurityException f){errMess = ("Security exception was thrown when attempting to copy.\n" + Prin.getStackTrace(f));}
 		catch(Exception g){errMess = ("There's been an exception: \n" + Prin.getStackTrace(g));}
@@ -308,7 +308,7 @@ public class FileCMD
 		
 		
 		//make sure the target paths are the same to verify copy process
-		if(newPath != null && newPath.equals(Paths.get(target)))
+		if(newPath != null && newPath.equals(strToPath(target)))
 			copied = true;
 		
 		return copied;
@@ -328,13 +328,13 @@ public class FileCMD
 		//The path returned by the copy method from Files class
 		Path newPath = null;
 		
-		try{newPath = Files.copy(Paths.get(source), Paths.get(target), StandardCopyOption.REPLACE_EXISTING);}
+		try{newPath = Files.copy(strToPath(source), strToPath(target), StandardCopyOption.REPLACE_EXISTING);}
 		catch(Exception e){errMess = ("There's been an exception when attempting to copy and replace file: \n" + Prin.getStackTrace(e));}
 
 		assert errMess == null : errMess;
 		
 		//make sure the target paths are the same to verify copy process
-		if(newPath != null && newPath.equals(Paths.get(target)))
+		if(newPath != null && newPath.equals(strToPath(target)))
 			copied = true;
 		
 		return copied;
@@ -388,7 +388,7 @@ public class FileCMD
 		FileTime lastMod = null;
 		String errMess = null;
 		
-		try{lastMod = Files.getLastModifiedTime(Paths.get(path), LinkOption.NOFOLLOW_LINKS);}
+		try{lastMod = Files.getLastModifiedTime(strToPath(path), LinkOption.NOFOLLOW_LINKS);}
 		catch(SecurityException e){errMess = ("Security Exception when accessing mod date of: " + path + "\n" + Prin.getStackTrace(e));}
 		catch(IOException f){errMess = ("There was an IOException when accessing mod date of: " + path + "\n" + Prin.getStackTrace(f));}
 
@@ -414,7 +414,7 @@ public class FileCMD
 		FileTime lastMod = null;
 		String errMess = null;
 		
-		try{lastMod = Files.getLastModifiedTime(Paths.get(path), LinkOption.NOFOLLOW_LINKS);}
+		try{lastMod = Files.getLastModifiedTime(strToPath(path), LinkOption.NOFOLLOW_LINKS);}
 		catch(SecurityException e){errMess = ("Security Exception when accessing mod date of: " + path + "\n" + Prin.getStackTrace(e));}
 		catch(IOException f){errMess = ("There was an IOException when accessing mod date of: " + path + "\n" + Prin.getStackTrace(f));}
 
@@ -441,11 +441,11 @@ public class FileCMD
 		int result = -1;
 		String errMess = null;
 		
-		try{file1Mod = Files.getLastModifiedTime(Paths.get(file1), LinkOption.NOFOLLOW_LINKS);}
+		try{file1Mod = Files.getLastModifiedTime(strToPath(file1), LinkOption.NOFOLLOW_LINKS);}
 		catch(SecurityException e){errMess = ("Security Exception when accessing mod date of: " + file1 + "\n" + Prin.getStackTrace(e));}
 		catch(IOException f){errMess = ("There was an IOException when accessing mod date of: " + file1 + "\n" + Prin.getStackTrace(f));}
 		
-		try{file2Mod = Files.getLastModifiedTime(Paths.get(file2), LinkOption.NOFOLLOW_LINKS);}
+		try{file2Mod = Files.getLastModifiedTime(strToPath(file2), LinkOption.NOFOLLOW_LINKS);}
 		catch(SecurityException e){errMess = ("Security Exception when accessing mod date of: " + file2 + "\n" + Prin.getStackTrace(e));}
 		catch(IOException f){errMess = ("There was an IOException when accessing mod date of: " + file2 + "\n" + Prin.getStackTrace(f));}
 
@@ -480,7 +480,7 @@ public class FileCMD
 		boolean isDir = false;
 		String errMess = null;
 		
-		try{isDir = Files.isDirectory(Paths.get(path), LinkOption.NOFOLLOW_LINKS);}
+		try{isDir = Files.isDirectory(strToPath(path), LinkOption.NOFOLLOW_LINKS);}
 		catch(SecurityException e){errMess = ("Security Exception when testing for directory: " + path + "\n" + Prin.getStackTrace(e));}
 
 		assert errMess == null : errMess;
