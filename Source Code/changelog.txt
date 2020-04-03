@@ -2,5 +2,6 @@
 
 -BUGFIX: 
 
--
+-Changed the file counter to a data type capable of handling a larger number of files.
+-Optimized the "help" output text to fit into narrower terminal windows. 
 
